@@ -8,10 +8,12 @@
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
-    "babel-preset-node6": "^11.0.0"
+    "babel-preset-node6": "^11.0.0",
+    "supervisor": "^0.12.0"
   },
   "scripts": {
     "start": "node dist/server/index.js",
+    "supervisor": "supervisor --r -r 'babel/register' dist/server/index.js",
     "watch": "babel src/server --out-dir dist/server --presets=node6 --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

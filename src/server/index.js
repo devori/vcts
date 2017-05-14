@@ -1,11 +1,10 @@
 import express from 'express';
+import apiRouter from './route/api'
 
 let app = express();
 
-app.get('/', (req, res) => {
-  res.send('Hello world!');
-});
+app.use('/api', apiRouter);
 
 app.listen(3000, () => {
   console.log('Start Server on port 3000');
-})
+});
