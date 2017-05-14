@@ -1,5 +1,5 @@
 import lowdb from 'lowdb';
-import rule from './rule/tony-rule';
+import rule from './rule';
 import trader from './trader';
 
 const INTERVAL_TIME = 5 * 60 * 1000;
