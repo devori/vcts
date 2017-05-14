@@ -21,5 +21,6 @@ export default {
       return;
     }
     bw.end();
+    browsers[browserName] = null;
   }
 }

@@ -6,6 +6,7 @@
   "dependencies": {
     "express": "^4.15.2",
     "lowdb": "^0.16.2",
+    "request": "^2.81.0",
     "webdriverio": "^4.8.0"
   },
   "devDependencies": {
