@@ -1,20 +1,19 @@
 import { Router } from 'express';
-import webdriver from '../webdriver/webdriver';
+import vc from '../vc/vc';
 
 let router = Router();
 router.use((req, res, next) => {
   next();
 });
 
-router.get('/browser', (req, res) => {
-  console.log('Called:', '/ for get');
-  let browser = webdriver.open('chrome');
-  res.send('Hello Browser');
+router.get('/accounts/:id', (req, res) => {
+  vc.start(req.params.id);
+  res.send(`Called /start/${req.params.id}`);
 });
 
-router.delete('/browser', (req, res) => {
-  console.log('Called', '/ for delete');
-  webdriver.close('chrome');
+router.get('/stop', (req, res) => {
+  vc.stop();
+  res.send('Called /stop');
 })
 
 export default router;

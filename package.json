@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "express": "^4.15.2",
+    "lowdb": "^0.16.2",
     "webdriverio": "^4.8.0"
   },
   "devDependencies": {
