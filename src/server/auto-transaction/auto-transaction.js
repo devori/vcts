@@ -2,7 +2,7 @@ import lowdb from 'lowdb';
 import rule from './rule';
 import trader from './trader';
 
-const INTERVAL_TIME = 5 * 60 * 1000;
+const INTERVAL_TIME = 5 * 60 * 1000 + 5000;
 const currencies = lowdb('./data/currencies.json');
 const accounts = lowdb('./data/accounts.json');
 
@@ -13,17 +13,20 @@ function start(accountName = 'sample') {
     return;
   }
   intervalId = setInterval(() => {
-    let assets = accounts.get(accountName).get('assets').value();
-    for (let currency in assets) {
-      let history = currencies.get(currency).value();
-      let judgement = rule.judge(history, assets[currency]);
-      if (judgement.sellList.length > 0) {
-        trader.sell(judgement.sellList);
+    trader.info('LTC', (balance) => {
+      let assets = accounts.get(accountName).get('assets').value();
+      let currency = 'LTC';
+      // for (let currency in assets) {
+      let history = currencies.get(currency).last().value();
+      let judgement = rule.judge(currency, history, Number(balance.available_krw), assets[currency]);
+      if (judgement.sellId) {
+        trader.sell(currency, judgement.sellId);
       }
-      if (judgement.buyList.length > 0) {
-        trader.buy(...judgement.buyList[0]);
+      if (judgement.buyUnits) {
+        trader.buy(currency, judgement.buyUnits);
       }
-    }
+      // }
+    });
   }, INTERVAL_TIME);
 }
 

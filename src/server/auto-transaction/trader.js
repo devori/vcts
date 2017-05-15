@@ -8,13 +8,13 @@ const apiKey = account.get('connect').value();
 const secretKey = account.get('secret').value();
 
 function sell(currency, id) {
-  if (!id || !assets.get(currency).has(id).value()) {
+  if (!id || !assets.get(currency).find({id}).value()) {
     return;
   }
-  let target = assets.get(currency).get(id).value();
+  let target = assets.get(currency).find({id}).value();
   bithumbApi.sell(currency, target.units).then((result) => {
     assets.get(currency).unset(id).write();
-    console.log(result);
+    console.log('TRADER: ', result);
   });
 }
 
@@ -22,16 +22,18 @@ function buy(currency, units) {
   bithumbApi.buy(currency, units).then((result) => {
     if (result.status === SUCCESS) {
       result.data.forEach((tr) => {
-        assets.get(currency).set(String(new Date().getTime()), tr).write();
+        tr.id = String(new Date().getTime());
+        assets.get(currency).push(tr).write();
       });
     }
-    console.log(result);
+    console.log('TRADER: ', result);
   });
 }
 
-function info(currency = 'LTC') {
+function info(currency = 'LTC', callback) {
   bithumbApi.info(currency).then((result) => {
-    console.log(result);
+    console.log('TRADER: ', result);
+    callback(result.data);
   });
 }
 

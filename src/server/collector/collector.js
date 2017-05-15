@@ -1,8 +1,8 @@
-import bithumb from './bithumb';
+import request from 'request';
 import lowdb from 'lowdb';
 
 const currencies = lowdb('./data/currencies.json');
-const INTERVAL_TIME = 60000;
+const INTERVAL_TIME = 5 * 60 * 1000;
 
 let intervalId;
 
@@ -16,8 +16,8 @@ function start() {
 
   intervalId = setInterval(() => {
     kinds.forEach((c) => {
-      bithumb.collect(c, (data) => {
-        currencies.get(c).push(data).write();
+      request(`https://api.bithumb.com/public/ticker/${c}`, (err, res, body) => {
+        currencies.get(c).push(JSON.parse(body).data).write();
       });
     });
   }, INTERVAL_TIME);
