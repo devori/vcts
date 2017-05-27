@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import vc from '../virtual-currency/virtual-currency';
+import vc from './virtual-currency';
 
 let router = Router();
 router.use((req, res, next) => {
