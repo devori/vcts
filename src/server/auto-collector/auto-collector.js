@@ -1,7 +1,7 @@
 import request from 'request';
 import vc from '../virtual-currency/virtual-currency';
 
-const INTERVAL_TIME = 5 * 60 * 1000;
+const INTERVAL_TIME = 5 * 30 * 1000;
 
 let intervalId;
 

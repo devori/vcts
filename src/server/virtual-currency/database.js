@@ -12,8 +12,8 @@ const currencies = lowdb('./data/currencies.json');
 let defaultValue = {};
 for (let k in VC) {
   defaultValue[VC[k]] = [];
-}
-currencies.defaults(defaultValue);
+};
+currencies.defaults(defaultValue).write();
 
 function add(vc = VC.BTC, value) {
   currencies.get(vc).push(value).write();

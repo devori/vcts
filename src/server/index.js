@@ -1,8 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import vcRouter from './virtual-currency/router';
-import collector from './collector/collector';
 import accountRouter from './account/router';
+import autoCollector from './auto-collector/auto-collector';
 
 let app = express();
 
@@ -23,4 +23,4 @@ app.listen(3000, () => {
   console.log('Start Server on port 3000');
 });
 
-collector.start();
+autoCollector.start();
