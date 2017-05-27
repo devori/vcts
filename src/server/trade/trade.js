@@ -5,7 +5,7 @@ const SUCCESS = '0000';
 
 function sell(accountId, vcType, price, units) {
   if (price === null) {
-    return bithumbApi.sell(vcType, units).then((result) => {
+    return bithumbApi.sell(vcType, String(units)).then((result) => {
       if (result.status !== SUCCESS) {
         throw result;
       }
@@ -19,7 +19,7 @@ function sell(accountId, vcType, price, units) {
 
 function buy(accountId, vcType, price, units) {
   if (price === null) {
-    return bithumbApi.buy(vcType, units).then((result) => {
+    return bithumbApi.buy(vcType, String(units)).then((result) => {
       if (result.status !== SUCCESS) {
         throw result;
       }

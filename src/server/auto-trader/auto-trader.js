@@ -26,7 +26,9 @@ function start(accountId) {
         if (units < 0.1) {
           return;
         }
-        trade.buy(accountId, vctype, null, units).catch(reason => {
+        units = Math.trunc(units * 10000) / 10000;
+        console.log(`Purchase: ${vcType} - ${units}`);
+        trade.buy(accountId, vcType, null, units).catch(reason => {
           console.log(reason);
         });
       });
@@ -40,10 +42,14 @@ function start(accountId) {
         if (units === 0) {
           return;
         }
+        units = Math.trunc(units * 10000) / 10000;
+        console.log(`Sale: ${vcType} - ${units}`);
         trade.sell(accountId, vcType, null, units).catch(reason => {
           console.log(reason);
         });
       });
+    }).catch(reason => {
+      console.log(reason);
     });
   }, INTERVAL_TIME);
 }
