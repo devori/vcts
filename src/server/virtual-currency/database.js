@@ -5,7 +5,7 @@ const VC = {
   ETH: 'ETH',
   DASH: 'DASH',
   LTC: 'LTC',
-  XRP: 'XRP'
+  ETC: 'ETC'
 };
 
 const currencies = lowdb('./data/currencies.json');
