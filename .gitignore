@@ -3,3 +3,4 @@ node_modules/
 .git/
 bin/
 data/
+src/server/auto-trader/rule.js
