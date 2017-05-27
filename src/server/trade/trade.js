@@ -35,7 +35,7 @@ function buy(accountId, vcType, price, units) {
   }
 }
 
-function info(vcType = 'BTC') {
+function info(vcType) {
   return bithumbApi.info(vcType).then((result) => {
     if (result.status !== SUCCESS) {
       throw result;

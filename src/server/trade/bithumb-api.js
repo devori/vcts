@@ -39,7 +39,7 @@ function buy(currency, units) {
 	});
 }
 
-function info(currency = 'BTC') {
+function info(currency) {
 	return new Promise((resolve, reject) => {
 	  new XCoinAPI(apiKey, secretKey).xcoinApiCall('/info/balance', {
 			currency

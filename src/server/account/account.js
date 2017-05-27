@@ -13,7 +13,7 @@ function addAsset(accountId, vcType, assetInfo) {
 function removeAsset(accountId, vcType, count) {
   let vcTypeAssets = searchAssets(accountId, vcType);
   vcTypeAssets.sort((a1, a2) => {
-    return a2.price - a1.price;
+    return a1.price - a2.price;
   });
 
   let removedAssetCount = 0;
