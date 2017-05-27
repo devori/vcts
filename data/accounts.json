@@ -3,6 +3,9 @@
     "description": "",
     "assets": {
       "BTC": [],
+      "ETC": [],
+      "DASH": [],
+      "LTC": [],
       "ETC": []
     }
   }
