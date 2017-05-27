@@ -4,7 +4,7 @@ import vc from '../virtual-currency/virtual-currency';
 import rule from './rule';
 import { VCTYPES } from '../properties';
 
-const INTERVAL_TIME = 0 * 1000 + 5000;
+const INTERVAL_TIME = 6 * 60 * 1000 + 5000;
 
 let intervalId;
 
