@@ -1,9 +1,9 @@
 import request from 'request';
 import lowdb from 'lowdb';
 
-const account = lowdb('./data/accounts.json').get('sample');
-const apiKey = account.get('connect').value();
-const secretKey = account.get('secret').value();
+const apiData = lowdb('../api.json');
+const apiKey = apiData.get('connect').value();
+const secretKey = apiData.get('secret').value();
 
 export default {
 	sell, buy, info

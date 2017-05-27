@@ -17,11 +17,11 @@ currencies.defaults(defaultValue).write();
 
 function add(vc = VC.BTC, value) {
   currencies.get(vc).push(value).write();
-  return currencies.get(vc).filter(value).value();
+  return currencies.get(vc).filter(value).cloneDeep().value();
 }
 
 function remove(vc = VC.BTC, condition) {
-  let target = currencies.get(vc).filter(condition).value();
+  let target = currencies.get(vc).filter(condition).cloneDeep().value();
   currencies.get(vc).remove(condition).write();
   return target;
 }
@@ -29,9 +29,9 @@ function remove(vc = VC.BTC, condition) {
 function search(vc = VC.BTC, filter, sortCond) {
   let searching = currencies.get(vc).filter(filter).sortBy(sortCond.sortBy);
   if (sortCond.direction === 'desc') {
-    return searching.takeRight(10).value();
+    return searching.takeRight(10).cloneDeep().value();
   } else {
-    return searching.take(10).value();
+    return searching.take(10).cloneDeep().value();
   }
 }
 

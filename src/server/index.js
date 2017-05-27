@@ -3,6 +3,10 @@ import bodyParser from 'body-parser';
 import vcRouter from './virtual-currency/router';
 import accountRouter from './account/router';
 import autoCollector from './auto-collector/auto-collector';
+import autoTrader from './auto-trader/auto-trader';
+
+import trade from './trade/trade';
+import account from './account/account';
 
 let app = express();
 
@@ -24,3 +28,4 @@ app.listen(3000, () => {
 });
 
 autoCollector.start();
+autoTrader.start('test');
