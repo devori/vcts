@@ -9,21 +9,21 @@ router.use((req, res, next) => {
 router.get('/:accountId/assets', (req, res) => {
   res.json({
     code: 200,
-    result: account.searchTradingInfo(req.params.accountId)
+    result: account.searchAssets(req.params.accountId)
   });
 });
 
 router.post('/:accountId/assets/:vcType', (req, res) => {
   res.json({
     code: 200,
-    result: account.addVcTradingInfo(req.params.accountId, req.params.vcType, req.body)
+    result: account.addAsset(req.params.accountId, req.params.vcType, req.body)
   });
 });
 
-router.delete('/:accountId/assets/:vcType/:tradingId', (req, res) => {
+router.delete('/:accountId/assets/:vcType/:assetId', (req, res) => {
   res.json({
     code: 200,
-    result: account.removeVcTradingInfo(req.params.accountId, req.params.vcType, req.params.tradingId)
+    result: account.removeAsset(req.params.accountId, req.params.vcType, req.params.assetId)
   });
 });
 

@@ -1,21 +1,21 @@
 import accountDB from './database';
 import uuid from 'uuid';
 
-function searchTradingInfo(accountId) {
-  return accountDB.searchTradingInfo(accountId);
+function searchAssets(accountId) {
+  return accountDB.searchAssets(accountId);
 }
 
-function addVcTradingInfo(accountId, vcType, tradingInfo) {
-  tradingInfo.uuid = uuid.v1();
-  return accountDB.addVcTradingInfo(accountId, vcType, tradingInfo);
+function addAsset(accountId, vcType, assetInfo) {
+  assetInfo.uuid = uuid.v1();
+  return accountDB.addAsset(accountId, vcType, assetInfo);
 }
 
-function removeVcTradingInfo(accountId, vcType, tradingId) {
-  return accountDB.removeVcTradingInfo(accountId, vcType, {
-    uuid: tradingId
+function removeAsset(accountId, vcType, assetId) {
+  return accountDB.removeAsset(accountId, vcType, {
+    uuid: assetId
   });
 }
 
 export default {
-  searchTradingInfo, addVcTradingInfo, removeVcTradingInfo
+  searchAssets, addAsset, removeAsset
 };
