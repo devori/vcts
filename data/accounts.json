@@ -1,1 +1,9 @@
-{}
+{
+  "test": {
+    "description": "",
+    "assets": {
+      "BTC": [],
+      "ETC": []
+    }
+  }
+}

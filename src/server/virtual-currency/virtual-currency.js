@@ -3,7 +3,7 @@ import uuid from 'uuid';
 
 function add(vc = vcDB.VC.BTC, value) {
   if (!value) {
-    return false;
+    throw 'value is empty';
   }
   value.uuid = uuid.v1();
   return vcDB.add(vc, value);
