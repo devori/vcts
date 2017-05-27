@@ -13,11 +13,17 @@ function start() {
         let data = JSON.parse(body).data;
         vc.add(c, {
           price: Number(data.closing_price),
-          timestamp: data.date
+          timestamp: new Date().getTime()
         });
+      });
+
+      let beforeOneDay = new Date(new Date().getTime() - 1000 * 60 * 60 * 24);
+      vc.remove(c, info => {
+        return info.timestamp < beforeOneDay.getTime();
       });
     });
     console.log('Auto-Collector:', 'collected');
+
   }, INTERVAL_TIME);
 }
 
