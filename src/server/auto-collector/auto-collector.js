@@ -1,7 +1,7 @@
 import request from 'request';
 import vc from '../virtual-currency/virtual-currency';
 
-const INTERVAL_TIME = 5 * 30 * 1000;
+const INTERVAL_TIME = 6 * 1000;
 
 let intervalId;
 
@@ -10,9 +10,14 @@ function start() {
   intervalId = setInterval(() => {
     kinds.forEach((c) => {
       request(`https://api.bithumb.com/public/ticker/${c}`, (err, res, body) => {
-        vc.add(c, JSON.parse(body).data);
+        let data = JSON.parse(body).data;
+        vc.add(c, {
+          price: Number(data.closing_price),
+          timestamp: data.date
+        });
       });
     });
+    console.log('Auto-Collector:', 'collected');
   }, INTERVAL_TIME);
 }
 

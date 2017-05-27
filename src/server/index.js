@@ -5,9 +5,6 @@ import accountRouter from './account/router';
 import autoCollector from './auto-collector/auto-collector';
 import autoTrader from './auto-trader/auto-trader';
 
-import trade from './trade/trade';
-import account from './account/account';
-
 let app = express();
 
 app.use(bodyParser.json());

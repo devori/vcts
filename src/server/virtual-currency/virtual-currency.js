@@ -5,14 +5,10 @@ function add(vc = vcDB.VC.BTC, value) {
   if (!value) {
     throw 'value is empty';
   }
-  value.uuid = uuid.v1();
   return vcDB.add(vc, value);
 }
 
 function remove(vc = vcDB.VC.BTC, condition) {
-  if (condition.uuid === undefined) {
-    throw 'uuid is required';
-  }
   return vcDB.remove(vc, condition);
 }
 
