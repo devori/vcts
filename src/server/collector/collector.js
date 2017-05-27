@@ -1,23 +1,16 @@
 import request from 'request';
-import lowdb from 'lowdb';
+import vc from '../virtual-currency/virtual-currency';
 
-const currencies = lowdb('./data/currencies.json');
 const INTERVAL_TIME = 5 * 60 * 1000;
 
 let intervalId;
 
 function start() {
-  let kinds = ['BTC', 'ETH', 'DASH', 'LTC'];
-  kinds.forEach((c) => {
-    if (!currencies.has(c).value()) {
-      currencies.set(c, []).write();
-    }
-  });
-
+  let kinds = ['BTC', 'ETH', 'DASH', 'LTC', 'ETC'];
   intervalId = setInterval(() => {
     kinds.forEach((c) => {
       request(`https://api.bithumb.com/public/ticker/${c}`, (err, res, body) => {
-        currencies.get(c).push(JSON.parse(body).data).write();
+        vc.add(c, JSON.parse(body).data);
       });
     });
   }, INTERVAL_TIME);
