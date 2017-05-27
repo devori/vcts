@@ -41,6 +41,10 @@ function info(vcType) {
       throw result;
     }
     return result.data;
+  }).then(data => {
+    return {
+      krw: Number(data.available_krw)
+    };
   });
 }
 
