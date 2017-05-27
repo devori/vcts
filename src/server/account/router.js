@@ -13,18 +13,4 @@ router.get('/:accountId/assets', (req, res) => {
   });
 });
 
-router.post('/:accountId/assets/:vcType', (req, res) => {
-  res.json({
-    code: 200,
-    result: account.addAsset(req.params.accountId, req.params.vcType, req.body)
-  });
-});
-
-router.delete('/:accountId/assets/:vcType/:assetId', (req, res) => {
-  res.json({
-    code: 200,
-    result: account.removeAsset(req.params.accountId, req.params.vcType, req.params.assetId)
-  });
-});
-
 export default router;

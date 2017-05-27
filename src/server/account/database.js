@@ -8,19 +8,32 @@ accounts.defaults(defaultValue);
 
 function addAsset(accountId, vcType, info) {
   accounts.get(accountId).get(`assets.${vcType}`).push(info).write();
-  return accounts.get(accountId).get(`assets.${vcType}`).filter(info).value();
+  return accounts.get(accountId).get(`assets.${vcType}`).filter(info).cloneDeep().value();
 }
 
-function removeAsset(accountId, vcType, condition) {
-  let target = accounts.get(accountId).get(`assets.${vcType}`).filter(condition).value();
-  accounts.get(accountId).get(`assets.${vcType}`).remove(condition).write();
+function updateAsset(accountId, vcType, info) {
+  let asset = accounts.get(`${accountId}.assets.${vcType}`).find({
+    uuid: info.uuid
+  }).assign(info).write();
+}
+
+function removeAsset(accountId, vcType, uuid) {
+  let target = accounts.get(accountId).get(`assets.${vcType}`).find({
+    uuid
+  }).cloneDeep().value();
+  accounts.get(accountId).get(`assets.${vcType}`).remove({uuid}).write();
   return target;
 }
 
-function searchAssets(accountId) {
-  return accounts.get(`${accountId}.assets`).value();
+function searchAssets(accountId, vcType) {
+  let assets = accounts.get(`${accountId}.assets`);
+  if (vcType === undefined) {
+    return assets.cloneDeep().value();
+  } else {
+    return assets.get(vcType).cloneDeep().value();
+  }
 }
 
 export default {
-  addAsset, removeAsset, searchAssets
+  addAsset, updateAsset, removeAsset, searchAssets
 };
