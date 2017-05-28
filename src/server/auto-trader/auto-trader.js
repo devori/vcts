@@ -41,7 +41,6 @@ function start(accountId) {
           return;
         }
         units = Math.trunc(units * 10000) / 10000;
-        console.log(`Purchase: ${vcType} - ${units}`);
         trade.buy(accountId, vcType, null, units).catch(reason => {
           console.log('[Sale Error]', reason);
         });
@@ -58,7 +57,6 @@ function start(accountId) {
           return;
         }
         units = Math.trunc(units * 10000) / 10000;
-        console.log(`Sale: ${vcType} - ${units}`);
         trade.sell(accountId, vcType, null, units).catch(reason => {
           console.log('[Sale Error]', reason);
         });

@@ -4,6 +4,7 @@ import bithumbApi from './bithumb-api';
 const SUCCESS = '0000';
 
 function sell(accountId, vcType, price, units) {
+  console.log(`[${Date()}] Sale : ${vcType} - ${units}`);
   if (price === null) {
     return bithumbApi.sell(vcType, String(units)).then((result) => {
       if (result.status !== SUCCESS) {
@@ -18,6 +19,7 @@ function sell(accountId, vcType, price, units) {
 }
 
 function buy(accountId, vcType, price, units) {
+  console.log(`[${Date()}] Purchase : ${vcType} - ${units}`);
   if (price === null) {
     return bithumbApi.buy(vcType, String(units)).then((result) => {
       if (result.status !== SUCCESS) {
