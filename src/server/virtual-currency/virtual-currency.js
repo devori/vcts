@@ -13,7 +13,7 @@ function remove(vc, condition) {
 }
 
 function search(vc, condition) {
-  return vcDB.search(vc, condition) || {};
+  return vcDB.search(vc, condition) || [];
 }
 
 export default {
