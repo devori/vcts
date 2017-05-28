@@ -13,6 +13,7 @@ function start() {
         let data = JSON.parse(body).data;
         vc.add(c, {
           price: Number(data.closing_price),
+          units: 1,
           timestamp: new Date().getTime()
         });
       });
