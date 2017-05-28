@@ -17,7 +17,7 @@ function start() {
         });
       });
 
-      let beforeOneDay = new Date(new Date().getTime() - 1000 * 60 * 60 * 24);
+      let beforeOneDay = new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 2);
       vc.remove(c, info => {
         return info.timestamp < beforeOneDay.getTime();
       });
