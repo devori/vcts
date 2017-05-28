@@ -28,7 +28,11 @@ function removeAsset(accountId, vcType, count) {
       removedAssetCount += count;
       asset.units -= count;
       count = 0;
-      accountDB.updateAsset(accountId, vcType, asset);
+      if (asset.units < 0.0001) {
+        accountDB.removeAsset(accountId, vcType, asset.uuid);
+      } else {
+        accountDB.updateAsset(accountId, vcType, asset);
+      }
     }
   });
   return removedAssetCount;

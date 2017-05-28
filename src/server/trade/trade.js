@@ -26,8 +26,9 @@ function buy(accountId, vcType, price, units) {
       return result.data;
     }).then(data => {
       data.forEach(asset => {
-        asset.units = Number(asset.units);
+        asset.units = Number(asset.units) - Number(asset.fee);
         asset.price = Number(asset.price);
+        asset.fee = Number(asset.fee);
         return account.addAsset(accountId, vcType, asset);
       });
       return data;
