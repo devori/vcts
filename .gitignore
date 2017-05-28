@@ -4,3 +4,5 @@ node_modules/
 bin/
 data/
 src/server/auto-trader/rule.js
+logs/
+npm-debug.log
