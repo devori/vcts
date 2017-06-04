@@ -1,5 +1,6 @@
 import request from 'request';
 import lowdb from 'lowdb';
+import logger from '../util/logger';
 
 const apiData = lowdb('../api.json');
 const apiKey = apiData.get('connect').value();
@@ -15,7 +16,7 @@ function sell(currency, units) {
 			currency, units
 		}, (error, response, rgResult) => {
 			if(error) {
-				console.log(error);
+				logger.error(error);
 				reject();
 				return;
 			}

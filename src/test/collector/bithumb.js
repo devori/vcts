@@ -22,7 +22,6 @@ describe('collector/bithumb', function () {
       });
       done();
     }).catch(reason => {
-      console.log(reason);
       expect.fail('', '', 'request failure');
     });
     this.timeout(3000);

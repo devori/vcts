@@ -1,7 +1,7 @@
 import request from 'request';
 import priceFileDB from '../database/priceFileDB';
 import { VCTYPES } from '../properties';
-
+import logger from '../util/logger';
 
 function collect() {
   let priceInfo = priceFileDB.load('bithumb');
@@ -21,7 +21,9 @@ function collect() {
           return info.timestamp < beforeOneDay.getTime();
         });
       }
+
       resolve(addedData);
+      logger.verbose('[Collector-Bithumb] Collected');
     });
   });
 }

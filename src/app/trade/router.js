@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import trade from './trade';
+import logger from '../util/logger';
 
 let router = Router();
 router.use((req, res, next) => {
@@ -22,7 +23,7 @@ router.delete('/:vcType', (req, res) => {
       result
     })
   }).catch(reason => {
-    console.log(reason);
+    logger.error(reason);
     res.json({
       code: 500,
       result: reason
