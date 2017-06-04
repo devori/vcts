@@ -30,7 +30,7 @@ function getPriceInfo() {
   return priceInfo;
 }
 
-function trade(accountId) {
+function run(accountId) {
   let priceInfo = getPriceInfo();
 
   return getBalance().then(krw => {
@@ -76,5 +76,5 @@ function trade(accountId) {
 }
 
 export default {
-  trade
+  run
 }

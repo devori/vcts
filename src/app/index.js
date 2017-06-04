@@ -31,7 +31,7 @@ setInterval(() => {
 }, 5 * 60 * 1000);
 
 setInterval(() => {
-  autoTraderForBithumb.trade('test').catch(reason => {
+  autoTraderForBithumb.run('test').catch(reason => {
     console.log('[Trader Error] for Bithumb:', reason);
   });
 }, 5 * 60 * 1000 + 3000);
