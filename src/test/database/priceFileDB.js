@@ -4,7 +4,7 @@ import priceFileDB from '../../app/database/priceFileDB';
 
 describe('database/priceFileDB', () => {
   const TARGET_CURRENCY = 'ETH';
-  let priceDBForTest = priceFileDB('testMarket');
+  let priceDBForTest = priceFileDB.load('testMarket');
   let priceInfo = {
     'price': 100,
     'timestamp': 123
@@ -15,7 +15,7 @@ describe('database/priceFileDB', () => {
   })
 
   it('should return same instance when markent name is same', () => {
-    expect(priceFileDB('testMarket')).to.be.equal(priceDBForTest);
+    expect(priceFileDB.load('testMarket')).to.be.equal(priceDBForTest);
   });
 
   it('should throw exception when value is null', () => {

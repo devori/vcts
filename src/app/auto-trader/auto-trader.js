@@ -6,7 +6,7 @@ import { VCTYPES } from '../properties';
 
 const INTERVAL_TIME = 5 * 60 * 1000 + 5000;
 
-let priceDB = priceFileDB('bithumb');
+let priceDB = priceFileDB.load('bithumb');
 let intervalId;
 
 function start(accountId) {

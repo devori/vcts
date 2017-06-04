@@ -2,17 +2,16 @@ import request from 'request';
 import priceFileDB from '../database/priceFileDB';
 import { VCTYPES } from '../properties';
 
-const INTERVAL_TIME = 5 * 60 * 1000;
 
-let intervalId;
-let priceInfo = priceFileDB('bithumb');
+function collect() {
+  let priceInfo = priceFileDB.load('bithumb');
 
-function start() {
-  intervalId = setInterval(() => {
+  return new Promise((resolve, reject) => {
     request('https://api.bithumb.com/public/ticker/ALL', (err, res, body) => {
       let data = JSON.parse(body).data;
+      let addedData = [];
       for (let k in data) {
-        priceInfo.add(k, {
+        addedData[k] = priceInfo.add(k, {
           price: Number(data[k].closing_price),
           units: 1,
           timestamp: new Date().getTime()
@@ -22,20 +21,11 @@ function start() {
           return info.timestamp < beforeOneDay.getTime();
         });
       }
+      resolve(addedData);
     });
-
-  }, INTERVAL_TIME);
-}
-
-function stop() {
-  if (!intervalId) {
-    return;
-  }
-
-  clearInterval(intervalId);
-  intervalId = null;
+  });
 }
 
 export default {
-  start, stop
+  collect
 };

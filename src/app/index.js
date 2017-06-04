@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import accountRouter from './account/router';
 import tradeRouter from './trade/router';
-import autoCollectorForBithumb from './auto-collector/bithumb';
+import autoCollectorForBithumb from './collector/bithumb';
 import autoTrader from './auto-trader/auto-trader';
 
 let app = express();
@@ -24,5 +24,9 @@ app.listen(3000, () => {
   console.log('Start Server on port 3000');
 });
 
-autoCollectorForBithumb.start();
+setInterval(() => {
+  collectorForBithumb.collect().catch(reason => {
+    console.log('[Error] Collector for Bithumb:', reason);
+  });
+}, 5 * 60 * 1000);
 autoTrader.start('test');

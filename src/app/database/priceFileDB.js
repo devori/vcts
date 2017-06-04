@@ -34,10 +34,12 @@ class PriceFileDB {
   }
 }
 
-export default (marketName => {
-  let result = instances[marketName];
-  if (!result) {
-    result = instances[marketName] = new PriceFileDB(marketName);
+export default {
+  load: (marketName) => {
+    let result = instances[marketName];
+    if (!result) {
+      result = instances[marketName] = new PriceFileDB(marketName);
+    }
+    return result;
   }
-  return result;
-});
+};
