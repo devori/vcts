@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import accountRouter from './account/router';
 import tradeRouter from './trade/router';
-import autoCollector from './auto-collector/auto-collector';
+import autoCollectorForBithumb from './auto-collector/bithumb';
 import autoTrader from './auto-trader/auto-trader';
 
 let app = express();
@@ -24,5 +24,5 @@ app.listen(3000, () => {
   console.log('Start Server on port 3000');
 });
 
-autoCollector.start();
+autoCollectorForBithumb.start();
 autoTrader.start('test');

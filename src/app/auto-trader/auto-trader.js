@@ -6,7 +6,7 @@ import { VCTYPES } from '../properties';
 
 const INTERVAL_TIME = 5 * 60 * 1000 + 5000;
 
-let priceInfo = priceFileDB('bithumb');
+let priceDB = priceFileDB('bithumb');
 let intervalId;
 
 function start(accountId) {
@@ -30,7 +30,7 @@ function start(accountId) {
   intervalId = setInterval(() => {
     let priceInfo = {};
     VCTYPES.forEach(vcType => {
-      priceInfo[vcType] = priceInfo.search(vcType);
+      priceInfo[vcType] = priceDB.search(vcType);
     });
 
     getBalance().then(krw => {
