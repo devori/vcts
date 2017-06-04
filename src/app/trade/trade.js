@@ -31,6 +31,7 @@ function buy(accountId, vcType, price, units) {
         asset.units = Number(asset.units) - Number(asset.fee);
         asset.price = Number(asset.price);
         asset.fee = Number(asset.fee);
+        asset.date = new Date().toLocaleString();
         account.addAsset(accountId, vcType, asset);
       });
       return data;

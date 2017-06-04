@@ -7,6 +7,7 @@ function searchAssets(accountId, vcType) {
 
 function addAsset(accountId, vcType, assetInfo) {
   assetInfo.uuid = uuid.v1();
+  assetInfo.units = Math.trunc(assetInfo.units * 10000) / 10000;
   return accountDB.addAsset(accountId, vcType, assetInfo);
 }
 
@@ -28,10 +29,11 @@ function removeAsset(accountId, vcType, count) {
       removedAssetCount += count;
       asset.units -= count;
       count = 0;
-      if (asset.units < 0.0001) {
-        accountDB.removeAsset(accountId, vcType, asset.uuid);
-      } else {
+      asset.units = Math.trunc(asset.units * 10000) / 10000;
+      if (asset.units > 0) {
         accountDB.updateAsset(accountId, vcType, asset);
+      } else {
+        accountDB.removeAsset(accountId, vcType, asset.uuid);
       }
     }
   });
