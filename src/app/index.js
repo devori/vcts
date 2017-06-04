@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import accountRouter from './account/router';
 import tradeRouter from './trade/router';
 import collectorForBithumb from './collector/bithumb';
-import autoTrader from './auto-trader/auto-trader';
+import autoTraderForBithumb from './auto-trader/bithumb';
 
 let app = express();
 
@@ -26,7 +26,12 @@ app.listen(3000, () => {
 
 setInterval(() => {
   collectorForBithumb.collect().catch(reason => {
-    console.log('[Error] Collector for Bithumb:', reason);
+    console.log('[Collector Error] for Bithumb:', reason);
   });
 }, 5 * 60 * 1000);
-autoTrader.start('test');
+
+setInterval(() => {
+  autoTraderForBithumb.start('test').catch(reason => {
+    console.log('[Trader Error] for Bithumb:', reason);
+  });
+}, 5 * 60 * 1000 + 3000);
