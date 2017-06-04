@@ -6,6 +6,7 @@
   "dependencies": {
     "body-parser": "^1.17.2",
     "express": "^4.15.2",
+    "firebase": "^4.1.1",
     "lodash": "^4.17.4",
     "lowdb": "^0.16.2",
     "request": "^2.81.0",
@@ -14,13 +15,15 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-preset-node6": "^11.0.0",
+    "chai": "^4.0.1",
+    "mocha": "^3.4.2",
     "supervisor": "^0.12.0"
   },
   "scripts": {
-    "start": "node dist/server/index.js",
-    "supervisor": "supervisor --r -r 'babel/register' dist/server/index.js",
-    "watch": "babel src/server --out-dir dist/server --presets=node6 --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node output/app/index.js",
+    "supervisor": "supervisor --r -r 'babel/register' output/app/index.js",
+    "watch": "babel src --out-dir output --presets=node6 --watch",
+    "test": "mocha output/test/**/*.js --compilers js:babel-core/register"
   },
   "repository": {
     "type": "git",

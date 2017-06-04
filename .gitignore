@@ -1,8 +1,9 @@
-dist/
+output/
 node_modules/
 .git/
 bin/
 data/
-src/server/auto-trader/rule.js
+src/app/auto-trader/rule.js
 logs/
 npm-debug.log
+git 

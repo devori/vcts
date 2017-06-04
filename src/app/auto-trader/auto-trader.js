@@ -4,7 +4,7 @@ import vc from '../virtual-currency/virtual-currency';
 import rule from './rule';
 import { VCTYPES } from '../properties';
 
-const INTERVAL_TIME = 6 * 60 * 1000 + 5000;
+const INTERVAL_TIME = 5 * 60 * 1000 + 5000;
 
 let intervalId;
 
@@ -16,7 +16,7 @@ function start(accountId) {
   let availableKrw = -1;
   function getBalance() {
     if (availableKrw < 0) {
-      return trade.info(VCTYPES[0]).then(balance => {
+      return trade.info('ALL').then(balance => {
         availableKrw = balance.krw;
         return availableKrw;
       });
@@ -33,16 +33,23 @@ function start(accountId) {
     });
 
     getBalance().then(krw => {
-      let threshold = (krw / VCTYPES.length) * 0.9;
+      let threshold = krw * 0.9;
       VCTYPES.forEach(vcType => {
         let asset = account.searchAssets(accountId, vcType) || [];
-        let units = rule.judgeForPurchase(vcType, priceInfo[vcType], asset, threshold);
+        let judgement = rule.judgeForPurchase(vcType, priceInfo[vcType], asset, threshold);
+        let units = judgement.units;
         if (units < 0.1) {
           return;
         }
+        console.log(`[${Date()}] Auto-Trader Schedule: Threshold - ${threshold}`);
+        console.log(`[${Date()}] Purchase Judgement: ${vcType} - ${judgement.price} : ${units}`);
         units = Math.trunc(units * 10000) / 10000;
-        trade.buy(accountId, vcType, null, units).catch(reason => {
-          console.log('[Sale Error]', reason);
+        trade.buy(accountId, vcType, null, units).then(data => {
+          data.forEach(row => {
+            threshold -= Number(row.total);
+          });
+        }).catch(reason => {
+          console.log(`[${Date()}] Purchase Error: ${vcType} - ${units}`, reason);
         });
         availableKrw = -1;
       });
@@ -52,13 +59,15 @@ function start(accountId) {
         if (!asset) {
           return;
         }
-        let units = rule.judgeForSale(vcType, priceInfo[vcType], asset);
-        if (units === 0) {
+        let judgement = rule.judgeForSale(vcType, priceInfo[vcType], asset);
+        let units = judgement.units;
+        if (units <= 0.001) {
           return;
         }
+        console.log(`[${Date()}] Sale Judgement: ${vcType} - ${units}`);
         units = Math.trunc(units * 10000) / 10000;
         trade.sell(accountId, vcType, null, units).catch(reason => {
-          console.log('[Sale Error]', reason);
+          console.log(`[${Date()}] Sale Error: ${vcType} - ${units}`, reason);
         });
         availableKrw = -1;
       });
