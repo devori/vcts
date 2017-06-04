@@ -4,6 +4,7 @@ import accountRouter from './account/router';
 import tradeRouter from './trade/router';
 import collectorForBithumb from './collector/bithumb';
 import autoTraderForBithumb from './auto-trader/bithumb';
+import logger from './util/logger';
 
 let app = express();
 
@@ -21,17 +22,21 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(3000, () => {
-  console.log('Start Server on port 3000');
+  logger.info('Start Server on port 3000');
 });
 
+const COLLECTOR_INTERVAL = 5 * 60 * 1000;
+logger.info(`Start Collector Schedule: ${COLLECTOR_INTERVAL} ms`);
 setInterval(() => {
   collectorForBithumb.collect().catch(reason => {
-    console.log('[Collector Error] for Bithumb:', reason);
+    logger.error('[Collector Error] for Bithumb:', reason);
   });
-}, 5 * 60 * 1000);
+}, COLLECTOR_INTERVAL);
 
+const AUTO_TRADER_INTERVAL = COLLECTOR_INTERVAL + 3000;
+logger.info(`Start Auto-Trader Schedule: ${AUTO_TRADER_INTERVAL} ms`);
 setInterval(() => {
   autoTraderForBithumb.run('test').catch(reason => {
-    console.log('[Trader Error] for Bithumb:', reason);
+    logger.error('[Trader Error] for Bithumb:', reason);
   });
-}, 5 * 60 * 1000 + 3000);
+}, AUTO_TRADER_INTERVAL);
