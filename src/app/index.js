@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import accountRouter from './account/router';
 import tradeRouter from './trade/router';
-import autoCollectorForBithumb from './collector/bithumb';
+import collectorForBithumb from './collector/bithumb';
 import autoTrader from './auto-trader/auto-trader';
 
 let app = express();
