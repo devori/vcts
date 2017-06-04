@@ -1,11 +1,12 @@
 import trade from '../trade/trade';
 import account from '../account/account';
-import vc from '../virtual-currency/virtual-currency';
+import priceFileDB from '../database/priceFileDB';
 import rule from './rule';
 import { VCTYPES } from '../properties';
 
 const INTERVAL_TIME = 5 * 60 * 1000 + 5000;
 
+let priceInfo = priceFileDB('bithumb');
 let intervalId;
 
 function start(accountId) {
@@ -29,7 +30,7 @@ function start(accountId) {
   intervalId = setInterval(() => {
     let priceInfo = {};
     VCTYPES.forEach(vcType => {
-      priceInfo[vcType] = vc.search(vcType);
+      priceInfo[vcType] = priceInfo.search(vcType);
     });
 
     getBalance().then(krw => {

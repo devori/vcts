@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import lowdb from 'lowdb';
 import { VCTYPES } from '../properties';
 
@@ -14,6 +15,10 @@ class PriceFileDB {
   }
 
   add(vc, value) {
+    if (!value) {
+      throw 'value is empty';
+    }
+    value.uuid = uuid.v1();
     this.fileDB.get(vc).push(value).write();
     return this.fileDB.get(vc).find(value).cloneDeep().value();
   }
