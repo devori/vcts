@@ -1,8 +1,8 @@
 import { expect, should } from 'chai';
-import priceFileDB from '../../app/database/priceFileDB';
+import priceFileDB from '../../app/database/price-file-db';
 
 
-describe('database/priceFileDB', () => {
+describe('database/price-file-db', () => {
   const TARGET_CURRENCY = 'ETH';
   let priceDBForTest = priceFileDB.load('testMarket');
   let priceInfo = {

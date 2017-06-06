@@ -15,6 +15,7 @@
     "winston-daily-rotate-file": "^1.4.6"
   },
   "devDependencies": {
+    "autobahn": "^17.5.2",
     "babel-cli": "^6.24.1",
     "babel-preset-node6": "^11.0.0",
     "chai": "^4.0.1",

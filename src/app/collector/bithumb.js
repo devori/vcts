@@ -1,6 +1,5 @@
 import request from 'request';
-import priceFileDB from '../database/priceFileDB';
-import { VCTYPES } from '../properties';
+import priceFileDB from '../database/price-file-db';
 import logger from '../util/logger';
 
 function collect() {

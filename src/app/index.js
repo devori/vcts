@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import tradeRouter from './trade/router';
 import collectorForBithumb from './collector/bithumb';
+import collectorForPoloniex from './collector/poloniex';
 import autoTraderForBithumb from './auto-trader/bithumb';
 import logger from './util/logger';
 
@@ -28,6 +29,10 @@ logger.info(`Start Collector Schedule: ${COLLECTOR_INTERVAL} ms`);
 setInterval(() => {
   collectorForBithumb.collect().catch(reason => {
     logger.error('[Collector Error] for Bithumb:', reason);
+  });
+
+  collectorForPoloniex.collect().catch(reason => {
+    logger.error('[Collector Error] for Poloniex:', reason);
   });
 }, COLLECTOR_INTERVAL);
 

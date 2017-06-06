@@ -1,23 +1,22 @@
 import uuid from 'uuid';
 import lowdb from 'lowdb';
-import { VCTYPES } from '../properties';
 
 let instances = {};
 
 class PriceFileDB {
   constructor(marketName) {
     this.fileDB = lowdb(`./data/prices/${marketName}.json`);
-    let defaultValue = {};
-    VCTYPES.forEach(vcType => {
-      defaultValue[vcType] = [];
-    });
-    this.fileDB.defaults(defaultValue).write();
+    this.fileDB.defaults({}).write();
   }
 
   add(vc, value) {
     if (!value) {
       throw 'value is empty';
     }
+    if (!this.fileDB.has(vc).value()) {
+      this.fileDB.set(vc, []).write();
+    }
+
     value.uuid = uuid.v1();
     this.fileDB.get(vc).push(value).write();
     return this.fileDB.get(vc).find(value).cloneDeep().value();
@@ -31,6 +30,10 @@ class PriceFileDB {
 
   search(vc, condition) {
     return this.fileDB.get(vc).filter(condition).cloneDeep().value();
+  }
+
+  getLast(vc) {
+    return this.fileDB.get(vc).last().cloneDeep().value();
   }
 }
 

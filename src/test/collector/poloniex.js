@@ -1,19 +1,18 @@
 import { expect, should } from 'chai';
 import sinon from 'sinon';
-import collectorForBithumb from '../../app/collector/bithumb';
+import collectorForBithumb from '../../app/collector/poloniex';
 import priceFileDB from '../../app/database/price-file-db';
-import { VCTYPES } from '../../app/properties';
 
-describe('collector/bithumb', function () {
-  const MARKET_NAME = 'bithumb';
+describe('collector/poloniex', function () {
+  const MARKET_NAME = 'poloniex';
   let mockPriceDB;
   before(() => {
     mockPriceDB = sinon.mock(priceFileDB.load(MARKET_NAME));
   });
 
   it('collected data should be added to priceFileDB', function (done) {
-    let expectationForAdd = mockPriceDB.expects('add').atLeast(6);
-    let expectationForRemove = mockPriceDB.expects('remove').atLeast(6);
+    let expectationForAdd = mockPriceDB.expects('add').atLeast(30);
+    let expectationForRemove = mockPriceDB.expects('remove').atLeast(30);
 
     collectorForBithumb.collect().then(data => {
       expectationForAdd.verify();

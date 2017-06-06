@@ -1,6 +1,6 @@
 import trade from '../trade/trade';
 import account from '../account/account';
-import priceFileDB from '../database/priceFileDB';
+import priceFileDB from '../database/price-file-db';
 import rule from './rule';
 import { VCTYPES } from '../properties';
 import logger from '../util/logger';
