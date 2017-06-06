@@ -5,21 +5,19 @@ import priceFileDB from '../../app/database/priceFileDB';
 import { VCTYPES } from '../../app/properties';
 
 describe('collector/bithumb', function () {
-
-  let priceInfo = priceFileDB.load('testMarket2');
-
+  const MARKET_NAME = 'bithumb';
+  let mockPriceDB;
   before(() => {
-    sinon.stub(priceFileDB, 'load').withArgs('bithumb').callsFake((marketName) => {
-      priceFileDB.load.restore();
-      return priceInfo;
-    });
+    mockPriceDB = sinon.mock(priceFileDB.load(MARKET_NAME));
   });
 
   it('collected data should be added to priceFileDB', function (done) {
+    let expectationForAdd = mockPriceDB.expects('add').atLeast(6);
+    let expectationForRemove = mockPriceDB.expects('remove').atLeast(6);
+
     collectorForBithumb.collect().then(data => {
-      VCTYPES.forEach(vcType => {
-        expect(data[vcType]).to.exist;
-      });
+      expectationForAdd.verify();
+      expectationForRemove.verify();
       done();
     }).catch(reason => {
       expect.fail('', '', 'request failure');
@@ -28,6 +26,6 @@ describe('collector/bithumb', function () {
   });
 
   after(() => {
-    priceFileDB.load.restore && priceFileDB.load.restore();
+    mockPriceDB.restore();
   });
 });
