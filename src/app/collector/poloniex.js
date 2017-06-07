@@ -22,7 +22,7 @@ function collect() {
   return new Promise((resolve, reject) => {
     request('https://poloniex.com/public?command=returnTicker', (err, res, body) => {
       let data = JSON.parse(body);
-      let usdtPerBtc = Number(data.USDT_BTC.lowestAsk);
+      let usdtPerBtc = Number(data.USDT_BTC.last);
       let addedData = [];
       addedData.push(addToDB('BTC', 1, usdtPerBtc));
 
@@ -31,10 +31,10 @@ function collect() {
         if (pair[0] !== 'BTC') {
           continue;
         }
-        let price = Number(data[k].lowestAsk);
+        let price = Number(data[k].last);
         price =  Math.trunc(price * usdtPerBtc * 100000000) / 100000000;
 
-        addedData.push(addToDB(pair[1], Number(data[k].lowestAsk), price));
+        addedData.push(addToDB(pair[1], Number(data[k].last), price));
       }
       logger.verbose('[Collector-Poloniex] Collected');
       resolve(addedData);

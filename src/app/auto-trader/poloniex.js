@@ -19,7 +19,7 @@ function run(accountId) {
       logger.info('[Auto-Trader-Poloniex] Balance: NaN');
       return;
     }
-    logger.verbose(`[Auto-Trader-Poloniex] Available Balance: ${balance}`);
+    logger.verbose(`[${Date()}] Auto-Trader-Poloniex Available Balance: ${balance}`);
     let btcPrice = priceDB.getLast('BTC').price;
 
     let promise = Promise.resolve();
@@ -42,6 +42,10 @@ function run(accountId) {
             asset.price = Number(row.rate) * btcPrice;
             asset.date = new Date().toLocaleString();
             account.addAsset(accountId, vcType, asset);
+            account.addHistory(accountId, vcType, Object.assign({
+              usdt_btc: btcPrice,
+              price: Number(row.rate) * btcPrice
+            }, row));
           });
         }).catch(reason => {
           logger.error(`[${Date()}] Auto-Trader-Poloniex Purchase Error: ${vcType} - ${units}`, reason);
@@ -65,6 +69,12 @@ function run(accountId) {
         return poloniexApi.sell(accountId, vcType, judgement.rate, units).then(result => {
           let total = result.resultingTrades.reduce((p, c) => p + Number(c.units), 0);
           account.removeAsset(accountId, vcType, total);
+          result.resultingTrades.forEach(row => {
+            account.addHistory(accountId, vcType, Object.assign({
+              usdt_btc: btcPrice,
+              price: Number(row.rate) * btcPrice
+            }, row));
+          });
         }).catch(reason => {
           logger.error(`[${Date()}] Auto-Trader-Poloniex Sale Error: ${vcType} - ${units}`, reason);
         });

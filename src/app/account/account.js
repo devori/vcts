@@ -1,6 +1,10 @@
 import accountFileDB from '../database/account-file-db'
 import uuid from 'uuid';
 
+function addHistory(accountId, vcType, assetInfo) {
+  let accountDB = accountFileDB.load(accountId);
+  return accountDB.addHistory(vcType, assetInfo);
+}
 
 function searchAssets(accountId, vcType) {
   let accountDB = accountFileDB.load(accountId);
@@ -45,5 +49,5 @@ function removeAsset(accountId, vcType, count) {
 }
 
 export default {
-  searchAssets, addAsset, removeAsset
+  searchAssets, addAsset, removeAsset, addHistory
 };

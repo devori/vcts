@@ -13,6 +13,13 @@ class AccountFileDB {
     }).write();
   }
 
+  addHistory(vcType, info) {
+    if (!this.accountDB.has(`history.${vcType}`).value()) {
+      this.accountDB.set(`history.${vcType}`, []).write();
+    }
+    this.accountDB.get(`history.${vcType}`).push(info).write();
+  }
+
   addAsset(vcType, info) {
     if (!this.accountDB.has(`assets.${vcType}`).value()) {
       this.accountDB.set(`assets.${vcType}`, []).write();

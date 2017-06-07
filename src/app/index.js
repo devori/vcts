@@ -28,9 +28,9 @@ app.listen(3000, () => {
 const COLLECTOR_INTERVAL = 3 * 60 * 1000;
 logger.info(`Start Collector Schedule: ${COLLECTOR_INTERVAL} ms`);
 setInterval(() => {
-  collectorForBithumb.collect().catch(reason => {
-    logger.error('[Collector Error] for Bithumb:', reason);
-  });
+  // collectorForBithumb.collect().catch(reason => {
+  //   logger.error('[Collector Error] for Bithumb:', reason);
+  // });
 
   collectorForPoloniex.collect().catch(reason => {
     logger.error('[Collector Error] for Poloniex:', reason);
@@ -40,9 +40,9 @@ setInterval(() => {
 const AUTO_TRADER_INTERVAL = COLLECTOR_INTERVAL + 3000;
 logger.info(`Start Auto-Trader Schedule: ${AUTO_TRADER_INTERVAL} ms`);
 setInterval(() => {
-  autoTraderForBithumb.run('test').catch(reason => {
-    logger.error('[Trader Error] for Bithumb:', reason);
-  });
+  // autoTraderForBithumb.run('test').catch(reason => {
+  //   logger.error('[Trader Error] for Bithumb:', reason);
+  // });
 
   autoTraderForPoloniex.run('poloniex').catch(reason => {
     logger.error('[Trader Error] for Poloniex:', reason);
