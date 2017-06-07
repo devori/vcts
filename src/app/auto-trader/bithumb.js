@@ -1,7 +1,7 @@
 import trade from '../trade/trade';
 import account from '../account/account';
 import priceFileDB from '../database/price-file-db';
-import rule from './rule';
+import rule from './rule-bithumb';
 import { VCTYPES } from '../properties';
 import logger from '../util/logger';
 
