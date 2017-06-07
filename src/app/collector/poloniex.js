@@ -5,9 +5,10 @@ import logger from '../util/logger';
 function collect() {
   let priceDB = priceFileDB.load('poloniex');
 
-  function addToDB(vcType, price) {
+  function addToDB(vcType, rate, price) {
     let data = {
-      price: price,
+      price,
+      rate,
       units: 1,
       timestamp: new Date().getTime()
     };
@@ -23,7 +24,7 @@ function collect() {
       let data = JSON.parse(body);
       let usdtPerBtc = Number(data.USDT_BTC.lowestAsk);
       let addedData = [];
-      addedData.push(addToDB('BTC', usdtPerBtc));
+      addedData.push(addToDB('BTC', 1, usdtPerBtc));
 
       for (let k in data) {
         let pair = k.split('_');
@@ -33,7 +34,7 @@ function collect() {
         let price = Number(data[k].lowestAsk);
         price =  Math.trunc(price * usdtPerBtc * 100000000) / 100000000;
 
-        addedData.push(addToDB(pair[1], price));
+        addedData.push(addToDB(pair[1], Number(data[k].lowestAsk), price));
       }
       logger.verbose('[Collector-Poloniex] Collected');
       resolve(addedData);

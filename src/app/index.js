@@ -4,6 +4,7 @@ import tradeRouter from './trade/router';
 import collectorForBithumb from './collector/bithumb';
 import collectorForPoloniex from './collector/poloniex';
 import autoTraderForBithumb from './auto-trader/bithumb';
+import autoTraderForPoloniex from './auto-trader/poloniex';
 import logger from './util/logger';
 
 let app = express();
@@ -41,5 +42,9 @@ logger.info(`Start Auto-Trader Schedule: ${AUTO_TRADER_INTERVAL} ms`);
 setInterval(() => {
   autoTraderForBithumb.run('test').catch(reason => {
     logger.error('[Trader Error] for Bithumb:', reason);
+  });
+
+  autoTraderForPoloniex.run('poloniex').catch(reason => {
+    logger.error('[Trader Error] for Poloniex:', reason);
   });
 }, AUTO_TRADER_INTERVAL);
