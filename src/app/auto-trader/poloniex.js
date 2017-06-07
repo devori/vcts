@@ -15,6 +15,10 @@ function getBalance() {
 
 function run(accountId) {
   return getBalance().then(balance => {
+    if (isNaN(balance)) {
+      logger.info('[Auto-Trader-Poloniex] Balance: NaN');
+      return;
+    }
     logger.verbose(`[Auto-Trader-Poloniex] Available Balance: ${balance}`);
     let btcPrice = priceDB.getLast('BTC').price;
 
