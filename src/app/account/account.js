@@ -1,6 +1,8 @@
 import accountFileDB from '../database/account-file-db'
 import uuid from 'uuid';
 
+let offset = 0;
+
 function addHistory(accountId, vcType, assetInfo) {
   let accountDB = accountFileDB.load(accountId);
   return accountDB.addHistory(vcType, assetInfo);
@@ -13,7 +15,7 @@ function searchAssets(accountId, vcType) {
 
 function addAsset(accountId, vcType, assetInfo) {
   let accountDB = accountFileDB.load(accountId);
-  assetInfo.uuid = uuid.v1();
+  assetInfo.uuid = uuid.v1() + offset++;
   assetInfo.units = Math.trunc(assetInfo.units * 10000) / 10000;
   return accountDB.addAsset(vcType, assetInfo);
 }

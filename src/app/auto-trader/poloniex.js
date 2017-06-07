@@ -67,7 +67,7 @@ function run(accountId) {
       units = Math.trunc(units * 10000) / 10000;
       promise.then(() => {
         return poloniexApi.sell(accountId, vcType, judgement.rate, units).then(result => {
-          let total = result.resultingTrades.reduce((p, c) => p + Number(c.units), 0);
+          let total = result.resultingTrades.reduce((p, c) => p + Number(c.amount), 0);
           account.removeAsset(accountId, vcType, total);
           result.resultingTrades.forEach(row => {
             account.addHistory(accountId, vcType, Object.assign({

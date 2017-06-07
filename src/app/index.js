@@ -25,7 +25,7 @@ app.listen(3000, () => {
   logger.info('Start Server on port 3000');
 });
 
-const COLLECTOR_INTERVAL = 3 * 60 * 1000;
+const COLLECTOR_INTERVAL = 1 * 60 * 1000;
 logger.info(`Start Collector Schedule: ${COLLECTOR_INTERVAL} ms`);
 setInterval(() => {
   // collectorForBithumb.collect().catch(reason => {
@@ -47,4 +47,5 @@ setInterval(() => {
   autoTraderForPoloniex.run('poloniex').catch(reason => {
     logger.error('[Trader Error] for Poloniex:', reason);
   });
+  console.log('---------- Auto-Trader ----------');
 }, AUTO_TRADER_INTERVAL);
