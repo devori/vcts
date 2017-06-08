@@ -20,7 +20,7 @@ function run(accountId) {
       return;
     }
     logger.verbose(`[${Date()}] Auto-Trader-Poloniex Available Balance: ${balance}`);
-    let btcPrice = priceDB.getLast('BTC').price;
+    let btcPriceInfo = priceDB.getLast('BTC');
 
     let promise = Promise.resolve();
 
@@ -34,17 +34,17 @@ function run(accountId) {
       balance -= judgement.rate * judgement.units;
       logger.info(`[${Date()}] Auto-Trader-Poloniex Purchase Judgement: ${vcType} - ${judgement.rate} - ${judgement.units}`);
       units = Math.trunc(units * 10000) / 10000;
-      promise.then(() => {
+      promise = promise.then(() => {
         return poloniexApi.buy(accountId, vcType, judgement.rate, units).then(result => {
           result.resultingTrades && result.resultingTrades.forEach(row => {
             let asset = {};
             asset.units = Number(row.amount) * 0.9975;
-            asset.price = Number(row.rate) * btcPrice;
+            asset.price = Number(row.rate) * btcPriceInfo.lowestAskPrice;
             asset.date = new Date().toLocaleString();
             account.addAsset(accountId, vcType, asset);
             account.addHistory(accountId, vcType, Object.assign({
-              usdt_btc: btcPrice,
-              price: Number(row.rate) * btcPrice
+              usdt_btc: btcPriceInfo.lowestAskPrice,
+              price: Number(row.rate) * btcPriceInfo.lowestAskPrice
             }, row));
           });
         }).catch(reason => {
@@ -65,14 +65,14 @@ function run(accountId) {
       }
       logger.info(`[${Date()}] Auto-Trader-Poloniex Sale Judgement: ${vcType} - ${judgement.rate} : ${judgement.units}`);
       units = Math.trunc(units * 10000) / 10000;
-      promise.then(() => {
+      promise = promise.then(() => {
         return poloniexApi.sell(accountId, vcType, judgement.rate, units).then(result => {
           let total = result.resultingTrades.reduce((p, c) => p + Number(c.amount), 0);
           account.removeAsset(accountId, vcType, total);
           result.resultingTrades.forEach(row => {
             account.addHistory(accountId, vcType, Object.assign({
-              usdt_btc: btcPrice,
-              price: Number(row.rate) * btcPrice
+              usdt_btc: btcPriceInfo.highestBidPrice,
+              price: Number(row.rate) * btcPriceInfo.highestBidPrice
             }, row));
           });
         }).catch(reason => {
