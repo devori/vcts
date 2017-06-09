@@ -12,7 +12,7 @@ function collect() {
     priceDB.add(vcType, data);
     let beforeOneDay = new Date(new Date().getTime() - 1000 * 60 * 60 * 1);
     priceDB.remove(vcType, info => {
-      return info.timestamp < beforeOneDay.getTime();
+      return new Date(info.timestamp).getTime() < beforeOneDay.getTime();
     });
   }
 
