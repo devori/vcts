@@ -9,6 +9,7 @@ router.use((req, res, next) => {
 
 router.get('/:accountId/:vcType?', (req, res) => {
   let history = account.searchHistory(req.params.accountId, req.params.vcType);
+  res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
   res.json(history || []);
 });
 
