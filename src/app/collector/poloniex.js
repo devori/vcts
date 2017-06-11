@@ -18,7 +18,12 @@ function collect() {
 
   return new Promise((resolve, reject) => {
     request('https://poloniex.com/public?command=returnTicker', (err, res, body) => {
-      let data = JSON.parse(body);
+      let data;
+      try {
+        data = JSON.parse(body);
+      } catch (e) {
+        reject();
+      }
       let usdtPerBtc = Number(data.USDT_BTC.last);
       let btcData = {
         lowestAskRate: Number(data.USDT_BTC.lowestAsk),

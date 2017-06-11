@@ -32,7 +32,7 @@ function run(accountId) {
         return;
       }
       balance -= judgement.rate * judgement.units;
-      logger.info(`[${Date()}] Auto-Trader-Poloniex Purchase Judgement: ${vcType} - ${judgement.rate} - ${judgement.units}`);
+      logger.info(`[${Date()}] Auto-Trader-Poloniex Purchase Judgement: ${vcType} - ${judgement.rate} - ${judgement.units} => ${judgement.rate * judgement.units}`);
       units = Math.trunc(units * 10000) / 10000;
       promise = promise.then(() => {
         return poloniexApi.buy(accountId, vcType, judgement.rate, units).then(result => {
@@ -63,7 +63,7 @@ function run(accountId) {
       if (units * judgement.rate <= 0.0001) {
         return;
       }
-      logger.info(`[${Date()}] Auto-Trader-Poloniex Sale Judgement: ${vcType} - ${judgement.rate} : ${judgement.units}`);
+      logger.info(`[${Date()}] Auto-Trader-Poloniex Sale Judgement: ${vcType} - ${judgement.rate} : ${judgement.units} => ${judgement.rate * judgement.units}`);
       units = Math.trunc(units * 10000) / 10000;
       promise = promise.then(() => {
         return poloniexApi.sell(accountId, vcType, judgement.rate, units).then(result => {

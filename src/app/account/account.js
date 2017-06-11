@@ -16,7 +16,7 @@ function searchAssets(accountId, vcType) {
 function addAsset(accountId, vcType, assetInfo) {
   let accountDB = accountFileDB.load(accountId);
   assetInfo.uuid = uuid.v1() + offset++;
-  assetInfo.units = Math.trunc(assetInfo.units * 10000) / 10000;
+  assetInfo.units = Math.trunc(assetInfo.units * 1000000) / 1000000;
   return accountDB.addAsset(vcType, assetInfo);
 }
 
@@ -39,7 +39,7 @@ function removeAsset(accountId, vcType, count) {
       removedAssetCount += count;
       asset.units -= count;
       count = 0;
-      asset.units = Math.trunc(asset.units * 10000) / 10000;
+      asset.units = Math.trunc(asset.units * 1000000) / 1000000;
       if (asset.units > 0) {
         accountDB.updateAsset(vcType, asset);
       } else {
