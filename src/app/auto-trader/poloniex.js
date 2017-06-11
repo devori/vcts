@@ -43,7 +43,8 @@ function run(accountId) {
             account.addAsset(accountId, vcType, asset);
             account.addHistory(accountId, vcType, Object.assign({
               usdt_btc: btcPriceInfo.lowestAskPrice,
-              price: Number(row.rate) * btcPriceInfo.lowestAskPrice
+              units: assets.units,
+              price: assets.price
             }, row));
           });
         }).catch(reason => {
@@ -71,6 +72,7 @@ function run(accountId) {
             account.addHistory(accountId, vcType, {
               usdt_btc: btcPriceInfo.highestBidPrice,
               price: Number(row.rate) * btcPriceInfo.highestBidPrice,
+              units: Number(row.amount),
               amount: Number(row.amount),
               date: new Date().getTime(),
               rate: Number(row.rate),
