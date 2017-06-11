@@ -23,6 +23,7 @@ function collect() {
         data = JSON.parse(body);
       } catch (e) {
         reject();
+        return;
       }
       let usdtPerBtc = Number(data.USDT_BTC.last);
       let btcData = {
