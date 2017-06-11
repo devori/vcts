@@ -74,7 +74,7 @@ function run(accountId) {
               amount: Number(row.amount),
               date: new Date().getTime(),
               rate: Number(row.rate),
-              totla: Number(row.total),
+              total: Number(row.total),
               tradeID: row.tradeID,
               type: row.type
             });
