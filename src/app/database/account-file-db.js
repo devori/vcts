@@ -17,6 +17,14 @@ class AccountFileDB {
     });
   }
 
+  searchHistory(vcType, condition) {
+    let history = this.accountHistoryDB.get(`trade`);
+    if (condition.vcType) {
+      history = history.get(condition.vcType);
+    }
+    return history.value();
+  }
+
   addHistory(vcType, info) {
     if (!this.accountHistoryDB.has(`trade.${vcType}`).value()) {
       this.accountHistoryDB.set(`trade.${vcType}`, []).write();

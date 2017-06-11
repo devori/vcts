@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import accountRouter from './account/router';
 import tradeRouter from './trade/router';
 import collectorForBithumb from './collector/bithumb';
 import collectorForPoloniex from './collector/poloniex';
@@ -11,6 +12,7 @@ let app = express();
 
 app.use(bodyParser.json());
 app.use('/api/v1/trade', tradeRouter);
+app.use('/api/v1/accounts', accountRouter);
 app.use((err, req, res, next) => {
   if (err) {
     res.status(500);

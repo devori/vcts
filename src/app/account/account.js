@@ -3,6 +3,13 @@ import uuid from 'uuid';
 
 let offset = 0;
 
+function searchHistory(accountId, vcType) {
+  let accountDB = accountFileDB.load(accountId);
+  return accountDB.searchHistory(accountId, {
+    vcType
+  });
+}
+
 function addHistory(accountId, vcType, assetInfo) {
   let accountDB = accountFileDB.load(accountId);
   return accountDB.addHistory(vcType, assetInfo);
@@ -51,5 +58,6 @@ function removeAsset(accountId, vcType, count) {
 }
 
 export default {
-  searchAssets, addAsset, removeAsset, addHistory
+  searchAssets, addAsset, removeAsset,
+  searchHistory, addHistory
 };
