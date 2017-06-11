@@ -11,13 +11,17 @@ class AccountFileDB {
       assets: {},
       history: {}
     }).write();
+    this.accountHistoryDB = lowdb(`./data/accounts/${accountId}-history.json`);
+    this.accountHistoryDB.defaults({
+      trade: {}
+    });
   }
 
   addHistory(vcType, info) {
-    if (!this.accountDB.has(`history.${vcType}`).value()) {
-      this.accountDB.set(`history.${vcType}`, []).write();
+    if (!this.accountHistoryDB.has(`trade.${vcType}`).value()) {
+      this.accountHistoryDB.set(`trade.${vcType}`, []).write();
     }
-    this.accountDB.get(`history.${vcType}`).push(info).write();
+    this.accountHistoryDB.get(`trade.${vcType}`).push(info).write();
   }
 
   addAsset(vcType, info) {
