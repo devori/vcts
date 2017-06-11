@@ -39,7 +39,7 @@ function run(accountId) {
             let asset = {};
             asset.units = Number(row.amount) * 0.9975;
             asset.price = Number(row.rate) * btcPriceInfo.lowestAskPrice;
-            asset.date = new Date().toLocaleString();
+            asset.date = new Date().getTime();
             account.addAsset(accountId, vcType, asset);
             account.addHistory(accountId, vcType, Object.assign({
               usdt_btc: btcPriceInfo.lowestAskPrice,
@@ -68,10 +68,16 @@ function run(accountId) {
           let total = result.resultingTrades.reduce((p, c) => p + Number(c.amount), 0);
           account.removeAsset(accountId, vcType, total);
           result.resultingTrades.forEach(row => {
-            account.addHistory(accountId, vcType, Object.assign({
+            account.addHistory(accountId, vcType, {
               usdt_btc: btcPriceInfo.highestBidPrice,
-              price: Number(row.rate) * btcPriceInfo.highestBidPrice
-            }, row));
+              price: Number(row.rate) * btcPriceInfo.highestBidPrice,
+              amount: Number(amount),
+              date: new Date().getTime(),
+              rate: Number(rate),
+              totla: Number(total),
+              tradeID: row.tradeID,
+              type: row.type
+            });
           });
         }).catch(reason => {
           logger.error(`[${Date()}] Auto-Trader-Poloniex Sale Error: ${vcType} - ${units}`, reason);

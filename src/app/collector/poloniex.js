@@ -7,12 +7,12 @@ function collect() {
 
   function addToDB(vcType, data) {
     data.units = 1;
-    data.timestamp = Date();
+    data.timestamp = new Date().getTime();
 
     priceDB.add(vcType, data);
-    let beforeOneDay = new Date(new Date().getTime() - 1000 * 60 * 60 * 1);
+    let beforeOneDay = new Date(new Date().getTime() - 1000 * 60 * 60 * 1).getTime();
     priceDB.remove(vcType, info => {
-      return new Date(info.timestamp).getTime() < beforeOneDay.getTime();
+      return info.timestamp < beforeOneDay;
     });
   }
 
