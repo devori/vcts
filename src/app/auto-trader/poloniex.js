@@ -43,8 +43,8 @@ function run(accountId) {
             account.addAsset(accountId, vcType, asset);
             account.addHistory(accountId, vcType, Object.assign({
               usdt_btc: btcPriceInfo.lowestAskPrice,
-              units: assets.units,
-              price: assets.price
+              units: asset.units,
+              price: asset.price
             }, row));
           });
         }).catch(reason => {
