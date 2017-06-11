@@ -47,5 +47,5 @@ setInterval(() => {
   autoTraderForPoloniex.run('poloniex').catch(reason => {
     logger.error('[Trader Error] for Poloniex:', reason);
   });
-  console.log('---------- Auto-Trader ----------');
+  console.log(`[${Date()}] ---------- Auto-Trader ----------`);
 }, AUTO_TRADER_INTERVAL);

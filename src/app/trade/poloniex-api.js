@@ -19,7 +19,7 @@ function sell(accountId, currency, rate, units) {
 			amount: units,
 			immediateOrCancel: 1
 	}).then(result => {
-		logger.info(`[${Date()}] Poloniex Sale: ${currency} - ${rate} - ${units}`);
+		logger.info(`[${Date()}] Poloniex Sale: ${currency} - ${rate} - ${units} => ${rate * units}`);
 		logger.info(result);
 		return result;
 	});
@@ -32,7 +32,7 @@ function buy(accountId, currency, rate, units) {
 		amount: units,
 		immediateOrCancel: 1
 	}).then(result => {
-		logger.info(`[${Date()}] Poloniex Purchase: ${currency} - ${rate} - ${units}`);
+		logger.info(`[${Date()}] Poloniex Purchase: ${currency} - ${rate} - ${units} => ${rate * units}`);
 		logger.info(result);
 		return result;
 	});

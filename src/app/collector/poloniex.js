@@ -49,7 +49,7 @@ function collect() {
 
         addToDB(pair[1], priceInfo);
       }
-      logger.verbose('[Collector-Poloniex] Collected');
+      logger.verbose(`[${Date()}] Collector-Poloniex - Collected`);
       resolve();
     });
   });
