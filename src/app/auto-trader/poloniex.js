@@ -71,10 +71,10 @@ function run(accountId) {
             account.addHistory(accountId, vcType, {
               usdt_btc: btcPriceInfo.highestBidPrice,
               price: Number(row.rate) * btcPriceInfo.highestBidPrice,
-              amount: Number(amount),
+              amount: Number(row.amount),
               date: new Date().getTime(),
-              rate: Number(rate),
-              totla: Number(total),
+              rate: Number(row.rate),
+              totla: Number(row.total),
               tradeID: row.tradeID,
               type: row.type
             });
