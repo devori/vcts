@@ -1,1 +1,1 @@
-node output/app/index.js
+npm start

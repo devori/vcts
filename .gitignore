@@ -7,3 +7,4 @@ src/app/auto-trader/rule-*.js
 logs/
 npm-debug.log
 git
+build/

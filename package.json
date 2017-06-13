@@ -24,9 +24,10 @@
     "supervisor": "^0.12.0"
   },
   "scripts": {
-    "start": "node output/app/index.js",
+    "start": "node build/app/index.js",
     "supervisor": "supervisor --r -r 'babel/register' output/app/index.js",
     "watch": "babel src --out-dir output --presets=node6 --watch",
+    "build": "babel src/app --out-dir build/app --presets=node6",
     "test": "mocha output/test/**/*.js"
   },
   "repository": {
