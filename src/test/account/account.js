@@ -30,7 +30,7 @@ describe('account/account', function () {
     let args = accountDB.addAsset.getCall(0).args;
     expect(args[0]).to.be.equal(TEST_VCTYPE);
     expect(args[1].uuid).to.exist;
-    expect(args[1].units).to.equal(1.0000);
+    expect(args[1].units).to.equal(1.000012);
   });
 
   it('should remove lower price asset first when remove call', () => {

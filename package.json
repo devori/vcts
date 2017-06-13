@@ -20,6 +20,7 @@
     "babel-preset-node6": "^11.0.0",
     "chai": "^4.0.1",
     "mocha": "^3.4.2",
+    "nock": "^9.0.13",
     "sinon": "^2.3.2",
     "supervisor": "^0.12.0"
   },
