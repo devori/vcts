@@ -21,7 +21,7 @@ describe('account/account', function () {
     expect(accountDB.searchAssets.calledOnce).to.be.true;
   });
 
-  it('should be added uuid and trunc units less than 0.0001 when addAsset call', () => {
+  it('should be added uuid and trunc units less than 0.000001 when addAsset call', () => {
     account.addAsset(ACCOUNT_ID, TEST_VCTYPE, {
       "price": 1000000,
       "units": 1.0000123,

@@ -4,13 +4,11 @@ import logger from '../util/logger';
 
 function collect() {
   let priceInfo = priceFileDB.load('bithumb');
-
   return new Promise((resolve, reject) => {
     request('https://api.bithumb.com/public/ticker/ALL', (err, res, body) => {
       let data = JSON.parse(body).data;
-      let addedData = [];
       for (let k in data) {
-        addedData[k] = priceInfo.add(k, {
+        priceInfo.add(k, {
           price: Number(data[k].closing_price),
           units: 1,
           timestamp: new Date().getTime()
@@ -20,8 +18,7 @@ function collect() {
           return info.timestamp < beforeOneDay.getTime();
         });
       }
-
-      resolve(addedData);
+      resolve();
       logger.verbose('[Collector-Bithumb] Collected');
     });
   });

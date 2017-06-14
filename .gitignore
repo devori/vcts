@@ -8,3 +8,4 @@ logs/
 npm-debug.log
 git
 build/
+npm-debug.log*

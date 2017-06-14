@@ -5,26 +5,26 @@ import priceFileDB from '../../app/database/price-file-db';
 import nock from 'nock';
 
 describe('collector/poloniex', function () {
-  const MARKET_NAME = 'poloniex-for-test';
+  const MARKET_NAME = 'poloniex';
   let mockPriceDB;
   let marketApiNock;
   before(() => {
     mockPriceDB = sinon.mock(priceFileDB.load(MARKET_NAME));
-    marketApiNock = nock('https://poloniex.com')
-                      .get('/public?command=returnTicker')
-                      .reply(200, {
-                        USDT_BTC: {},
-                        BTC_TEST: {}
-                      });
+    nock('https://poloniex.com')
+      .get('/public?command=returnTicker')
+      .reply(200, {
+        USDT_BTC: {},
+        BTC_TEST: {}
+    });
   });
 
   it('collected data should be added to priceFileDB', function (done) {
     let expectationForAdd = mockPriceDB.expects('add').twice();
     let expectationForRemove = mockPriceDB.expects('remove').twice();
 
-    collectorForPoloniex.collect().then(data => {
-      // expectationForAdd.verify();
-      // expectationForRemove.verify();
+    collectorForPoloniex.collect().then(() => {
+      expectationForAdd.verify();
+      expectationForRemove.verify();
       done();
     }).catch(reason => {
       expect.fail('', '', 'request failure');

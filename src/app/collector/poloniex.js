@@ -8,7 +8,6 @@ function collect() {
   function addToDB(vcType, data) {
     data.units = 1;
     data.timestamp = new Date().getTime();
-
     priceDB.add(vcType, data);
     let beforeOneDay = new Date(new Date().getTime() - 1000 * 60 * 60 * 1).getTime();
     priceDB.remove(vcType, info => {
