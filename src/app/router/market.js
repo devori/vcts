@@ -8,7 +8,7 @@ router.use((req, res, next) => {
   next();
 });
 
-router.get('/:vcType?', (req, res) => {
+router.get('/:market/:vcType?', (req, res) => {
   let priceDB = priceFileDB.load('poloniex');
   let result = {};
   if (req.params.vcType) {

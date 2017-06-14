@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import account from './account';
+import account from '../account/account';
 import logger from '../util/logger';
 
 let router = Router();

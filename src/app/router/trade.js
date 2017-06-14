@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import trade from './trade';
+import trade from '../trade/trade';
 import logger from '../util/logger';
 
 let router = Router();
