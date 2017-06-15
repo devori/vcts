@@ -8,7 +8,7 @@ import logger from '../util/logger';
 let priceDB = priceFileDB.load('poloniex');
 
 function getBalance() {
-  return poloniexApi.info().then(data => {
+  return poloniexApi.getBalances().then(data => {
     return Number(data.BTC);
   });
 }

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import request from 'request';
 import lowdb from 'lowdb';
 import crypto from 'crypto';
@@ -9,7 +10,28 @@ const SECRET_KEY = apiData.get('secret').value();
 const POLONIEX_API_URL = ' https://poloniex.com/tradingApi';
 
 export default {
-	sell, buy, info
+	sell, buy, getBalances, getTickers
+}
+
+function getTickers() {
+	return new Promise((resolve, reject) => {
+		request('https://poloniex.com/public?command=returnTicker', (err, res, body) => {
+			let data;
+			try {
+				data = JSON.parse(body);
+			} catch (e) {
+				reject();
+				return;
+			}
+			for (let vc in data) {
+				for (let k in data[vc]) {
+					data[vc][k] = Number(data[vc][k]);
+				}
+			}
+			logger.verbose(`[${Date()}] Poloniex getTickers`);
+			resolve(data);
+		});
+	});
 }
 
 function sell(accountId, currency, rate, units) {
@@ -38,7 +60,7 @@ function buy(accountId, currency, rate, units) {
 	});
 }
 
-function info(accountId) {
+function getBalances(accountId) {
 	return callApi('returnBalances');
 }
 
