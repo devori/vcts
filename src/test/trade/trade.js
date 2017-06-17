@@ -35,6 +35,6 @@ describe('trade/poloniex-api', function () {
   });
 
   after(() => {
-    nock.enableNetConnect();
+    nock.cleanAll();
   });
 });
