@@ -34,27 +34,27 @@ function getTickers() {
 	});
 }
 
-function sell(accountId, currency, rate, units) {
+function sell(accountId, currencyPair, rate, units) {
 	return callApi('sell', {
-			currencyPair: `BTC_${currency}`,
+			currencyPair: currencyPair,
 			rate: rate,
 			amount: units,
 			immediateOrCancel: 1
 	}).then(result => {
-		logger.info(`[${Date()}] Poloniex Sale: ${currency} - ${rate} - ${units} => ${rate * units}`);
+		logger.info(`[${Date()}] Poloniex Sale: ${currencyPair} - ${rate} - ${units} => ${rate * units}`);
 		logger.info(result);
 		return result;
 	});
 }
 
-function buy(accountId, currency, rate, units) {
+function buy(accountId, currencyPair, rate, units) {
 	return callApi('buy', {
-		currencyPair: `BTC_${currency}`,
+		currencyPair: currencyPair,
 		rate: rate,
 		amount: units,
 		immediateOrCancel: 1
 	}).then(result => {
-		logger.info(`[${Date()}] Poloniex Purchase: ${currency} - ${rate} - ${units} => ${rate * units}`);
+		logger.info(`[${Date()}] Poloniex Purchase: ${currencyPair} - ${rate} - ${units} => ${rate * units}`);
 		logger.info(result);
 		return result;
 	});

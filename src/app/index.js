@@ -29,27 +29,30 @@ app.listen(3000, () => {
   logger.info('Start Server on port 3000');
 });
 
-const COLLECTOR_INTERVAL = 1 * 60 * 1000;
-logger.info(`Start Collector Schedule: ${COLLECTOR_INTERVAL} ms`);
-setInterval(() => {
+// const COLLECTOR_INTERVAL = 1 * 60 * 1000;
+// logger.info(`Start Collector Schedule: ${COLLECTOR_INTERVAL} ms`);
+// setInterval(() => {
   // collectorForBithumb.collect().catch(reason => {
   //   logger.error('[Collector Error] for Bithumb:', reason);
   // });
 
-  collectorForPoloniex.collect().catch(reason => {
-    logger.error('[Collector Error] for Poloniex:', reason);
-  });
-}, COLLECTOR_INTERVAL);
+  // collectorForPoloniex.collect().catch(reason => {
+  //   logger.error('[Collector Error] for Poloniex:', reason);
+  // });
+// }, COLLECTOR_INTERVAL);
 
-const AUTO_TRADER_INTERVAL = COLLECTOR_INTERVAL + 3000;
+const AUTO_TRADER_INTERVAL = 1 * 60 * 1000;
 logger.info(`Start Auto-Trader Schedule: ${AUTO_TRADER_INTERVAL} ms`);
 setInterval(() => {
   // autoTraderForBithumb.run('test').catch(reason => {
   //   logger.error('[Trader Error] for Bithumb:', reason);
   // });
 
-  autoTraderForPoloniex.run('poloniex').catch(reason => {
+  autoTraderForPoloniex.run('poloniex').then(() => {
+    logger.info(`[${Date()}] ---------- Auto-Trader Resolve----------`);
+  }, () => {
+    logger.warn(`[${Date()}] ---------- Auto-Trader Reject ----------`)
+  }).catch(reason => {
     logger.error('[Trader Error] for Poloniex:', reason);
   });
-  console.log(`[${Date()}] ---------- Auto-Trader ----------`);
 }, AUTO_TRADER_INTERVAL);

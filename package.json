@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "async": "^2.4.1",
     "body-parser": "^1.17.2",
     "express": "^4.15.2",
     "firebase": "^4.1.1",
