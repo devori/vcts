@@ -34,6 +34,6 @@ describe('collector/poloniex', function () {
 
   after(() => {
     mockPriceDB.restore();
-    nock.enableNetConnect();
+    nock.cleanAll();
   });
 });

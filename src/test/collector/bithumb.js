@@ -37,6 +37,6 @@ describe('collector/bithumb', function () {
 
   after(() => {
     mockPriceDB.restore();
-    nock.enableNetConnect();
+    nock.cleanAll();
   });
 });
