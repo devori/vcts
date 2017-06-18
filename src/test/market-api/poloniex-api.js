@@ -85,7 +85,7 @@ describe('market-api/poloniex-api.js', function () {
       .post('/tradingApi', {
         command: 'sell',
         currencyPair: 'USDT_BTC',
-        rate: '2600',
+        rate: '2500',
         amount: '1',
         immediateOrCancel: '1'
       })
@@ -116,7 +116,7 @@ describe('market-api/poloniex-api.js', function () {
       let prom = poloniexApi.sell({
         apiKey: 'a',
         secretKey: 'b'
-      }, 'USDT', 'BTC', 1, 2600);
+      }, 'USDT', 'BTC', 1, 2500);
       expect(prom).to.be.a('promise');
       prom.then(result => {
         expect(result.raw.orderNumber).to.equal(123);
@@ -134,6 +134,73 @@ describe('market-api/poloniex-api.js', function () {
           price: 2600,
           total: 0.6 * 2600 * 0.9975,
           type: 'sell'
+        });
+        expect(result.trades[1].timestamp).to.be.a('number');
+        done();
+      });
+      this.timeout(3000);
+    });
+
+    after(() => {
+      nock.cleanAll();
+    })
+  });
+
+  describe('buy', () => {
+    before(() => {
+      nock('https://poloniex.com')
+      .post('/tradingApi', {
+        command: 'buy',
+        currencyPair: 'USDT_BTC',
+        rate: '2600',
+        amount: '1',
+        immediateOrCancel: '1'
+      })
+      .reply(200, {
+        "orderNumber": 124,
+        "resultingTrades": [
+          {
+            "amount": "0.4",
+            "date": "2017-06-18 14:31:12",
+            "rate": "2500",
+            "total": "1000",
+            "tradeID": "3",
+            "type": "buy"
+          },
+          {
+            "amount": "0.6",
+            "date": "2017-06-18 14:31:12",
+            "rate": "2600",
+            "total": "1560",
+            "tradeID": "4",
+            "type": "buy"
+          }
+        ]
+      });
+    });
+
+    it('should return buy result when buy call', done => {
+      let prom = poloniexApi.buy({
+        apiKey: 'a',
+        secretKey: 'b'
+      }, 'USDT', 'BTC', 1, 2600);
+      expect(prom).to.be.a('promise');
+      prom.then(result => {
+        expect(result.raw.orderNumber).to.equal(124);
+        expect(result.raw.resultingTrades).to.have.lengthOf(2);
+        expect(result.trades).to.have.lengthOf(2);
+        expect(result.trades[0]).to.deep.include({
+          units: 0.4 * 0.9975,
+          price: 2500,
+          total: 0.4 * 2500,
+          type: 'buy'
+        });
+        expect(result.trades[0].timestamp).to.be.a('number');
+        expect(result.trades[1]).to.deep.include({
+          units: 0.6 * 0.9975,
+          price: 2600,
+          total: 0.6 * 2600,
+          type: 'buy'
         });
         expect(result.trades[1].timestamp).to.be.a('number');
         done();

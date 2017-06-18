@@ -67,15 +67,26 @@ export function sell(auth, base, vcType, units, price) {
 	});
 }
 
-function buy(accountId, currencyPair, rate, units) {
-	return callApi('buy', {
-		currencyPair: currencyPair,
-		rate: rate,
-		amount: units,
-		immediateOrCancel: 1
-	}).then(result => {
-		logger.info(`[${Date()}] Poloniex Purchase: ${currencyPair} - ${rate} - ${units} => ${rate * units}`);
-		logger.info(result);
+export function buy(auth, base, vcType, units, price) {
+	return callPrivateApi(auth, 'buy', {
+		currencyPair: `${base}_${vcType}`,
+		rate: String(price),
+		amount: String(units),
+		immediateOrCancel: '1'
+	}).then(data => {
+		let result = {
+			raw: data,
+			trades: []
+		};
+		data.resultingTrades.forEach(t => {
+			result.trades.push({
+				units: Number(t.amount) * 0.9975,
+				price: Number(t.rate),
+				total: Number(t.amount) * Number(t.rate),
+				type: 'buy',
+				timestamp: new Date().getTime()
+			})
+		});
 		return result;
 	});
 }
