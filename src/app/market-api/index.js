@@ -1,4 +1,5 @@
 import * as poloniexApi from './poloniex-api';
+import * as account from '../account';
 
 export const MARKET = {
   POLONIEX: 'poloniex'
@@ -13,11 +14,15 @@ const wrapperPoloniexApi = {
   },
   sell (auth, base, vcType, units, price) {
     return poloniexApi.sell(auth, base, vcType, units, price).then(result => {
+      account.removeAsset(auth.uuid, MARKET.POLONIEX, result);
+      account.addHistory(auth.uuid, MARKET.POLONIEX, result);
       return result;
     });
   },
   buy (auth, base, vcType, units, price) {
     return poloniexApi.buy(auth, base, vcType, units, price).then(result => {
+      account.addAsset(auth.uuid, MARKET.POLONIEX, result);
+      account.addHistory(auth.uuid, MARKET.POLONIEX, result);
       return result;
     });
   }
