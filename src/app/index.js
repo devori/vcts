@@ -2,7 +2,6 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import tradeRouter from './router/trade';
 import accountRouter from './router/account';
-import marketRouter from './router/market';
 import pubilcRouter from './router/public';
 import collectorForBithumb from './collector/bithumb';
 import collectorForPoloniex from './collector/poloniex';
@@ -15,7 +14,6 @@ let app = express();
 app.use(bodyParser.json());
 app.use('/api/v1/trade', tradeRouter);
 app.use('/api/v1/accounts', accountRouter);
-app.use('/api/v1/market', marketRouter);
 app.use('/api/v1/public', pubilcRouter);
 app.use((err, req, res, next) => {
   if (err) {
