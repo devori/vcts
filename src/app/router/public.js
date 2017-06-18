@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import marketApi from '../market-api';
+import * as marketApi from '../market-api';
 import logger from '../util/logger';
 
 let router = Router();

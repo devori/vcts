@@ -12,7 +12,3 @@ export function load(marketName) {
     throw `${marketName} is not supported`;
   }
 }
-
-export default {
-  MARKET, load
-}

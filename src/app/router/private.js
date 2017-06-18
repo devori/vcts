@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import marketApi from '../market-api';
+import * as marketApi from '../market-api';
 import * as account from '../account';
 import logger from '../util/logger';
 

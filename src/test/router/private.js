@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import supertest from 'supertest';
 import sinon from 'sinon';
 import { expect, should } from 'chai';
-import marketApi from '../../app/market-api';
+import * as marketApi from '../../app/market-api';
 import privateRouter from '../../app/router/private';
 import * as account from '../../app/account';
 
@@ -15,7 +15,7 @@ describe('router/private.js', function () {
 		sinon.stub(account, 'authenticate')
 			.withArgs('api-key-for-test', sinon.match({ nonce: '123' }), 'correct').returns(true)
 			.withArgs('api-key-for-test', sinon.match({ nonce: '123' }), 'incorrect').returns(false);
-      
+
     sinon.stub(marketApi.load('poloniex'), 'getBalances').callsFake(() => {
       return Promise.resolve({
   			balances: {

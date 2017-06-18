@@ -2,7 +2,7 @@ import express from 'express';
 import supertest from 'supertest';
 import sinon from 'sinon';
 import { expect, should } from 'chai';
-import marketApi from '../../app/market-api';
+import * as marketApi from '../../app/market-api';
 import publicRouter from '../../app/router/public';
 
 describe('router/public.js', function () {
