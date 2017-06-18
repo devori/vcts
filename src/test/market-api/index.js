@@ -12,6 +12,9 @@ describe('market-api/index.js', function () {
   });
 
   it('should return api instance when marketName is valid', () => {
-    expect(marketApi.load(marketApi.MARKET.POLONIEX)).to.equal(poloniexApi);
+    expect(marketApi.load(marketApi.MARKET.POLONIEX).getTickers).to.exist;
+    expect(marketApi.load(marketApi.MARKET.POLONIEX).getBalances).to.exist;
+    expect(marketApi.load(marketApi.MARKET.POLONIEX).buy).to.exist;
+    expect(marketApi.load(marketApi.MARKET.POLONIEX).sell).to.exist;
   });
 });
