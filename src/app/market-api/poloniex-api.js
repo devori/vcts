@@ -1,4 +1,5 @@
 import request from 'request';
+import crypto from 'crypto';
 
 const POLONIEX_API_BASE_URL = 'https://poloniex.com';
 
@@ -25,4 +26,50 @@ export function getTickers() {
 		}
 		return result;
 	});
+}
+
+export function getBalances(auth) {
+	return callPrivateApi(auth, 'returnBalances').then(data => {
+		let result = {};
+		for (let k in data) {
+			result[k] = Number(data[k]);
+		}
+		return result;
+	});
+}
+
+function callPrivateApi(auth, command, params = {}) {
+	params.command = command;
+	params.nonce = String(new Date().getTime());
+
+	let headers = {
+		Key: auth.apiKey,
+		Sign: getHmacSha512(auth.secretKey, params)
+	};
+
+	return new Promise((resolve, reject) => {
+		request({
+			method: 'POST',
+			url: `${POLONIEX_API_BASE_URL}/tradingApi`,
+			headers: headers,
+			form: params
+		}, (err, res, body) => {
+			if (err) {
+				throw err;
+			}
+			resolve(JSON.parse(body));
+		});
+	});
+}
+
+function getHmacSha512(key, params) {
+	let paramStr = "";
+	for (let k in params) {
+		paramStr += encodeURIComponent(k) + '=' + encodeURIComponent(params[k]) + "&";
+	}
+	if (paramStr.charAt(paramStr.length - 1) === '&') {
+		paramStr = paramStr.substr(0, paramStr.length - 1);
+	}
+
+	return crypto.createHmac('sha512', key).update(paramStr).digest('hex');
 }
