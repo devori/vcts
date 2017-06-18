@@ -31,35 +31,38 @@ export function getTickers() {
 
 export function getBalances(auth) {
 	return callPrivateApi(auth, 'returnBalances').then(data => {
-		let result = {};
+		let result = {
+			balances: {},
+			timestamp: new Date().getTime(),
+			raw: data
+		};
 		for (let k in data) {
-			result[k] = Number(data[k]);
-			result[k] = _.floor(result[k], 8);
+			result.balances[k] = _.floor(Number(data[k]), 8);
 		}
 		return result;
 	});
 }
 
-export function sell(auth, vcType, base, units, price) {
+export function sell(auth, base, vcType, units, price) {
 	return callPrivateApi(auth, 'sell', {
 		currencyPair: `${base}_${vcType}`,
-		rate: price,
-		amount: units,
-		immediateOrCancel: 1
+		rate: String(price),
+		amount: String(units),
+		immediateOrCancel: '1'
 	}).then(data => {
-		return result;
-	});
-}
-
-function sell(accountId, currencyPair, rate, units) {
-	return callApi('sell', {
-			currencyPair: currencyPair,
-			rate: rate,
-			amount: units,
-			immediateOrCancel: 1
-	}).then(result => {
-		logger.info(`[${Date()}] Poloniex Sale: ${currencyPair} - ${rate} - ${units} => ${rate * units}`);
-		logger.info(result);
+		let result = {
+			raw: data,
+			trades: []
+		};
+		data.resultingTrades.forEach(t => {
+			result.trades.push({
+				units: Number(t.amount),
+				price: Number(t.rate),
+				total: Number(t.amount) * Number(t.rate) * 0.9975,
+				type: 'sell',
+				timestamp: new Date().getTime()
+			});
+		});
 		return result;
 	});
 }
