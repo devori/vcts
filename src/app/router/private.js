@@ -40,4 +40,22 @@ router.post('/accounts/:uuid/markets/:market/:base/:vcType', (req, res) => {
   });
 });
 
+
+router.delete('/accounts/:uuid/markets/:market/:base/:vcType', (req, res) => {
+  let keys = account.getMarketKeys(req.params.uuid, req.params.market);
+  marketApi.load(req.params.market).buy(
+    keys,
+    req.params.base,
+    req.params.vcType,
+    req.body.units,
+    req.body.price
+  ).then(result => {
+    result.trades.forEach(t => {
+      account.removeAsset(req.params.uuid, req.params.market, t);
+      account.addHistory(req.params.uuid, req.params.market, t);
+    });
+    res.json(result);
+  });
+});
+
 export default router;
