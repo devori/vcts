@@ -22,10 +22,6 @@ describe('market-api/index.js', function () {
     });
   });
 
-  beforeEach(() => {
-    mockAccount = sinon.mock(account);
-  });
-
   it('should throw exception when there is not marketName', () => {
     expect(() => {
       marketApi.load('test-market');
@@ -69,34 +65,6 @@ describe('market-api/index.js', function () {
     expect(marketApi.load(marketApi.MARKET.POLONIEX).getBalances).to.exist;
     expect(marketApi.load(marketApi.MARKET.POLONIEX).buy).to.exist;
     expect(marketApi.load(marketApi.MARKET.POLONIEX).sell).to.exist;
-  });
-
-  it('should call account-api after buy call correctly', done => {
-    mockAccount.expects('addAsset').withArgs('test-uuid', marketApi.MARKET.POLONIEX).once();
-    mockAccount.expects('addHistory').withArgs('test-uuid', marketApi.MARKET.POLONIEX).once();
-    marketApi.load(marketApi.MARKET.POLONIEX).buy({
-      uuid: 'test-uuid'
-    }).then(result => {
-      mockAccount.verify();
-      done();
-    });
-    this.timeout(3000);
-  });
-
-  it('should call db-api after sell call correctly', done => {
-    mockAccount.expects('removeAsset').withArgs('test-uuid', marketApi.MARKET.POLONIEX).once();
-    mockAccount.expects('addHistory').withArgs('test-uuid', marketApi.MARKET.POLONIEX).once();
-    marketApi.load(marketApi.MARKET.POLONIEX).sell({
-      uuid: 'test-uuid'
-    }).then(result => {
-      mockAccount.verify();
-      done();
-    });
-    this.timeout(3000);
-  });
-
-  afterEach(() => {
-    mockAccount.restore();
   });
 
   after(() => {
