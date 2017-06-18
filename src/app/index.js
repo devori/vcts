@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import tradeRouter from './router/trade';
 import accountRouter from './router/account';
 import pubilcRouter from './router/public';
+import privateRouter from './router/private';
 import collectorForBithumb from './collector/bithumb';
 import collectorForPoloniex from './collector/poloniex';
 import autoTraderForBithumb from './auto-trader/bithumb';
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 app.use('/api/v1/trade', tradeRouter);
 app.use('/api/v1/accounts', accountRouter);
 app.use('/api/v1/public', pubilcRouter);
+app.use('/api/v1/private', privateRouter);
 app.use((err, req, res, next) => {
   if (err) {
     res.status(500);

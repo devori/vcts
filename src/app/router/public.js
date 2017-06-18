@@ -8,6 +8,7 @@ router.use((req, res, next) => {
 });
 
 router.get('/markets/:market/tickers/:base?/:vcType?', (req, res) => {
+  logger.verbose(`[${Date()}] ${req.url} called`);
   res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
   marketApi.load(req.params.market).getTickers().then(tickers => {
     let base = req.params.base;
