@@ -1,5 +1,6 @@
 import request from 'request';
 import crypto from 'crypto';
+import _ from 'lodash';
 
 const POLONIEX_API_BASE_URL = 'https://poloniex.com';
 
@@ -33,7 +34,45 @@ export function getBalances(auth) {
 		let result = {};
 		for (let k in data) {
 			result[k] = Number(data[k]);
+			result[k] = _.floor(result[k], 8);
 		}
+		return result;
+	});
+}
+
+export function sell(auth, vcType, base, units, price) {
+	return callPrivateApi(auth, 'sell', {
+		currencyPair: `${base}_${vcType}`,
+		rate: price,
+		amount: units,
+		immediateOrCancel: 1
+	}).then(data => {
+		return result;
+	});
+}
+
+function sell(accountId, currencyPair, rate, units) {
+	return callApi('sell', {
+			currencyPair: currencyPair,
+			rate: rate,
+			amount: units,
+			immediateOrCancel: 1
+	}).then(result => {
+		logger.info(`[${Date()}] Poloniex Sale: ${currencyPair} - ${rate} - ${units} => ${rate * units}`);
+		logger.info(result);
+		return result;
+	});
+}
+
+function buy(accountId, currencyPair, rate, units) {
+	return callApi('buy', {
+		currencyPair: currencyPair,
+		rate: rate,
+		amount: units,
+		immediateOrCancel: 1
+	}).then(result => {
+		logger.info(`[${Date()}] Poloniex Purchase: ${currencyPair} - ${rate} - ${units} => ${rate * units}`);
+		logger.info(result);
 		return result;
 	});
 }

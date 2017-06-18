@@ -53,7 +53,7 @@ describe('market-api/poloniex-api.js', function () {
       })
       .reply(200, {
         USDT: '100',
-        BTC: 1
+        BTC: 1.123456789
       });
     });
 
@@ -65,7 +65,7 @@ describe('market-api/poloniex-api.js', function () {
       expect(prom).to.be.a('promise');
       prom.then(result => {
         expect(result.USDT).to.equal(100);
-        expect(result.BTC).to.equal(1);
+        expect(result.BTC).to.equal(1.12345678);
         done();
       });
       this.timeout(3000);
