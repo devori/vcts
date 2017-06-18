@@ -24,6 +24,10 @@ export function authenticate(apiKey, source, dest) {
   return true;
 }
 
+export function getMarketKeys(apiKey, market) {
+	return apiKeyInfo[apiKey].marketKeys[market];
+}
+
 export function addAsset(uuid, market, asset) {
 
 }
@@ -33,5 +37,5 @@ export function addHistory(uuid, market, asset) {
 }
 
 export function removeAsset(uuid, market, asset) {
-	
+
 }

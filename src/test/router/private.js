@@ -1,4 +1,5 @@
 import express from 'express';
+import bodyParser from 'body-parser';
 import crypto from 'crypto';
 import supertest from 'supertest';
 import sinon from 'sinon';
@@ -8,15 +9,22 @@ import privateRouter from '../../app/router/private';
 import * as account from '../../app/account';
 
 describe('router/private.js', function () {
+  const apiKey = 'api key';
   const secretKey = 'secret key';
 
+  let mockAccount;
   let app;
-  before(() => {
-		sinon.stub(account, 'authenticate')
-			.withArgs('api-key-for-test', sinon.match({ nonce: '123' }), 'correct').returns(true)
-			.withArgs('api-key-for-test', sinon.match({ nonce: '123' }), 'incorrect').returns(false);
+  beforeEach(() => {
+    mockAccount = sinon.mock(account);
 
-    sinon.stub(marketApi.load('poloniex'), 'getBalances').callsFake(() => {
+		sinon.stub(account, 'authenticate')
+			.withArgs('test-api-key', sinon.match({ nonce: '123' }), 'correct').returns(true)
+			.withArgs('test-api-key', sinon.match({ nonce: '123' }), 'incorrect').returns(false);
+
+    sinon.stub(marketApi.load('poloniex'), 'getBalances').withArgs({
+      apiKey: apiKey,
+      secretKey: secretKey
+    }).callsFake(() => {
       return Promise.resolve({
   			balances: {
           USDT: 1000,
@@ -27,13 +35,31 @@ describe('router/private.js', function () {
   		});
     });
 
+    sinon.stub(marketApi.load('poloniex'), 'buy').withArgs({
+      apiKey: apiKey,
+      secretKey: secretKey
+    }).callsFake(() => {
+      return Promise.resolve({
+  			trades: [
+          {
+            units: 1,
+            price: 100,
+            total: 99.75
+          }
+        ],
+  			timestamp: new Date().getTime(),
+  			raw: {}
+  		});
+    });
+
     app = express();
+    app.use(bodyParser.json());
     app.use('/', privateRouter);
   });
 
   it('should return balances when authentication is correct', done => {
     supertest(app)
-			.get('/accounts/api-key-for-test/markets/poloniex/balances')
+			.get('/accounts/test-api-key/markets/poloniex/balances')
       .set('nonce', 123)
       .set('sign', 'correct')
       .expect('Content-Type', 'application/json; charset=utf-8')
@@ -53,14 +79,35 @@ describe('router/private.js', function () {
 
   it('should return 401 status code when authentication is incorrect', () => {
     supertest(app)
-      .get('/accounts/api-key-for-test/markets/poloniex/balances')
+      .get('/accounts/test-api-key/markets/poloniex/balances')
 			.set('nonce', 123)
 			.set('sign', 'incorrect')
       .expect(401)
   });
 
-  after(() => {
+  it('should return buy result after buy info save when buy call', done => {
+    mockAccount.expects('addAsset').withArgs('test-api-key', 'poloniex').once();
+    mockAccount.expects('addHistory').withArgs('test-api-key', 'poloniex').once();
+    supertest(app)
+      .post('/accounts/test-api-key/markets/poloniex/USDT/BTC', {
+        units: 1,
+        price: 100
+      })
+      .set('nonce', 123)
+      .set('sign', 'correct')
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200)
+      .end((err, res) => {
+        mockAccount.verify();
+        done();
+      });
+    this.timeout(3000);
+  });
+
+  afterEach(() => {
 		account.authenticate.restore();
+    mockAccount.restore();
     marketApi.load('poloniex').getBalances.restore();
+    marketApi.load('poloniex').buy.restore();
   });
 });
