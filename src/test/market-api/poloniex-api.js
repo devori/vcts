@@ -11,12 +11,12 @@ describe('market-api/poloniex-api.js', function () {
       .get('/public?command=returnTicker')
       .reply(200, {
         USDT_BTC: {
-          lowestAsk: 101,
-          highestBid: 99
+          lowestAsk: '101',
+          highestBid: '99'
         },
         BTC_TEST: {
-          lowestAsk: 102,
-          highestBid: 98
+          lowestAsk: '102',
+          highestBid: '98'
         }
       });
     });
@@ -25,16 +25,21 @@ describe('market-api/poloniex-api.js', function () {
       let prom = poloniexApi.getTickers();
       expect(prom).to.be.a('promise');
       prom.then(result => {
-        expect(result.tickers.USDT).to.exist;
-        expect(result.tickers.USDT.BTC).to.exist;
-        expect(result.tickers.USDT.BTC.low).to.equal(99);
-        expect(result.tickers.USDT.BTC.high).to.equal(101);
+        expect(result.USDT).to.exist;
+        expect(result.USDT.BTC).to.exist;
+        expect(result.USDT.BTC.base).to.equal('USDT');
+        expect(result.USDT.BTC.vcType).to.equal('BTC');
+        expect(result.USDT.BTC.low).to.equal(99);
+        expect(result.USDT.BTC.high).to.equal(101);
+        expect(result.USDT.BTC.timestamp).to.be.a('number');
 
-        expect(result.tickers.BTC).to.exist;
-        expect(result.tickers.BTC.TEST).to.exist;
-        expect(result.tickers.BTC.TEST.low).to.equal(98);
-        expect(result.tickers.BTC.TEST.high).to.equal(102);
-        expect(result.timestamp).to.be.a('number');
+        expect(result.BTC).to.exist;
+        expect(result.BTC.TEST).to.exist;
+        expect(result.BTC.TEST.base).to.equal('BTC');
+        expect(result.BTC.TEST.vcType).to.equal('TEST');
+        expect(result.BTC.TEST.low).to.equal(98);
+        expect(result.BTC.TEST.high).to.equal(102);
+        expect(result.BTC.TEST.timestamp).to.be.a('number');
         done();
       });
       this.timeout(3000);

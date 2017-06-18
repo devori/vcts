@@ -13,16 +13,16 @@ export function getTickers() {
 			resolve(JSON.parse(body));
 		});
 	}).then(data => {
-		let result = {
-			tickers: {},
-			timestamp: new Date().getTime()
-		};
+		let result = {};
 		for (let vcType in data) {
 			let pair = vcType.split('_');
-			result.tickers[pair[0]] = result.tickers[pair[0]] || {};
-			result.tickers[pair[0]][pair[1]] = {
-				low: data[vcType].highestBid,
-				high: data[vcType].lowestAsk
+			result[pair[0]] = result[pair[0]] || {};
+			result[pair[0]][pair[1]] = {
+				base: pair[0],
+				vcType: pair[1],
+				low: Number(data[vcType].highestBid),
+				high: Number(data[vcType].lowestAsk),
+				timestamp: new Date().getTime()
 			};
 		}
 		return result;
