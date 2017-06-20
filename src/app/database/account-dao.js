@@ -57,3 +57,28 @@ export function addHistory(accountId, market, history) {
   dao.push(history).write();
   return dao.last().cloneDeep().value();
 }
+
+export function removeAsset(accountId, market, condition) {
+  let dao = findDao(accountId, market, 'assets');
+  if (!dao) {
+    return null;
+  }
+  if (!dao.has(condition.base).value()) {
+    return null;
+  }
+  dao = dao.get(condition.base);
+  if (!dao.has(condition.vcType).value()) {
+    return null;
+  }
+  dao = dao.get(condition.vcType);
+  if (!dao.find({ uuid: condition.uuid }).value()) {
+    return null;
+  }
+  let target = dao.find({
+    uuid: condition.uuid
+  }).cloneDeep().value();
+  dao.remove({
+    uuid: condition.uuid
+  }).write();
+  return target;
+}
