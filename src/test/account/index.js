@@ -17,7 +17,7 @@ function getHmacSha512(secretKey, data) {
 
 describe('account/index', function () {
 	const ACCOUNT_ID = 'test-user';
-	const MARKET = 'a-market';
+	const MARKET = 'poloniex';
 
 	let mockAccountDao;
 	before(() => {
@@ -44,8 +44,8 @@ describe('account/index', function () {
 	});
 
   it('should return true with correct args', () => {
-    let hash = getHmacSha512('test secret key', { nonce: 123 });
-    let result = account.authenticate('test-api-key', {
+    let hash = getHmacSha512('secret key', { nonce: 123 });
+    let result = account.authenticate('test-user', {
       nonce: 123
     }, hash);
     expect(result).to.equal(true);
@@ -53,7 +53,7 @@ describe('account/index', function () {
 
   it('should return false with incorrect args', () => {
     let hash = getHmacSha512('incorrect secret key', { nonce: 123 });
-    let result = account.authenticate('test-api-key', {
+    let result = account.authenticate('test-user', {
       nonce: 123
     }, hash);
     expect(result).to.equal(false);

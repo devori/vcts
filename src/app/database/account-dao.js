@@ -1,12 +1,12 @@
 import lowdb from 'lowdb';
 import uuid from 'uuid/v4';
 
-function findDao(accountId, market, target) {
+function findDao(...filePaths) {
   try {
-    return lowdb(`./data/accounts/${accountId}/${market}/${target}.json`);
+    return lowdb(`./data/accounts/${filePaths.join('/')}.json`);
   } catch (err) {
     return null;
-  };
+  }
 }
 
 function findByPath(dao, paths) {
@@ -21,6 +21,22 @@ function findByPath(dao, paths) {
     dao = dao.get(p.name);
   }
   return dao;
+}
+
+export function getSecretKey(accountId) {
+  let dao = findDao(accountId, 'key');
+  if (!dao) {
+    return null;
+  }
+  return dao.get('secretKey').cloneDeep().value();
+}
+
+export function getMarketKeys(accountId, market) {
+  let dao = findDao(accountId, market, 'key');
+  if (!dao) {
+    return null;
+  }
+  return dao.cloneDeep().value();
 }
 
 export function searchAssets(accountId, market, base, vcType) {

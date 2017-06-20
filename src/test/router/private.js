@@ -18,8 +18,8 @@ describe('router/private.js', function () {
     mockAccount = sinon.mock(account);
 
 		sinon.stub(account, 'authenticate')
-			.withArgs('test-api-key', sinon.match({ nonce: '123' }), 'correct').returns(true)
-			.withArgs('test-api-key', sinon.match({ nonce: '123' }), 'incorrect').returns(false);
+			.withArgs('test-user', sinon.match({ nonce: '123' }), 'correct').returns(true)
+			.withArgs('test-user', sinon.match({ nonce: '123' }), 'incorrect').returns(false);
 
     sinon.stub(marketApi.load('poloniex'), 'getBalances').withArgs({
       apiKey: apiKey,
@@ -76,7 +76,7 @@ describe('router/private.js', function () {
 
   it('should return balances when authentication is correct', done => {
     supertest(app)
-			.get('/accounts/test-api-key/markets/poloniex/balances')
+			.get('/accounts/test-user/markets/poloniex/balances')
       .set('nonce', 123)
       .set('sign', 'correct')
       .expect('Content-Type', 'application/json; charset=utf-8')
@@ -96,17 +96,17 @@ describe('router/private.js', function () {
 
   it('should return 401 status code when authentication is incorrect', () => {
     supertest(app)
-      .get('/accounts/test-api-key/markets/poloniex/balances')
+      .get('/accounts/test-user/markets/poloniex/balances')
 			.set('nonce', 123)
 			.set('sign', 'incorrect')
       .expect(401)
   });
 
   it('should return buy result after buy info save when buy call', done => {
-    mockAccount.expects('addAsset').withArgs('test-api-key', 'poloniex').once();
-    mockAccount.expects('addHistory').withArgs('test-api-key', 'poloniex').once();
+    mockAccount.expects('addAsset').withArgs('test-user', 'poloniex').once();
+    mockAccount.expects('addHistory').withArgs('test-user', 'poloniex').once();
     supertest(app)
-      .post('/accounts/test-api-key/markets/poloniex/USDT/BTC', {
+      .post('/accounts/test-user/markets/poloniex/USDT/BTC', {
         units: 1,
         price: 100
       })
@@ -122,10 +122,10 @@ describe('router/private.js', function () {
   });
 
   it('should return sell result after sell info save when sell call', done => {
-    mockAccount.expects('removeAsset').withArgs('test-api-key', 'poloniex').once();
-    mockAccount.expects('addHistory').withArgs('test-api-key', 'poloniex').once();
+    mockAccount.expects('removeAsset').withArgs('test-user', 'poloniex').once();
+    mockAccount.expects('addHistory').withArgs('test-user', 'poloniex').once();
     supertest(app)
-      .delete('/accounts/test-api-key/markets/poloniex/USDT/BTC', {
+      .delete('/accounts/test-user/markets/poloniex/USDT/BTC', {
         units: 1,
         price: 10000
       })

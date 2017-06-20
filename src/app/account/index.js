@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-import apiKeyInfo from '../../../data/accounts/info';
 import * as accountDao from '../database/account-dao';
 
 function getHmacSha512(secretKey, data) {
@@ -14,11 +13,11 @@ function getHmacSha512(secretKey, data) {
 }
 
 export function authenticate(accountId, source, dest) {
-  let info = apiKeyInfo[accountId];
-  if (!info) {
+  let secretKey = accountDao.getSecretKey(accountId);
+	if (!secretKey) {
     return false;
   }
-  let hash = getHmacSha512(info.secretKey, source);
+  let hash = getHmacSha512(secretKey, source);
   if (hash !== dest) {
     return false;
   }
@@ -26,7 +25,7 @@ export function authenticate(accountId, source, dest) {
 }
 
 export function getMarketKeys(accountId, market) {
-	return apiKeyInfo[accountId].marketKeys[market];
+	return accountDao.getMarketKeys(accountId, market);
 }
 
 export function addAsset(accountId, market, asset) {

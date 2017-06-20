@@ -37,6 +37,8 @@ router.post('/accounts/:accountId/markets/:market/:base/:vcType', (req, res) => 
       account.addHistory(req.params.accountId, req.params.market, t);
     });
     res.json(result);
+    console.log(`[${Date()}] Purchase - ${req.params.base}_${req.params.vcType} : ${req.params.units} - ${req.params.price}`);
+    console.log(result.raw);
   });
 });
 
@@ -55,6 +57,8 @@ router.delete('/accounts/:accountId/markets/:market/:base/:vcType', (req, res) =
       account.addHistory(req.params.accountId, req.params.market, t);
     });
     res.json(result);
+    console.log(`[${Date()}] Sale - ${req.params.base}_${req.params.vcType} : ${req.params.units} - ${req.params.price}`);
+    console.log(result.raw);
   });
 });
 

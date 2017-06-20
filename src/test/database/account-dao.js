@@ -4,9 +4,17 @@ import * as accountDao from '../../app/database/account-dao';
 describe('database/account-dao', () => {
   const ACCOUNT_ID = 'test-user';
   const INVALID_ACCOUNT_ID = 'invalid-account-id';
-  const MARKET = 'a-market';
-  before(() => {
+  const MARKET = 'poloniex';
 
+  it('should return secretKey if accountId exist', () => {
+    let result = accountDao.getSecretKey(ACCOUNT_ID);
+    expect(result).to.exist;
+  });
+
+  it('should return market keys if accountId and market are valid', () => {
+    let result = accountDao.getMarketKeys(ACCOUNT_ID, MARKET);
+    expect(result.apiKey).to.exist;
+    expect(result.secretKey).to.exist;
   });
 
   it('should return null if accountId does not exist', () => {
