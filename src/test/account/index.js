@@ -21,6 +21,7 @@ describe('account/index', function () {
 
 	before(() => {
 		sinon.stub(accountDao, 'addAsset').returnsArg(2);
+		sinon.stub(accountDao, 'addHistory').returnsArg(2);
 	});
 
   it('should return true with correct args', () => {
@@ -51,7 +52,7 @@ describe('account/index', function () {
 	});
 
 	it('should return result of dao when addHistory call', () => {
-		let result = accountDao.addAsset(ACCOUNT_ID, MARKET, {
+		let result = accountDao.addHistory(ACCOUNT_ID, MARKET, {
       base: 'USDT',
       vcType: 'BTC',
       units: 1.23,
@@ -66,7 +67,10 @@ describe('account/index', function () {
 		expect(result.type).to.equal('sell');
 	});
 
+
+
 	after(() => {
 		accountDao.addAsset.restore();
+		accountDao.addHistory.restore();
 	});
 });
