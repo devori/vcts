@@ -39,7 +39,7 @@ describe('account/index', function () {
     expect(result).to.equal(false);
   });
 
-	it('should return result of dao', () => {
+	it('should return result of dao when addAsset call', () => {
 		let result = accountDao.addAsset(ACCOUNT_ID, MARKET, {
 			base: 'USDT',
 			vcType: 'BTC',
@@ -48,6 +48,22 @@ describe('account/index', function () {
 		expect(result.base).to.equal('USDT');
 		expect(result.vcType).to.equal('BTC');
 		expect(result.units).to.equal(1.23);
+	});
+
+	it('should return result of dao when addHistory call', () => {
+		let result = accountDao.addAsset(ACCOUNT_ID, MARKET, {
+      base: 'USDT',
+      vcType: 'BTC',
+      units: 1.23,
+      price: 2500,
+      total: 2500,
+      type: 'sell',
+      timestamp: 123
+    });
+		expect(result.base).to.equal('USDT');
+		expect(result.vcType).to.equal('BTC');
+		expect(result.units).to.equal(1.23);
+		expect(result.type).to.equal('sell');
 	});
 
 	after(() => {
