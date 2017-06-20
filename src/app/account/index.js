@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import apiKeyInfo from '../../../data/accounts/info';
+import accountDao from '../database/account-dao';
 
 function getHmacSha512(secretKey, data) {
 	let dataStr = "";
@@ -29,13 +30,13 @@ export function getMarketKeys(apiKey, market) {
 }
 
 export function addAsset(accountId, market, asset) {
-
+	return accountDao.addAsset(accountId, market, asset);
 }
 
-export function addHistory(accountId, market, asset) {
-
+export function addHistory(accountId, market, history) {
+	return accountDao.addHistory(accountId, market, history);
 }
 
-export function removeAsset(accountId, market, asset) {
-
+export function removeAsset(accountId, market, base, vcType, units) {
+	accountDao.searchAssets(accountId, market);
 }

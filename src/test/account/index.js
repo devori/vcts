@@ -2,6 +2,7 @@ import { expect, should } from 'chai';
 import sinon from 'sinon';
 import crypto from 'crypto';
 import * as account from '../../app/account';
+import * as accountDao from '../../app/database/account-dao';
 
 function getHmacSha512(secretKey, data) {
 	let dataStr = "";
@@ -15,6 +16,13 @@ function getHmacSha512(secretKey, data) {
 }
 
 describe('account/index', function () {
+	const ACCOUNT_ID = 'test-user';
+	const MARKET = 'a-market';
+
+	before(() => {
+		sinon.stub(accountDao, 'addAsset').returnsArg(2);
+	});
+
   it('should return true with correct args', () => {
     let hash = getHmacSha512('test secret key', { nonce: 123 });
     let result = account.authenticate('test-api-key', {
@@ -30,4 +38,19 @@ describe('account/index', function () {
     }, hash);
     expect(result).to.equal(false);
   });
+
+	it('should return result of dao', () => {
+		let result = accountDao.addAsset(ACCOUNT_ID, MARKET, {
+			base: 'USDT',
+			vcType: 'BTC',
+			units: 1.23
+		});
+		expect(result.base).to.equal('USDT');
+		expect(result.vcType).to.equal('BTC');
+		expect(result.units).to.equal(1.23);
+	});
+
+	after(() => {
+		accountDao.addAsset.restore();
+	});
 });
