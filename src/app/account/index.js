@@ -13,20 +13,20 @@ function getHmacSha512(secretKey, data) {
 	return crypto.createHmac('sha512', secretKey).update(dataStr).digest('hex');
 }
 
-export function authenticate(apiKey, source, dest) {
-  let info = apiKeyInfo[apiKey];
+export function authenticate(accountId, source, dest) {
+  let info = apiKeyInfo[accountId];
   if (!info) {
     return false;
   }
-  let hash = getHmacSha512(apiKeyInfo[apiKey].secretKey, source);
+  let hash = getHmacSha512(info.secretKey, source);
   if (hash !== dest) {
     return false;
   }
   return true;
 }
 
-export function getMarketKeys(apiKey, market) {
-	return apiKeyInfo[apiKey].marketKeys[market];
+export function getMarketKeys(accountId, market) {
+	return apiKeyInfo[accountId].marketKeys[market];
 }
 
 export function addAsset(accountId, market, asset) {
