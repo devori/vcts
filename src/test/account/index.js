@@ -19,9 +19,28 @@ describe('account/index', function () {
 	const ACCOUNT_ID = 'test-user';
 	const MARKET = 'a-market';
 
+	let mockAccountDao;
 	before(() => {
+		mockAccountDao = sinon.mock(accountDao);
+
 		sinon.stub(accountDao, 'addAsset').returnsArg(2);
 		sinon.stub(accountDao, 'addHistory').returnsArg(2);
+		sinon.stub(accountDao, 'searchAssets').returns([
+			{
+				base: 'USDT',
+				vcType: 'BTC',
+				units: 2,
+				price: 2500,
+				uuid: 'units-2-2500'
+			},
+			{
+				base: 'USDT',
+				vcType: 'BTC',
+				units: 1,
+				price: 2400,
+				uuid: 'units-1-2400'
+			}
+		]);
 	});
 
   it('should return true with correct args', () => {
@@ -41,10 +60,11 @@ describe('account/index', function () {
   });
 
 	it('should return result of dao when addAsset call', () => {
-		let result = accountDao.addAsset(ACCOUNT_ID, MARKET, {
+		let result = account.addAsset(ACCOUNT_ID, MARKET, {
 			base: 'USDT',
 			vcType: 'BTC',
-			units: 1.23
+			units: 1.23,
+			price: 2500
 		});
 		expect(result.base).to.equal('USDT');
 		expect(result.vcType).to.equal('BTC');
@@ -52,7 +72,7 @@ describe('account/index', function () {
 	});
 
 	it('should return result of dao when addHistory call', () => {
-		let result = accountDao.addHistory(ACCOUNT_ID, MARKET, {
+		let result = account.addHistory(ACCOUNT_ID, MARKET, {
       base: 'USDT',
       vcType: 'BTC',
       units: 1.23,
@@ -67,10 +87,26 @@ describe('account/index', function () {
 		expect(result.type).to.equal('sell');
 	});
 
-
+	it('should remove assets in order of low price', () => {
+		mockAccountDao.expects('removeAsset').withArgs(ACCOUNT_ID, MARKET, {
+			base: 'USDT',
+			vcType: 'BTC',
+			uuid: 'units-1-2400'
+		});
+		mockAccountDao.expects('updateAsset').withArgs(ACCOUNT_ID, MARKET, {
+			base: 'USDT',
+			vcType: 'BTC',
+			units: 0.5,
+			uuid: 'units-2-2500'
+		});
+		account.removeAsset(ACCOUNT_ID, MARKET, 'USDT', 'BTC', 2.5);
+		mockAccountDao.verify();
+	});
 
 	after(() => {
 		accountDao.addAsset.restore();
 		accountDao.addHistory.restore();
+		accountDao.searchAssets.restore();
+		mockAccountDao.restore();
 	});
 });

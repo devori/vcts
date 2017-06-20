@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import apiKeyInfo from '../../../data/accounts/info';
-import accountDao from '../database/account-dao';
+import * as accountDao from '../database/account-dao';
 
 function getHmacSha512(secretKey, data) {
 	let dataStr = "";
@@ -38,5 +38,28 @@ export function addHistory(accountId, market, history) {
 }
 
 export function removeAsset(accountId, market, base, vcType, units) {
-	accountDao.searchAssets(accountId, market);
+	if (units <= 0) {
+		return;
+	}
+	let assets = accountDao.searchAssets(accountId, market, base, vcType);
+	assets.sort((a1, a2) => a2.price - a1.price);
+	console.log(assets);
+	for (let i = assets.length - 1; i >= 0; i--) {
+		if (assets[i].units <= units) {
+			accountDao.removeAsset(accountId, market, {
+				base,
+				vcType,
+				uuid: assets[i].uuid
+			});
+			units -= assets[i].units;
+		} else {
+			accountDao.updateAsset(accountId, market, {
+				base,
+				vcType,
+				units: assets[i].units - units,
+				uuid: assets[i].uuid
+			});
+			break;
+		}
+	}
 }
