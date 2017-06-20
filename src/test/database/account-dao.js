@@ -30,6 +30,11 @@ describe('database/account-dao', () => {
     let result = accountDao.addAsset(ACCOUNT_ID, MARKET, asset);
     expect(result.uuid).to.exist;
     expect(result).to.not.equal(asset);
+    accountDao.removeAsset(ACCOUNT_ID, MARKET, {
+      base: asset.base,
+      vcType: asset.vcType,
+      uuid: asset.uuid
+    });
   });
 
   it('should return history after history add', () => {
