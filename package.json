@@ -11,7 +11,7 @@
     "lodash": "^4.17.4",
     "lowdb": "^0.16.2",
     "request": "^2.81.0",
-    "uuid": "^3.0.1",
+    "uuid": "^3.1.0",
     "winston": "^2.3.1",
     "winston-daily-rotate-file": "^1.4.6"
   },

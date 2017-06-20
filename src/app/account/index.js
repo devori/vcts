@@ -28,14 +28,14 @@ export function getMarketKeys(apiKey, market) {
 	return apiKeyInfo[apiKey].marketKeys[market];
 }
 
-export function addAsset(uuid, market, asset) {
+export function addAsset(accountId, market, asset) {
 
 }
 
-export function addHistory(uuid, market, asset) {
+export function addHistory(accountId, market, asset) {
 
 }
 
-export function removeAsset(uuid, market, asset) {
+export function removeAsset(accountId, market, asset) {
 
 }

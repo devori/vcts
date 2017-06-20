@@ -1,16 +1,16 @@
 import lowdb from 'lowdb';
-import uuid from 'uuid';
+import uuid from 'uuid/v4';
 
-function findDao(uuid, market) {
+function findDao(accountId, market) {
   try {
-    return lowdb(`./data/accounts/${uuid}/${market}/assets.json`);
+    return lowdb(`./data/accounts/${accountId}/${market}/assets.json`);
   } catch (err) {
     return null;
   };
 }
 
-export function searchAssets(uuid, market, base, vcType) {
-  let dao = findDao(uuid, market);
+export function searchAssets(accountId, market, base, vcType) {
+  let dao = findDao(accountId, market);
   if (!dao) {
     return null;
   };
@@ -21,4 +21,22 @@ export function searchAssets(uuid, market, base, vcType) {
     dao = dao.get(vcType);
   }
   return dao.cloneDeep().value();
+}
+
+export function addAsset(accountId, market, asset) {
+  let dao = findDao(accountId, market);
+  if (!dao) {
+    return null;
+  }
+  if (!dao.has(asset.base).value()) {
+    dao.set(asset.base, {}).write();
+  }
+  dao = dao.get(asset.base);
+  if (!dao.has(asset.vcType).value()) {
+    dao.set(asset.vcType, []);
+  }
+  dao = dao.get(asset.vcType);
+  asset.uuid = uuid();
+  dao.push(asset).write();
+  return dao.last().cloneDeep().value();
 }
