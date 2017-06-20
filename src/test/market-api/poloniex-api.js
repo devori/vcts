@@ -128,6 +128,8 @@ describe('market-api/poloniex-api.js', function () {
         expect(result.raw.resultingTrades).to.have.lengthOf(2);
         expect(result.trades).to.have.lengthOf(2);
         expect(result.trades[0]).to.deep.include({
+          base: 'USDT',
+          vcType: 'BTC',
           units: 0.4,
           price: 2500,
           total: 0.4 * 2500 * 0.9975,
@@ -135,6 +137,8 @@ describe('market-api/poloniex-api.js', function () {
         });
         expect(result.trades[0].timestamp).to.be.a('number');
         expect(result.trades[1]).to.deep.include({
+          base: 'USDT',
+          vcType: 'BTC',
           units: 0.6,
           price: 2600,
           total: 0.6 * 2600 * 0.9975,
@@ -195,6 +199,8 @@ describe('market-api/poloniex-api.js', function () {
         expect(result.raw.resultingTrades).to.have.lengthOf(2);
         expect(result.trades).to.have.lengthOf(2);
         expect(result.trades[0]).to.deep.include({
+          base: 'USDT',
+          vcType: 'BTC',
           units: 0.4 * 0.9975,
           price: 2500,
           total: 0.4 * 2500,
@@ -202,6 +208,8 @@ describe('market-api/poloniex-api.js', function () {
         });
         expect(result.trades[0].timestamp).to.be.a('number');
         expect(result.trades[1]).to.deep.include({
+          base: 'USDT',
+          vcType: 'BTC',
           units: 0.6 * 0.9975,
           price: 2600,
           total: 0.6 * 2600,

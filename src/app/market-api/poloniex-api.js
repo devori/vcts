@@ -56,6 +56,8 @@ export function sell(auth, base, vcType, units, price) {
 		};
 		data.resultingTrades.forEach(t => {
 			result.trades.push({
+				base,
+				vcType,
 				units: Number(t.amount),
 				price: Number(t.rate),
 				total: Number(t.amount) * Number(t.rate) * 0.9975,
@@ -80,6 +82,8 @@ export function buy(auth, base, vcType, units, price) {
 		};
 		data.resultingTrades.forEach(t => {
 			result.trades.push({
+				base,
+				vcType,
 				units: Number(t.amount) * 0.9975,
 				price: Number(t.rate),
 				total: Number(t.amount) * Number(t.rate),
