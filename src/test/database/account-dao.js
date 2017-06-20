@@ -63,11 +63,30 @@ describe('database/account-dao', () => {
     expect(arr[arr.length - 1].uuid).to.equal(addedAsset.uuid);
     let lengthBeforeRemove = arr.length;
     accountDao.removeAsset(ACCOUNT_ID, MARKET, {
-      base: 'USDT',
-      vcType: 'BTC',
+      base: addedAsset.base,
+      vcType: addedAsset.vcType,
       uuid: addedAsset.uuid
     });
     let arrAfterRemove = accountDao.searchAssets(ACCOUNT_ID, MARKET, 'USDT', 'BTC');
     expect(arrAfterRemove.length).to.equal(lengthBeforeRemove - 1);
   });
+
+  it('should update asset matched when updateAsset', () => {
+    let addedAsset = accountDao.addAsset(ACCOUNT_ID, MARKET, {
+      base: 'USDT',
+      vcType: 'BTC',
+      units: 1,
+      price: 2500,
+      timestamp: 123
+    });
+    accountDao.updateAsset(ACCOUNT_ID, MARKET, {
+      base: addedAsset.base,
+      vcType: addedAsset.vcType,
+      units: 0.4,
+      uuid: addedAsset.uuid
+    });
+    let arr = accountDao.searchAssets(ACCOUNT_ID, MARKET, 'USDT', 'BTC');
+    let updatedAsset = arr[arr.length - 1];
+    expect(updatedAsset.units).to.equal(0.4);
+  })
 });

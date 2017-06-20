@@ -84,3 +84,19 @@ export function removeAsset(accountId, market, condition) {
   }).write();
   return target;
 }
+
+export function updateAsset(accountId, market, asset) {
+  let dao = findDao(accountId, market, 'assets');
+  if (!dao) {
+    return null;
+  }
+  dao = findByPath(dao, [
+    { name: asset.base, force: false },
+    { name: asset.vcType, force: false }
+  ]);
+  if (!dao) {
+    return null;
+  }
+  dao.find({ uuid: asset.uuid }).assign(asset).write();
+  return dao.find({ uuid: asset.uuid }).cloneDeep().value();
+}
