@@ -9,10 +9,10 @@ router.use('/accounts/:accountId', (req, res, next) => {
   let signObj = req.body || {};
   signObj.nonce = req.headers.nonce;
   let auth = account.authenticate(req.params.accountId, signObj, req.headers.sign);
-  // if (!auth) {
-  //   res.sendStatus(401);
-  //   return;
-  // }
+  if (!auth) {
+    res.sendStatus(401);
+    return;
+  }
   next();
 });
 
@@ -40,8 +40,8 @@ router.post('/accounts/:accountId/markets/:market/:base/:vcType', (req, res) => 
       account.addHistory(req.params.accountId, req.params.market, t);
     });
     res.json(result);
-    console.log(`[${Date()}] Purchase - ${req.params.base}_${req.params.vcType} : ${req.body.units} - ${req.body.price}`);
-    console.log(result.trade);
+    logger.info(`[${Date()}] Purchase - ${req.params.base}_${req.params.vcType} : ${req.body.units} - ${req.body.price}`);
+    logger.info(result.trade);
   }).catch(err => {
     res.status(500).send(er);
   });
@@ -62,8 +62,8 @@ router.delete('/accounts/:accountId/markets/:market/:base/:vcType', (req, res) =
       account.addHistory(req.params.accountId, req.params.market, t);
     });
     res.json(result);
-    console.log(`[${Date()}] Sale - ${req.params.base}_${req.params.vcType} : ${req.body.units} - ${req.body.price}`);
-    console.log(result.raw);
+    logger.info(`[${Date()}] Sale - ${req.params.base}_${req.params.vcType} : ${req.body.units} - ${req.body.price}`);
+    logger.info(result.raw);
   }).catch(err => {
     res.status(500).send(err);
   });
