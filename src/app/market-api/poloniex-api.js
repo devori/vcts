@@ -103,7 +103,6 @@ function callPrivateApi(auth, command, params = {}) {
 		Key: auth.apiKey,
 		Sign: getHmacSha512(auth.secretKey, params)
 	};
-
 	return new Promise((resolve, reject) => {
 		request({
 			method: 'POST',
@@ -112,10 +111,16 @@ function callPrivateApi(auth, command, params = {}) {
 			form: params
 		}, (err, res, body) => {
 			if (err) {
+				reject();
 				throw err;
 			}
 			resolve(JSON.parse(body));
-		});
+		})
+	}).then(result => {
+		if (result.error) {
+			throw result.error;
+		}
+		return result;
 	});
 }
 

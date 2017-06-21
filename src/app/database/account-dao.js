@@ -50,7 +50,7 @@ export function searchAssets(accountId, market, base, vcType) {
   if (vcType) {
     dao = dao.get(vcType);
   }
-  return dao.cloneDeep().value();
+  return dao.cloneDeep().value() || [];
 }
 
 export function addAsset(accountId, market, asset) {

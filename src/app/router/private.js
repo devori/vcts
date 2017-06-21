@@ -9,10 +9,10 @@ router.use('/accounts/:accountId', (req, res, next) => {
   let signObj = req.body || {};
   signObj.nonce = req.headers.nonce;
   let auth = account.authenticate(req.params.accountId, signObj, req.headers.sign);
-  if (!auth) {
-    res.sendStatus(401);
-    return;
-  }
+  // if (!auth) {
+  //   res.sendStatus(401);
+  //   return;
+  // }
   next();
 });
 
@@ -20,6 +20,9 @@ router.get('/accounts/:accountId/markets/:market/balances', (req, res) => {
   let keys = account.getMarketKeys(req.params.accountId, req.params.market);
   marketApi.load(req.params.market).getBalances(keys).then(result => {
     res.json(result.balances);
+  }).catch(err => {
+    console.log(err);
+    res.sendStatus(500);
   });
 });
 
@@ -37,15 +40,17 @@ router.post('/accounts/:accountId/markets/:market/:base/:vcType', (req, res) => 
       account.addHistory(req.params.accountId, req.params.market, t);
     });
     res.json(result);
-    console.log(`[${Date()}] Purchase - ${req.params.base}_${req.params.vcType} : ${req.params.units} - ${req.params.price}`);
-    console.log(result.raw);
+    console.log(`[${Date()}] Purchase - ${req.params.base}_${req.params.vcType} : ${req.body.units} - ${req.body.price}`);
+    console.log(result.trade);
+  }).catch(err => {
+    res.status(500).send(er);
   });
 });
 
 
 router.delete('/accounts/:accountId/markets/:market/:base/:vcType', (req, res) => {
   let keys = account.getMarketKeys(req.params.accountId, req.params.market);
-  marketApi.load(req.params.market).buy(
+  marketApi.load(req.params.market).sell(
     keys,
     req.params.base,
     req.params.vcType,
@@ -53,12 +58,14 @@ router.delete('/accounts/:accountId/markets/:market/:base/:vcType', (req, res) =
     req.body.price
   ).then(result => {
     result.trades.forEach(t => {
-      account.removeAsset(req.params.accountId, req.params.market, t);
+      account.removeAsset(req.params.accountId, req.params.market, t.base, t.vcType, t.units);
       account.addHistory(req.params.accountId, req.params.market, t);
     });
     res.json(result);
-    console.log(`[${Date()}] Sale - ${req.params.base}_${req.params.vcType} : ${req.params.units} - ${req.params.price}`);
+    console.log(`[${Date()}] Sale - ${req.params.base}_${req.params.vcType} : ${req.body.units} - ${req.body.price}`);
     console.log(result.raw);
+  }).catch(err => {
+    res.status(500).send(err);
   });
 });
 
