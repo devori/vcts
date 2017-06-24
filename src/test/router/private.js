@@ -79,7 +79,7 @@ describe('router/private.js', function () {
 
   it('should return balances when authentication is correct', done => {
     supertest(app)
-			.get('/markets/poloniex/balances')
+			.get('/markets/poloniex/assets/balances')
       .set('api-key', ACCOUNT_API_KEY)
       .set('sign', ACCOUNT_VALID_SIGN)
       .set('nonce', 123)
@@ -100,7 +100,7 @@ describe('router/private.js', function () {
 
   it('should return 401 status code when authentication is incorrect', () => {
     supertest(app)
-      .get('/markets/poloniex/balances')
+      .get('/markets/poloniex/assets/balances')
       .set('api-key', ACCOUNT_API_KEY)
       .set('sign', ACCOUNT_INVALID_SIGN)
       .set('nonce', 123)
@@ -111,7 +111,7 @@ describe('router/private.js', function () {
     mockAccount.expects('addAsset').withArgs('test-user', 'poloniex').once();
     mockAccount.expects('addHistory').withArgs('test-user', 'poloniex').once();
     supertest(app)
-      .post('/markets/poloniex/USDT/BTC')
+      .post('/markets/poloniex/assets/USDT/BTC')
       .send({
         units: 1,
         price: 100
@@ -132,7 +132,7 @@ describe('router/private.js', function () {
     mockAccount.expects('removeAsset').withArgs('test-user', 'poloniex').once();
     mockAccount.expects('addHistory').withArgs('test-user', 'poloniex').once();
     supertest(app)
-      .delete('/markets/poloniex/USDT/BTC')
+      .delete('/markets/poloniex/assets/USDT/BTC')
       .send({
         units: 1,
         price: 10000

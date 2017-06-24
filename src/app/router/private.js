@@ -19,7 +19,7 @@ router.use('/', (req, res, next) => {
   next();
 });
 
-router.get('/markets/:market/balances', (req, res) => {
+router.get('/markets/:market/assets/balances', (req, res) => {
   let apiKey = req.headers['api-key'];
   let keys = account.getMarketKeys(apiKey, req.params.market);
   marketApi.load(req.params.market).getBalances(keys).then(result => {
@@ -30,7 +30,7 @@ router.get('/markets/:market/balances', (req, res) => {
   });
 });
 
-router.post('/markets/:market/:base/:vcType', (req, res) => {
+router.post('/markets/:market/assets/:base/:vcType', (req, res) => {
   let apiKey = req.headers['api-key'];
   let keys = account.getMarketKeys(apiKey, req.params.market);
   marketApi.load(req.params.market).buy(
@@ -53,7 +53,7 @@ router.post('/markets/:market/:base/:vcType', (req, res) => {
 });
 
 
-router.delete('/markets/:market/:base/:vcType', (req, res) => {
+router.delete('/markets/:market/assets/:base/:vcType', (req, res) => {
   let apiKey = req.headers['api-key'];
   let keys = account.getMarketKeys(apiKey, req.params.market);
   marketApi.load(req.params.market).sell(
