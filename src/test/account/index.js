@@ -47,6 +47,15 @@ describe('account/index', function () {
 				uuid: 'units-1-2400'
 			}
 		]);
+		sinon.stub(accountDao, 'getHistory').returns({
+			USDT: {
+				BTC: [
+					{
+						base: 'USDT'
+					}
+				]
+			}
+		})
 	});
 
   it('should return true with correct args', () => {
@@ -115,11 +124,19 @@ describe('account/index', function () {
 		expect(result.secretKey).to.equal(SECRET_KEY);
 	});
 
+	it('should return histories matched accountId when getHistory call', () => {
+		let result = account.getHistory(ACCOUNT_ID, MARKET, 'USDT', 'BTC');
+		expect(result.USDT).to.exist;
+		expect(result.USDT.BTC).to.exist;
+		expect(result.USDT.BTC.length).to.equal(1);
+	});
+
 	after(() => {
 		accountDao.createAccount.restore();
 		accountDao.addAsset.restore();
 		accountDao.addHistory.restore();
 		accountDao.searchAssets.restore();
+		accountDao.getHistory.restore();
 		mockAccountDao.restore();
 	});
 });

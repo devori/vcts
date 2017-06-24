@@ -14,6 +14,7 @@ describe('router/private.js', function () {
   const ACCOUNT_INVALID_SIGN = 'account-invalid-sign';
   const POLONIEX_API_KEY = 'poloniex-api-key';
   const POLONIEX_SECRET_API = 'poloniex-secret-key';
+  const MARKET = 'poloniex';
 
   let mockAccount;
   let app;
@@ -23,6 +24,22 @@ describe('router/private.js', function () {
 		sinon.stub(account, 'authenticate')
 			.withArgs(ACCOUNT_API_KEY, sinon.match({ nonce: '123' }), ACCOUNT_VALID_SIGN).returns(true)
 			.withArgs(ACCOUNT_API_KEY, sinon.match({ nonce: '123' }), ACCOUNT_INVALID_SIGN).returns(false);
+
+    sinon.stub(account, 'getHistory').withArgs(ACCOUNT_API_KEY, MARKET, sinon.match.any, sinon.match.any).returns(Promise.resolve({
+      "USDT": {
+        "BTC": [
+          {
+            "base": "USDT",
+            "vcType": "BTC",
+            "units": 1,
+            "price": 2500,
+            "total": 2500,
+            "type": "sell",
+            "timestamp": 123
+          }
+        ]
+      }
+    }));
 
     sinon.stub(marketApi.load('poloniex'), 'getBalances').withArgs({
       apiKey: POLONIEX_API_KEY,
@@ -149,8 +166,27 @@ describe('router/private.js', function () {
     this.timeout(3000);
   });
 
+  it('should return history matched condition when histories call using get method', done => {
+    supertest(app)
+      .get('/markets/poloniex/histories/USDT/BTC')
+      .set('api-key', ACCOUNT_API_KEY)
+      .set('sign', ACCOUNT_VALID_SIGN)
+      .set('nonce', 123)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200)
+      .end((err, res) => {
+        expect(res.body.USDT).to.exist;
+        expect(res.body.USDT.BTC).to.exist;
+        expect(res.body.USDT.BTC.length).to.equal(1);
+        expect(res.body.USDT.BTC[0].base).to.equal('USDT');
+        done();
+      });
+    this.timeout(3000);
+  });
+
   afterEach(() => {
 		account.authenticate.restore();
+    account.getHistory.restore();
     mockAccount.restore();
     marketApi.load('poloniex').getBalances.restore();
     marketApi.load('poloniex').buy.restore();

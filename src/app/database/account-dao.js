@@ -80,6 +80,20 @@ export function addHistory(accountId, market, history) {
   return dao.last().cloneDeep().value();
 }
 
+export function getHistory(accountId, market, base, vcType) {
+  let dao = findDao(accountId, market, 'history');
+  if (!dao) {
+    return null;
+  }
+  if (base) {
+    dao = dao.get(base);
+    if (vcType) {
+      dao = dao.get(vcType);
+    }
+  }
+  return dao.cloneDeep().value();
+}
+
 export function removeAsset(accountId, market, condition) {
   let dao = findDao(accountId, market, 'assets');
   if (!dao) {
@@ -121,7 +135,7 @@ export function createAccount(info) {
   let apiKey = uuid();
   let secretKey = uuid();
   try {
-    let db = lowdb(`./data/accounts/${apiKey}.json`);
+    // let db = lowdb(`./data/accounts/${apiKey}.json`);
     return {
       apiKey,
       secretKey

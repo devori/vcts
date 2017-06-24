@@ -65,3 +65,7 @@ export function removeAsset(accountId, market, base, vcType, units) {
 		}
 	}
 }
+
+export function getHistory(accountId, market, base, vcType) {
+	return accountDao.getHistory(accountId, market, base, vcType);
+}

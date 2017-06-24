@@ -102,5 +102,20 @@ describe('database/account-dao', () => {
     let result = accountDao.createAccount({});
     expect(result.apiKey).to.exist;
     expect(result.secretKey).to.exist;
-  })
+  });
+
+  it('should return history when getHistory call', () => {
+    accountDao.addHistory(ACCOUNT_ID, MARKET, {
+      base: 'USDT',
+      vcType: 'BTC',
+      units: 1,
+      price: 2500,
+      total: 2500,
+      type: 'sell',
+      timestamp: 123
+    });
+    let result = accountDao.getHistory(ACCOUNT_ID, MARKET, null, null);
+    expect(result.USDT).to.exist;
+    expect(result.USDT.BTC).to.exist;
+  });
 });

@@ -75,4 +75,15 @@ router.delete('/markets/:market/assets/:base/:vcType', (req, res) => {
   });
 });
 
+router.get('/markets/:market/histories/:base?/:vcType?', (req, res) => {
+  let apiKey = req.headers['api-key'];
+  let base = req.params.base;
+  let vcType = req.params.vcType;
+  account.getHistory(apiKey, req.params.market, base, vcType).then(result => {
+    res.json(result);
+  }).catch(err => {
+    res.status(500).send(err);
+  });
+});
+
 export default router;
