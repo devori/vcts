@@ -25,7 +25,7 @@ describe('router/private.js', function () {
 			.withArgs(ACCOUNT_API_KEY, sinon.match({ nonce: '123' }), ACCOUNT_VALID_SIGN).returns(true)
 			.withArgs(ACCOUNT_API_KEY, sinon.match({ nonce: '123' }), ACCOUNT_INVALID_SIGN).returns(false);
 
-    sinon.stub(account, 'getHistory').withArgs(ACCOUNT_API_KEY, MARKET, sinon.match.any, sinon.match.any).returns(Promise.resolve({
+    sinon.stub(account, 'getHistory').withArgs(ACCOUNT_API_KEY, MARKET, sinon.match.any, sinon.match.any).returns({
       "USDT": {
         "BTC": [
           {
@@ -39,7 +39,7 @@ describe('router/private.js', function () {
           }
         ]
       }
-    }));
+    });
 
     sinon.stub(marketApi.load('poloniex'), 'getBalances').withArgs({
       apiKey: POLONIEX_API_KEY,

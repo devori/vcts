@@ -79,11 +79,8 @@ router.get('/markets/:market/histories/:base?/:vcType?', (req, res) => {
   let apiKey = req.headers['api-key'];
   let base = req.params.base;
   let vcType = req.params.vcType;
-  account.getHistory(apiKey, req.params.market, base, vcType).then(result => {
-    res.json(result);
-  }).catch(err => {
-    res.status(500).send(err);
-  });
+  let result = account.getHistory(apiKey, req.params.market, base, vcType);
+  res.json(result);
 });
 
 export default router;
