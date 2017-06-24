@@ -9,8 +9,11 @@ import privateRouter from '../../app/router/private';
 import * as account from '../../app/account';
 
 describe('router/private.js', function () {
-  const apiKey = 'api key';
-  const secretKey = 'secret key';
+  const ACCOUNT_API_KEY = 'test-user';
+  const ACCOUNT_VALID_SIGN = 'account-valid-sign';
+  const ACCOUNT_INVALID_SIGN = 'account-invalid-sign';
+  const POLONIEX_API_KEY = 'poloniex-api-key';
+  const POLONIEX_SECRET_API = 'poloniex-secret-key';
 
   let mockAccount;
   let app;
@@ -18,12 +21,12 @@ describe('router/private.js', function () {
     mockAccount = sinon.mock(account);
 
 		sinon.stub(account, 'authenticate')
-			.withArgs('test-user', sinon.match({ nonce: '123' }), 'correct').returns(true)
-			.withArgs('test-user', sinon.match({ nonce: '123' }), 'incorrect').returns(false);
+			.withArgs(ACCOUNT_API_KEY, sinon.match({ nonce: '123' }), ACCOUNT_VALID_SIGN).returns(true)
+			.withArgs(ACCOUNT_API_KEY, sinon.match({ nonce: '123' }), ACCOUNT_INVALID_SIGN).returns(false);
 
     sinon.stub(marketApi.load('poloniex'), 'getBalances').withArgs({
-      apiKey: apiKey,
-      secretKey: secretKey
+      apiKey: POLONIEX_API_KEY,
+      secretKey: POLONIEX_SECRET_API
     }).callsFake(() => {
       return Promise.resolve({
   			balances: {
@@ -36,8 +39,8 @@ describe('router/private.js', function () {
     });
 
     sinon.stub(marketApi.load('poloniex'), 'buy').withArgs({
-      apiKey: apiKey,
-      secretKey: secretKey
+      apiKey: POLONIEX_API_KEY,
+      secretKey: POLONIEX_SECRET_API
     }).callsFake(() => {
       return Promise.resolve({
   			trades: [
@@ -53,8 +56,8 @@ describe('router/private.js', function () {
     });
 
     sinon.stub(marketApi.load('poloniex'), 'sell').withArgs({
-      apiKey: apiKey,
-      secretKey: secretKey
+      apiKey: POLONIEX_API_KEY,
+      secretKey: POLONIEX_SECRET_API
     }).callsFake(() => {
       return Promise.resolve({
         trades: [
@@ -76,9 +79,10 @@ describe('router/private.js', function () {
 
   it('should return balances when authentication is correct', done => {
     supertest(app)
-			.get('/accounts/test-user/markets/poloniex/balances')
+			.get('/markets/poloniex/balances')
+      .set('api-key', ACCOUNT_API_KEY)
+      .set('sign', ACCOUNT_VALID_SIGN)
       .set('nonce', 123)
-      .set('sign', 'correct')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200)
       .end((err, res) => {
@@ -96,9 +100,10 @@ describe('router/private.js', function () {
 
   it('should return 401 status code when authentication is incorrect', () => {
     supertest(app)
-      .get('/accounts/test-user/markets/poloniex/balances')
-			.set('nonce', 123)
-			.set('sign', 'incorrect')
+      .get('/markets/poloniex/balances')
+      .set('api-key', ACCOUNT_API_KEY)
+      .set('sign', ACCOUNT_INVALID_SIGN)
+      .set('nonce', 123)
       .expect(401)
   });
 
@@ -106,12 +111,13 @@ describe('router/private.js', function () {
     mockAccount.expects('addAsset').withArgs('test-user', 'poloniex').once();
     mockAccount.expects('addHistory').withArgs('test-user', 'poloniex').once();
     supertest(app)
-      .post('/accounts/test-user/markets/poloniex/USDT/BTC', {
+      .post('/markets/poloniex/USDT/BTC', {
         units: 1,
         price: 100
       })
+      .set('api-key', ACCOUNT_API_KEY)
+      .set('sign', ACCOUNT_VALID_SIGN)
       .set('nonce', 123)
-      .set('sign', 'correct')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200)
       .end((err, res) => {
@@ -125,12 +131,13 @@ describe('router/private.js', function () {
     mockAccount.expects('removeAsset').withArgs('test-user', 'poloniex').once();
     mockAccount.expects('addHistory').withArgs('test-user', 'poloniex').once();
     supertest(app)
-      .delete('/accounts/test-user/markets/poloniex/USDT/BTC', {
+      .delete('/markets/poloniex/USDT/BTC', {
         units: 1,
         price: 10000
       })
+      .set('api-key', ACCOUNT_API_KEY)
+      .set('sign', ACCOUNT_VALID_SIGN)
       .set('nonce', 123)
-      .set('sign', 'correct')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200)
       .end((err, res) => {
