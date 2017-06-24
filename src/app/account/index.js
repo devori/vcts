@@ -12,6 +12,9 @@ function getHmacSha512(secretKey, data) {
 	return crypto.createHmac('sha512', secretKey).update(dataStr).digest('hex');
 }
 
+export function register(info) {
+}
+
 export function authenticate(accountId, source, dest) {
   let secretKey = accountDao.getSecretKey(accountId);
 	if (!secretKey) {

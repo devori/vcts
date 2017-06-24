@@ -1,13 +1,29 @@
 import express from 'express';
+import bodyParser from 'body-parser';
 import supertest from 'supertest';
 import sinon from 'sinon';
 import { expect, should } from 'chai';
 import * as marketApi from '../../app/market-api';
 import publicRouter from '../../app/router/public';
+import * as account from '../../app/account'
 
 describe('router/public.js', function () {
+  let TEST_NAME = 'test';
+  let TEST_EMAIL = 'test@gmail.com';
+
+  let API_KEY = 'api-key';
+  let SECRET_KEY = 'secret-key';
+
   let app;
   before(() => {
+    sinon.stub(account, 'register')
+			.withArgs(sinon.match({
+         name: TEST_NAME, email: TEST_EMAIL
+       })).returns({
+         apiKey: API_KEY,
+         secretKey: SECRET_KEY
+       });
+
     sinon.stub(marketApi.load('poloniex'), 'getTickers').callsFake(() => {
       return Promise.resolve({
         USDT: {
@@ -23,6 +39,7 @@ describe('router/public.js', function () {
     });
 
     app = express();
+    app.use(bodyParser.json());
     app.use('/', publicRouter);
   });
 
@@ -84,6 +101,28 @@ describe('router/public.js', function () {
         expect(res.body.low).to.equal(2400);
         expect(res.body.high).to.equal(2500);
         expect(res.body.timestamp).to.be.a('number');
+        done();
+      });
+    this.timeout(3000);
+  });
+
+  it('should return api keys info when account register', (done) => {
+    supertest(app)
+      .post('/accounts')
+      .send({
+        name: TEST_NAME,
+        email: TEST_EMAIL
+      })
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200)
+      .end((err, res) => {
+        if (err) {
+          console.log(err);
+          expect.fail('', '', 'request failure');
+          return;
+        }
+        expect(res.body.apiKey).to.equal(API_KEY);
+        expect(res.body.secretKey).to.equal(SECRET_KEY);
         done();
       });
     this.timeout(3000);

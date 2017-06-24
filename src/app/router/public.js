@@ -1,14 +1,15 @@
 import { Router } from 'express';
 import * as marketApi from '../market-api';
+import * as account from '../account';
 import logger from '../util/logger';
 
 let router = Router();
 router.use((req, res, next) => {
+  logger.verbose(`[${Date()}] ${req.url} called`);
   next();
 });
 
 router.get('/markets/:market/tickers/:base?/:vcType?', (req, res) => {
-  logger.verbose(`[${Date()}] ${req.url} called`);
   res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
   marketApi.load(req.params.market).getTickers().then(tickers => {
     let base = req.params.base;
@@ -23,6 +24,11 @@ router.get('/markets/:market/tickers/:base?/:vcType?', (req, res) => {
       res.json(tickers);
     }
   });
+});
+
+router.post('/accounts', (req, res) => {
+  let result = account.register(req.body);
+  res.json(result);
 });
 
 export default router;
