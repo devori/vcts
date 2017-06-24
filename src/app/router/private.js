@@ -48,7 +48,7 @@ router.post('/markets/:market/:base/:vcType', (req, res) => {
     logger.info(`[${Date()}] Purchase - ${req.params.base}_${req.params.vcType} : ${req.body.units} - ${req.body.price}`);
     logger.info(result.trade);
   }).catch(err => {
-    res.status(500).send(er);
+    res.status(500).send(err);
   });
 });
 
