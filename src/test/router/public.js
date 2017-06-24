@@ -129,6 +129,7 @@ describe('router/public.js', function () {
   });
 
   after(() => {
+    account.register.restore();
     marketApi.load('poloniex').getTickers.restore();
   });
 });

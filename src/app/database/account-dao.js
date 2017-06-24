@@ -116,3 +116,7 @@ export function updateAsset(accountId, market, asset) {
   dao.find({ uuid: asset.uuid }).assign(asset).write();
   return dao.find({ uuid: asset.uuid }).cloneDeep().value();
 }
+
+export function createAccount(info) {
+  
+}

@@ -13,6 +13,7 @@ function getHmacSha512(secretKey, data) {
 }
 
 export function register(info) {
+	return accountDao.createAccount(info);
 }
 
 export function authenticate(accountId, source, dest) {

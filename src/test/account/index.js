@@ -18,11 +18,17 @@ function getHmacSha512(secretKey, data) {
 describe('account/index', function () {
 	const ACCOUNT_ID = 'test-user';
 	const MARKET = 'poloniex';
+	const API_KEY = 'api-key';
+	const SECRET_KEY = 'secret-key';
 
 	let mockAccountDao;
 	before(() => {
 		mockAccountDao = sinon.mock(accountDao);
 
+		sinon.stub(accountDao, 'createAccount').returns({
+			apiKey: API_KEY,
+			secretKey: SECRET_KEY
+		});
 		sinon.stub(accountDao, 'addAsset').returnsArg(2);
 		sinon.stub(accountDao, 'addHistory').returnsArg(2);
 		sinon.stub(accountDao, 'searchAssets').returns([
@@ -103,7 +109,14 @@ describe('account/index', function () {
 		mockAccountDao.verify();
 	});
 
+	it('should return api key info when register call', () => {
+		let result = account.register({});
+		expect(result.apiKey).to.equal(API_KEY);
+		expect(result.secretKey).to.equal(SECRET_KEY);
+	});
+
 	after(() => {
+		accountDao.createAccount.restore();
 		accountDao.addAsset.restore();
 		accountDao.addHistory.restore();
 		accountDao.searchAssets.restore();
