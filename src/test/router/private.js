@@ -111,7 +111,8 @@ describe('router/private.js', function () {
     mockAccount.expects('addAsset').withArgs('test-user', 'poloniex').once();
     mockAccount.expects('addHistory').withArgs('test-user', 'poloniex').once();
     supertest(app)
-      .post('/markets/poloniex/USDT/BTC', {
+      .post('/markets/poloniex/USDT/BTC')
+      .send({
         units: 1,
         price: 100
       })
@@ -131,7 +132,8 @@ describe('router/private.js', function () {
     mockAccount.expects('removeAsset').withArgs('test-user', 'poloniex').once();
     mockAccount.expects('addHistory').withArgs('test-user', 'poloniex').once();
     supertest(app)
-      .delete('/markets/poloniex/USDT/BTC', {
+      .delete('/markets/poloniex/USDT/BTC')
+      .send({
         units: 1,
         price: 10000
       })
