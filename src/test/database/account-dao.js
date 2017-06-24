@@ -96,5 +96,11 @@ describe('database/account-dao', () => {
     let arr = accountDao.searchAssets(ACCOUNT_ID, MARKET, 'USDT', 'BTC');
     let updatedAsset = arr[arr.length - 1];
     expect(updatedAsset.units).to.equal(0.4);
+  });
+
+  it('should return api-key info when createAccount call', () => {
+    let result = accountDao.createAccount({});
+    expect(result.apiKey).to.exist;
+    expect(result.secretKey).to.exist;
   })
 });

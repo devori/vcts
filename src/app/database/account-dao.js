@@ -118,5 +118,15 @@ export function updateAsset(accountId, market, asset) {
 }
 
 export function createAccount(info) {
-  
+  let apiKey = uuid();
+  let secretKey = uuid();
+  try {
+    let db = lowdb(`./data/accounts/${apiKey}.json`);
+    return {
+      apiKey,
+      secretKey
+    }
+  } catch (err) {
+    return null;
+  }
 }
