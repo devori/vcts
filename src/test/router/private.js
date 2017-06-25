@@ -22,8 +22,8 @@ describe('router/private.js', function () {
     mockAccount = sinon.mock(account);
 
 		sinon.stub(account, 'authenticate')
-			.withArgs(ACCOUNT_API_KEY, sinon.match({ nonce: '123' }), ACCOUNT_VALID_SIGN).returns(true)
-			.withArgs(ACCOUNT_API_KEY, sinon.match({ nonce: '123' }), ACCOUNT_INVALID_SIGN).returns(false);
+			.withArgs(ACCOUNT_API_KEY, sinon.match.any, ACCOUNT_VALID_SIGN).returns(true)
+			.withArgs(ACCOUNT_API_KEY, sinon.match.any, ACCOUNT_INVALID_SIGN).returns(false);
 
     sinon.stub(account, 'getHistory').withArgs(ACCOUNT_API_KEY, MARKET, sinon.match.any, sinon.match.any).returns({
       "USDT": {
@@ -100,7 +100,7 @@ describe('router/private.js', function () {
 			.get('/markets/poloniex/assets')
       .set('api-key', ACCOUNT_API_KEY)
       .set('sign', ACCOUNT_VALID_SIGN)
-      .set('nonce', 123)
+      .set('nonce', new Date().getTime())
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200)
       .end((err, res) => {
@@ -121,6 +121,15 @@ describe('router/private.js', function () {
       .get('/')
       .set('api-key', ACCOUNT_API_KEY)
       .set('sign', ACCOUNT_INVALID_SIGN)
+      .set('nonce', new Date().getTime())
+      .expect(401)
+  });
+
+  it('should return 401 status code when nonce is less than current timestamp - 3000', () => {
+    supertest(app)
+      .get('/')
+      .set('api-key', ACCOUNT_API_KEY)
+      .set('sign', ACCOUNT_INVALID_SIGN)
       .set('nonce', 123)
       .expect(401)
   });
@@ -136,7 +145,7 @@ describe('router/private.js', function () {
       })
       .set('api-key', ACCOUNT_API_KEY)
       .set('sign', ACCOUNT_VALID_SIGN)
-      .set('nonce', 123)
+      .set('nonce', new Date().getTime())
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200)
       .end((err, res) => {
@@ -157,7 +166,7 @@ describe('router/private.js', function () {
       })
       .set('api-key', ACCOUNT_API_KEY)
       .set('sign', ACCOUNT_VALID_SIGN)
-      .set('nonce', 123)
+      .set('nonce', new Date().getTime())
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200)
       .end((err, res) => {
@@ -172,7 +181,7 @@ describe('router/private.js', function () {
       .get('/markets/poloniex/histories/USDT/BTC')
       .set('api-key', ACCOUNT_API_KEY)
       .set('sign', ACCOUNT_VALID_SIGN)
-      .set('nonce', 123)
+      .set('nonce', new Date().getTime())
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200)
       .end((err, res) => {

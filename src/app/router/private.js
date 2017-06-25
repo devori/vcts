@@ -6,8 +6,13 @@ import logger from '../util/logger';
 let router = Router();
 router.use('/', (req, res, next) => {
   logger.verbose(`[${Date()}] ${req.url} called`);
+  let nonce = req.headers.nonce;
+  if (!nonce || nonce < (new Date().getTime() - 3000)) {
+    res.status(401);
+    return;
+  }
   let signObj = req.body || {};
-  signObj.nonce = req.headers.nonce;
+  signObj.nonce = nonce;
 
   let apiKey = req.headers['api-key']
   let signValue =  req.headers['sign'];
