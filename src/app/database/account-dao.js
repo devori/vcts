@@ -1,5 +1,7 @@
 import lowdb from 'lowdb';
 import uuid from 'uuid/v4';
+import fs from 'fs'
+import logger from '../util/logger'
 
 function findDao(...filePaths) {
   try {
@@ -135,12 +137,16 @@ export function createAccount(info) {
   let apiKey = uuid();
   let secretKey = uuid();
   try {
-    // let db = lowdb(`./data/accounts/${apiKey}.json`);
-    return {
+    fs.mkdirSync(`./data/accounts/${apiKey}`);
+    fs.mkdirSync(`./data/accounts/${apiKey}/poloniex`);
+    let db = lowdb(`./data/accounts/${apiKey}/key.json`);
+    db.defaults({
       apiKey,
       secretKey
-    }
+    }).write();
+    return db.cloneDeep().value();
   } catch (err) {
+    logger.error(err);
     return null;
   }
 }

@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { expect, should } from 'chai';
 import * as accountDao from '../../app/database/account-dao';
 
@@ -102,6 +103,9 @@ describe('database/account-dao', () => {
     let result = accountDao.createAccount({});
     expect(result.apiKey).to.exist;
     expect(result.secretKey).to.exist;
+    fs.unlinkSync(`./data/accounts/${result.apiKey}/key.json`);
+    fs.rmdirSync(`./data/accounts/${result.apiKey}/poloniex`);
+    fs.rmdirSync(`./data/accounts/${result.apiKey}`);
   });
 
   it('should return history when getHistory call', () => {
