@@ -41,18 +41,19 @@ describe('router/private.js', function () {
       }
     });
 
-    sinon.stub(marketApi.load('poloniex'), 'getBalances').withArgs({
-      apiKey: POLONIEX_API_KEY,
-      secretKey: POLONIEX_SECRET_API
-    }).callsFake(() => {
-      return Promise.resolve({
-  			balances: {
-          USDT: 1000,
-          BTC: 1.5
-        },
-  			timestamp: new Date().getTime(),
-  			raw: {}
-  		});
+    sinon.stub(account, 'searchAssets').withArgs(ACCOUNT_API_KEY, MARKET, sinon.match.any, sinon.match.any).returns({
+      "USDT": {
+        "BTC": [
+          {
+            "base": "USDT",
+            "vcType": "BTC",
+            "units": 0.4,
+            "price": 2500,
+            "timestamp": 123,
+            "uuid": "265dac7d-1aaa-46b0-9f46-6dac2f45f44f"
+          }
+        ]
+      }
     });
 
     sinon.stub(marketApi.load('poloniex'), 'buy').withArgs({
@@ -94,9 +95,9 @@ describe('router/private.js', function () {
     app.use('/', privateRouter);
   });
 
-  it('should return balances when authentication is correct', done => {
+  it('should return assets when authentication is correct', done => {
     supertest(app)
-			.get('/markets/poloniex/assets/balances')
+			.get('/markets/poloniex/assets')
       .set('api-key', ACCOUNT_API_KEY)
       .set('sign', ACCOUNT_VALID_SIGN)
       .set('nonce', 123)
@@ -107,9 +108,9 @@ describe('router/private.js', function () {
           expect.fail('', '', 'request failure');
           return;
         }
-        expect(res.body.USDT).to.equal(1000);
-        expect(res.body.BTC).to.equal(1.5);
-        expect(res.body.raw).to.not.exist;
+        expect(res.body.USDT).to.exist;
+        expect(res.body.USDT.BTC.length).to.equal(1);
+        expect(res.body.USDT.BTC[0].base).to.equal('USDT');
         done();
       });
     this.timeout(3000);
@@ -117,7 +118,7 @@ describe('router/private.js', function () {
 
   it('should return 401 status code when authentication is incorrect', () => {
     supertest(app)
-      .get('/markets/poloniex/assets/balances')
+      .get('/')
       .set('api-key', ACCOUNT_API_KEY)
       .set('sign', ACCOUNT_INVALID_SIGN)
       .set('nonce', 123)
@@ -187,8 +188,8 @@ describe('router/private.js', function () {
   afterEach(() => {
 		account.authenticate.restore();
     account.getHistory.restore();
+    account.searchAssets.restore();
     mockAccount.restore();
-    marketApi.load('poloniex').getBalances.restore();
     marketApi.load('poloniex').buy.restore();
     marketApi.load('poloniex').sell.restore();
   });

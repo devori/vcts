@@ -19,15 +19,12 @@ router.use('/', (req, res, next) => {
   next();
 });
 
-router.get('/markets/:market/assets/balances', (req, res) => {
+router.get('/markets/:market/assets/:base?/:vcType?', (req, res) => {
   let apiKey = req.headers['api-key'];
-  let keys = account.getMarketKeys(apiKey, req.params.market);
-  marketApi.load(req.params.market).getBalances(keys).then(result => {
-    res.json(result.balances);
-  }).catch(err => {
-    console.log(err);
-    res.sendStatus(500);
-  });
+  let base = req.params.base;
+  let vcType = req.params.vcType
+  let assets = account.searchAssets(apiKey, req.params.market, base, vcType);
+  res.json(assets);
 });
 
 router.post('/markets/:market/assets/:base/:vcType', (req, res) => {

@@ -31,31 +31,37 @@ describe('account/index', function () {
 		});
 		sinon.stub(accountDao, 'addAsset').returnsArg(2);
 		sinon.stub(accountDao, 'addHistory').returnsArg(2);
-		sinon.stub(accountDao, 'searchAssets').returns([
-			{
-				base: 'USDT',
-				vcType: 'BTC',
-				units: 2,
-				price: 2500,
-				uuid: 'units-2-2500'
-			},
-			{
-				base: 'USDT',
-				vcType: 'BTC',
-				units: 1,
-				price: 2400,
-				uuid: 'units-1-2400'
+		sinon.stub(accountDao, 'searchAssets').callsFake((accountId, market, base, vcType) => {
+			let result = [
+				{
+					base: 'USDT',
+					vcType: 'BTC',
+					units: 2,
+					price: 2500,
+					uuid: 'units-2-2500'
+				},
+				{
+					base: 'USDT',
+					vcType: 'BTC',
+					units: 1,
+					price: 2400,
+					uuid: 'units-1-2400'
+				}
+			];
+			if (!base) {
+				result = {
+					USDT: {
+						BTC: result
+					}
+				}
 			}
-		]);
+			return result;
+		});
 		sinon.stub(accountDao, 'getHistory').returns({
 			USDT: {
-				BTC: [
-					{
-						base: 'USDT'
-					}
-				]
+				BTC: [{ base: 'USDT' }]
 			}
-		})
+		});
 	});
 
   it('should return true with correct args', () => {
@@ -129,6 +135,13 @@ describe('account/index', function () {
 		expect(result.USDT).to.exist;
 		expect(result.USDT.BTC).to.exist;
 		expect(result.USDT.BTC.length).to.equal(1);
+	});
+
+	it('should return assets matched accountId when searchAssets call', () => {
+		let result = account.searchAssets(ACCOUNT_ID, MARKET);
+		expect(result.USDT).to.exist;
+		expect(result.USDT.BTC).to.exist;
+		expect(result.USDT.BTC.length).to.equal(2);
 	});
 
 	after(() => {

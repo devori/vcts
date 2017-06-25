@@ -32,6 +32,10 @@ export function getMarketKeys(accountId, market) {
 	return accountDao.getMarketKeys(accountId, market);
 }
 
+export function searchAssets(accountId, market, base, vcType) {
+	return accountDao.searchAssets(accountId, market, base, vcType);
+}
+
 export function addAsset(accountId, market, asset) {
 	return accountDao.addAsset(accountId, market, asset);
 }
@@ -44,7 +48,7 @@ export function removeAsset(accountId, market, base, vcType, units) {
 	if (units <= 0) {
 		return;
 	}
-	let assets = accountDao.searchAssets(accountId, market, base, vcType);
+	let assets = searchAssets(accountId, market, base, vcType);
 	assets.sort((a1, a2) => a2.price - a1.price);
 	for (let i = assets.length - 1; i >= 0; i--) {
 		if (assets[i].units <= units) {
