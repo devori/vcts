@@ -1,1 +1,1 @@
-npm start & echo $! > process.pid
+node ./build/app/index.js & echo $! > process.pid
