@@ -9,3 +9,4 @@ npm-debug.log
 git
 build/
 npm-debug.log*
+process.pid
