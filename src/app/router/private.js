@@ -4,7 +4,7 @@ import * as account from '../account';
 import logger from '../util/logger';
 
 let router = Router();
-router.use('/', (req, res, next) => {
+router.all('*', (req, res, next) => {
   logger.verbose(`[${Date()}] ${req.url} called`);
   let nonce = req.headers.nonce;
   if (!nonce || nonce < (new Date().getTime() - 3000)) {
