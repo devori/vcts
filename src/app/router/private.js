@@ -8,7 +8,7 @@ router.all('*', (req, res, next) => {
   logger.verbose(`[${Date()}] ${req.url} called`);
   let nonce = req.headers.nonce;
   if (!nonce || nonce < (new Date().getTime() - 3000)) {
-    res.status(401);
+    res.sendStatus(401);
     return;
   }
   let signObj = req.body || {};
