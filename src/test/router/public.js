@@ -9,7 +9,6 @@ import * as account from '../../app/account'
 
 describe('router/public.js', function () {
   let TEST_NAME = 'test';
-  let TEST_EMAIL = 'test@gmail.com';
 
   let API_KEY = 'api-key';
   let SECRET_KEY = 'secret-key';
@@ -18,8 +17,9 @@ describe('router/public.js', function () {
   before(() => {
     sinon.stub(account, 'register')
 			.withArgs(sinon.match({
-         name: TEST_NAME, email: TEST_EMAIL
+         name: TEST_NAME
        })).returns({
+         username: TEST_NAME,
          apiKey: API_KEY,
          secretKey: SECRET_KEY
        });
@@ -106,21 +106,21 @@ describe('router/public.js', function () {
     this.timeout(3000);
   });
 
-  it('should return api keys info when account register', (done) => {
+  it('should return api keys info when account register', done => {
     supertest(app)
       .post('/accounts')
       .send({
-        name: TEST_NAME,
-        email: TEST_EMAIL
+        name: TEST_NAME
       })
       .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect(200)
+      .expect(201)
       .end((err, res) => {
         if (err) {
           console.log(err);
           expect.fail('', '', 'request failure');
           return;
         }
+        expect(res.body.username).to.equal(TEST_NAME);
         expect(res.body.apiKey).to.equal(API_KEY);
         expect(res.body.secretKey).to.equal(SECRET_KEY);
         done();

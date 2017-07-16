@@ -28,7 +28,7 @@ router.get('/markets/:market/tickers/:base?/:vcType?', (req, res) => {
 
 router.post('/accounts', (req, res) => {
   let result = account.register(req.body);
-  res.json(result);
+  res.status(201).json(result);
 });
 
 export default router;

@@ -142,7 +142,8 @@ export function createAccount(info) {
     let db = lowdb(`./data/accounts/${apiKey}/key.json`);
     db.defaults({
       apiKey,
-      secretKey
+      secretKey,
+      name: info.name
     }).write();
     return db.cloneDeep().value();
   } catch (err) {
