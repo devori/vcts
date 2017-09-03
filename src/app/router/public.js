@@ -26,7 +26,7 @@ router.get('/markets/:market/tickers/:base?/:vcType?', (req, res) => {
   });
 });
 
-router.post('/accounts', (req, res) => {
+router.post('/users', (req, res) => {
   if (account.existUser(req.body.username)) {
     res.sendStatus(409);
     return;

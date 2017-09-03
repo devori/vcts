@@ -137,3 +137,7 @@ export function createAccount(info) {
     return null;
   }
 }
+
+export function existUser(accountId) {
+  return fs.existsSync(`./data/accounts/${accountId}`);
+}

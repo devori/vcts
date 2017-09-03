@@ -11,20 +11,15 @@ describe('router/public.js', function () {
   const TEST_NAME = 'test';
   const DUPLICATED_USERNAME = 'duplicated-username';
 
-  let API_KEY = 'api-key';
-  let SECRET_KEY = 'secret-key';
-
   let app;
   before(() => {
     sinon.stub(account, 'register')
 			.withArgs(sinon.match({
          username: TEST_NAME
        })).returns({
-         username: TEST_NAME,
-         apiKey: API_KEY,
-         secretKey: SECRET_KEY
+         username: TEST_NAME
        });
-   sinon.stub(account, 'existUser')
+    sinon.stub(account, 'existUser')
 			.withArgs(sinon.match(DUPLICATED_USERNAME)).returns(true);
 
     sinon.stub(marketApi.load('poloniex'), 'getTickers').callsFake(() => {
@@ -111,7 +106,7 @@ describe('router/public.js', function () {
 
   it('should return api keys info when account register', done => {
     supertest(app)
-      .post('/accounts')
+      .post('/users')
       .send({
         username: TEST_NAME
       })
@@ -123,8 +118,6 @@ describe('router/public.js', function () {
           return;
         }
         expect(res.body.username).to.equal(TEST_NAME);
-        expect(res.body.apiKey).to.equal(API_KEY);
-        expect(res.body.secretKey).to.equal(SECRET_KEY);
         done();
       });
     this.timeout(3000);
@@ -132,7 +125,7 @@ describe('router/public.js', function () {
 
   it('should returnn 409 when username is duplicated', done => {
     supertest(app)
-      .post('/accounts')
+      .post('/users')
       .send({
         username: DUPLICATED_USERNAME
       })

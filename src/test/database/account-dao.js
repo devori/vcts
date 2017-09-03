@@ -161,4 +161,10 @@ describe('database/account-dao', () => {
     expect(result.USDT).to.exist;
     expect(result.USDT.BTC).to.exist;
   });
+
+  describe('existUser', () => {
+    it('should return when user exists', () => {
+      expect(accountDao.existUser(USERNAME)).to.be.true;
+    })
+  })
 });
