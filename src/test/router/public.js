@@ -8,7 +8,8 @@ import publicRouter from '../../app/router/public';
 import * as account from '../../app/account'
 
 describe('router/public.js', function () {
-  let TEST_NAME = 'test';
+  const TEST_NAME = 'test';
+  const DUPLICATED_USERNAME = 'duplicated-username';
 
   let API_KEY = 'api-key';
   let SECRET_KEY = 'secret-key';
@@ -17,12 +18,14 @@ describe('router/public.js', function () {
   before(() => {
     sinon.stub(account, 'register')
 			.withArgs(sinon.match({
-         name: TEST_NAME
+         username: TEST_NAME
        })).returns({
          username: TEST_NAME,
          apiKey: API_KEY,
          secretKey: SECRET_KEY
        });
+   sinon.stub(account, 'existUser')
+			.withArgs(sinon.match(DUPLICATED_USERNAME)).returns(true);
 
     sinon.stub(marketApi.load('poloniex'), 'getTickers').callsFake(() => {
       return Promise.resolve({
@@ -110,19 +113,35 @@ describe('router/public.js', function () {
     supertest(app)
       .post('/accounts')
       .send({
-        name: TEST_NAME
+        username: TEST_NAME
       })
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(201)
       .end((err, res) => {
         if (err) {
-          console.log(err);
-          expect.fail('', '', 'request failure');
+          expect.fail('', '', err);
           return;
         }
         expect(res.body.username).to.equal(TEST_NAME);
         expect(res.body.apiKey).to.equal(API_KEY);
         expect(res.body.secretKey).to.equal(SECRET_KEY);
+        done();
+      });
+    this.timeout(3000);
+  });
+
+  it('should returnn 409 when username is duplicated', done => {
+    supertest(app)
+      .post('/accounts')
+      .send({
+        username: DUPLICATED_USERNAME
+      })
+      .expect(409)
+      .end((err, res) => {
+        if (err) {
+          expect.fail('', '', err);
+          return;
+        }
         done();
       });
     this.timeout(3000);

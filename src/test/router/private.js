@@ -68,11 +68,8 @@ describe('router/private.js', function () {
     let mockAccount;
     before(() => {
       mockAccount = sinon.mock(account);
-      sinon.stub(marketApi.load(MARKET), 'buy').withArgs({
-        apiKey: POLONIEX_API_KEY,
-        secretKey: POLONIEX_SECRET_API
-      }).callsFake(() => {
-        return Promise.resolve({
+      sinon.stub(marketApi.load(MARKET), 'buy').returns(
+        Promise.resolve({
     			trades: [
             {
               units: 0.9975,
@@ -82,8 +79,7 @@ describe('router/private.js', function () {
           ],
     			timestamp: new Date().getTime(),
     			raw: {}
-    		});
-      });
+  		}));
     });
     after(() => {
       marketApi.load(MARKET).buy.restore();
@@ -116,11 +112,8 @@ describe('router/private.js', function () {
     let mockAccount;
     before(() => {
       mockAccount = sinon.mock(account);
-      sinon.stub(marketApi.load(MARKET), 'sell').withArgs({
-        apiKey: POLONIEX_API_KEY,
-        secretKey: POLONIEX_SECRET_API
-      }).callsFake(() => {
-        return Promise.resolve({
+      sinon.stub(marketApi.load(MARKET), 'sell').returns(
+        Promise.resolve({
           trades: [
             {
               units: 1,
@@ -130,8 +123,7 @@ describe('router/private.js', function () {
           ],
           timestamp: new Date().getTime(),
           raw: {}
-        });
-      });
+      }));
     });
     after(() => {
       marketApi.load(MARKET).sell.restore();

@@ -25,14 +25,6 @@ function findByPath(dao, paths) {
   return dao;
 }
 
-export function getSecretKey(accountId) {
-  let dao = findDao(accountId, 'key');
-  if (!dao) {
-    return null;
-  }
-  return dao.get('secretKey').cloneDeep().value();
-}
-
 export function getMarketKeys(accountId, market) {
   let dao = findDao(accountId, market, 'key');
   if (!dao) {
@@ -134,18 +126,12 @@ export function updateAsset(accountId, market, asset) {
 }
 
 export function createAccount(info) {
-  let apiKey = uuid();
-  let secretKey = uuid();
   try {
-    fs.mkdirSync(`./data/accounts/${apiKey}`);
-    fs.mkdirSync(`./data/accounts/${apiKey}/poloniex`);
-    let db = lowdb(`./data/accounts/${apiKey}/key.json`);
-    db.defaults({
-      apiKey,
-      secretKey,
-      name: info.name
-    }).write();
-    return db.cloneDeep().value();
+    fs.mkdirSync(`./data/accounts/${info.username}`);
+    fs.mkdirSync(`./data/accounts/${info.username}/poloniex`);
+    return {
+      username: info.username
+    };
   } catch (err) {
     logger.error(err);
     return null;

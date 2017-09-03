@@ -16,6 +16,10 @@ export function register(info) {
 	return accountDao.createAccount(info);
 }
 
+export function existUser(username) {
+	return accountDao.existUser(username);
+}
+
 export function authenticate(accountId, source, dest) {
   let secretKey = accountDao.getSecretKey(accountId);
 	if (!secretKey) {
