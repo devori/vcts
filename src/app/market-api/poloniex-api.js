@@ -20,8 +20,8 @@ export function getTickers() {
 			result[pair[0]][pair[1]] = {
 				base: pair[0],
 				vcType: pair[1],
-				low: Number(data[vcType].highestBid),
-				high: Number(data[vcType].lowestAsk),
+				bid: Number(data[vcType].highestBid),
+				ask: Number(data[vcType].lowestAsk),
 				timestamp: new Date().getTime()
 			};
 		}
