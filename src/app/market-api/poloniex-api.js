@@ -43,10 +43,10 @@ export function getBalances(auth) {
 	});
 }
 
-export function sell(auth, base, vcType, units, price) {
+export function sell(auth, base, vcType, units, rate) {
 	return callPrivateApi(auth, 'sell', {
 		currencyPair: `${base}_${vcType}`,
-		rate: String(price),
+		rate: String(rate),
 		amount: String(units),
 		immediateOrCancel: '1'
 	}).then(data => {
@@ -59,7 +59,7 @@ export function sell(auth, base, vcType, units, price) {
 				base,
 				vcType,
 				units: Number(t.amount),
-				price: Number(t.rate),
+				rate: Number(t.rate),
 				total: Number(t.amount) * Number(t.rate) * 0.9975,
 				type: 'sell',
 				timestamp: new Date().getTime()
@@ -69,10 +69,10 @@ export function sell(auth, base, vcType, units, price) {
 	});
 }
 
-export function buy(auth, base, vcType, units, price) {
+export function buy(auth, base, vcType, units, rate) {
 	return callPrivateApi(auth, 'buy', {
 		currencyPair: `${base}_${vcType}`,
-		rate: String(price),
+		rate: String(rate),
 		amount: String(units),
 		immediateOrCancel: '1'
 	}).then(data => {
@@ -85,7 +85,7 @@ export function buy(auth, base, vcType, units, price) {
 				base,
 				vcType,
 				units: Number(t.amount) * 0.9975,
-				price: Number(t.rate),
+				rate: Number(t.rate),
 				total: Number(t.amount) * Number(t.rate),
 				type: 'buy',
 				timestamp: new Date().getTime()
@@ -111,8 +111,8 @@ function callPrivateApi(auth, command, params = {}) {
 			form: params
 		}, (err, res, body) => {
 			if (err) {
-				reject();
-				throw err;
+				reject(err);
+				return;
 			}
 			resolve(JSON.parse(body));
 		})
@@ -121,6 +121,8 @@ function callPrivateApi(auth, command, params = {}) {
 			throw result.error;
 		}
 		return result;
+	}).catch(err => {
+		console.error(err);
 	});
 }
 

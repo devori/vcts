@@ -19,14 +19,14 @@ router.post('/users/:user/markets/:market/assets/:base/:vcType', (req, res) => {
     base,
     vcType,
     req.body.units,
-    req.body.price
+    req.body.rate
   ).then(result => {
     result.trades.forEach(t => {
       account.addAsset(user, market, t);
       account.addHistory(user, market, t);
     });
     res.status(201).json(result);
-    logger.info(`[${Date()}] Purchase - ${base}_${vcType} : ${req.body.units} - ${req.body.price}`);
+    logger.info(`[${Date()}] Purchase - ${base}_${vcType} : ${req.body.units} - ${req.body.rate}`);
     logger.info(result.trades);
   }).catch(err => {
     res.status(500).send(err);
@@ -42,14 +42,14 @@ router.delete('/users/:user/markets/:market/assets/:base/:vcType', (req, res) =>
     base,
     vcType,
     req.body.units,
-    req.body.price
+    req.body.rate
   ).then(result => {
     result.trades.forEach(t => {
       account.removeAsset(user, market, t.base, t.vcType, t.units);
       account.addHistory(user, market, t);
     });
     res.json(result);
-    logger.info(`[${Date()}] Sale - ${base}_${vcType} : ${req.body.units} - ${req.body.price}`);
+    logger.info(`[${Date()}] Sale - ${base}_${vcType} : ${req.body.units} - ${req.body.rate}`);
     logger.info(result.raw);
   }).catch(err => {
     res.status(500).send(err);

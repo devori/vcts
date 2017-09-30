@@ -34,7 +34,7 @@ describe('router/private.js', function () {
               "base": "USDT",
               "vcType": "BTC",
               "units": 0.4,
-              "price": 2500,
+              "rate": 2500,
               "timestamp": 123,
               "uuid": "265dac7d-1aaa-46b0-9f46-6dac2f45f44f"
             }
@@ -73,7 +73,7 @@ describe('router/private.js', function () {
     			trades: [
             {
               units: 0.9975,
-              price: 100,
+              rate: 100,
               total: 100
             }
           ],
@@ -92,7 +92,7 @@ describe('router/private.js', function () {
         .post(`/users/${TEST_USER}/markets/${MARKET}/assets/USDT/BTC`)
         .send({
           units: 1,
-          price: 100
+          rate: 100
         })
         .expect('Content-Type', 'application/json; charset=utf-8')
         .expect(201)
@@ -117,7 +117,7 @@ describe('router/private.js', function () {
           trades: [
             {
               units: 1,
-              price: 10000,
+              rate: 10000,
               total: 9975
             }
           ],
@@ -136,7 +136,7 @@ describe('router/private.js', function () {
         .delete(`/users/${TEST_USER}/markets/${MARKET}/assets/USDT/BTC`)
         .send({
           units: 1,
-          price: 10000
+          rate: 10000
         })
         .expect('Content-Type', 'application/json; charset=utf-8')
         .expect(200)
@@ -161,7 +161,7 @@ describe('router/private.js', function () {
               "base": "USDT",
               "vcType": "BTC",
               "units": 1,
-              "price": 2500,
+              "rate": 2500,
               "total": 2500,
               "type": "sell",
               "timestamp": 123

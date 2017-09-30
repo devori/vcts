@@ -131,7 +131,7 @@ describe('market-api/poloniex-api.js', function () {
           base: 'USDT',
           vcType: 'BTC',
           units: 0.4,
-          price: 2500,
+          rate: 2500,
           total: 0.4 * 2500 * 0.9975,
           type: 'sell'
         });
@@ -140,7 +140,7 @@ describe('market-api/poloniex-api.js', function () {
           base: 'USDT',
           vcType: 'BTC',
           units: 0.6,
-          price: 2600,
+          rate: 2600,
           total: 0.6 * 2600 * 0.9975,
           type: 'sell'
         });
@@ -202,7 +202,7 @@ describe('market-api/poloniex-api.js', function () {
           base: 'USDT',
           vcType: 'BTC',
           units: 0.4 * 0.9975,
-          price: 2500,
+          rate: 2500,
           total: 0.4 * 2500,
           type: 'buy'
         });
@@ -211,7 +211,7 @@ describe('market-api/poloniex-api.js', function () {
           base: 'USDT',
           vcType: 'BTC',
           units: 0.6 * 0.9975,
-          price: 2600,
+          rate: 2600,
           total: 0.6 * 2600,
           type: 'buy'
         });

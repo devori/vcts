@@ -28,8 +28,8 @@ describe('router/public.js', function () {
           BTC: {
             base: 'USDT',
             vcType: 'BTC',
-            low: 2400,
-            high: 2500,
+            ask: 2400,
+            bid: 2500,
             timestamp: 123
           }
         }
@@ -54,8 +54,8 @@ describe('router/public.js', function () {
         }
         expect(res.body.USDT.BTC.base).to.equal('USDT');
         expect(res.body.USDT.BTC.vcType).to.equal('BTC');
-        expect(res.body.USDT.BTC.low).to.equal(2400);
-        expect(res.body.USDT.BTC.high).to.equal(2500);
+        expect(res.body.USDT.BTC.ask).to.equal(2400);
+        expect(res.body.USDT.BTC.bid).to.equal(2500);
         expect(res.body.USDT.BTC.timestamp).to.equal(123);
         done();
       });
@@ -75,8 +75,8 @@ describe('router/public.js', function () {
         }
         expect(res.body.BTC.base).to.equal('USDT');
         expect(res.body.BTC.vcType).to.equal('BTC');
-        expect(res.body.BTC.low).to.equal(2400);
-        expect(res.body.BTC.high).to.equal(2500);
+        expect(res.body.BTC.ask).to.equal(2400);
+        expect(res.body.BTC.bid).to.equal(2500);
         expect(res.body.BTC.timestamp).to.equal(123);
         done();
       });
@@ -96,8 +96,8 @@ describe('router/public.js', function () {
         }
         expect(res.body.base).to.equal('USDT');
         expect(res.body.vcType).to.equal('BTC');
-        expect(res.body.low).to.equal(2400);
-        expect(res.body.high).to.equal(2500);
+        expect(res.body.ask).to.equal(2400);
+        expect(res.body.bid).to.equal(2500);
         expect(res.body.timestamp).to.be.a('number');
         done();
       });

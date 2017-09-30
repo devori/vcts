@@ -26,14 +26,14 @@ describe('account/index', function () {
 					base: 'USDT',
 					vcType: 'BTC',
 					units: 2,
-					price: 2500,
+					rate: 2500,
 					uuid: 'units-2-2500'
 				},
 				{
 					base: 'USDT',
 					vcType: 'BTC',
 					units: 1,
-					price: 2400,
+					rate: 2400,
 					uuid: 'units-1-2400'
 				}
 			];
@@ -58,7 +58,7 @@ describe('account/index', function () {
 			base: 'USDT',
 			vcType: 'BTC',
 			units: 1.23,
-			price: 2500
+			rate: 2500
 		});
 		expect(result.base).to.equal('USDT');
 		expect(result.vcType).to.equal('BTC');
@@ -70,7 +70,7 @@ describe('account/index', function () {
       base: 'USDT',
       vcType: 'BTC',
       units: 1.23,
-      price: 2500,
+      rate: 2500,
       total: 2500,
       type: 'sell',
       timestamp: 123
@@ -81,7 +81,7 @@ describe('account/index', function () {
 		expect(result.type).to.equal('sell');
 	});
 
-	it('should remove assets in order of low price', () => {
+	it('should remove assets in order of low rate', () => {
 		mockAccountDao.expects('removeAsset').withArgs(ACCOUNT_ID, MARKET, {
 			base: 'USDT',
 			vcType: 'BTC',

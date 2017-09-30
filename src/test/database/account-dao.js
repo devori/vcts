@@ -61,7 +61,7 @@ describe('database/account-dao', () => {
       base: 'USDT',
       vcType: 'BTC',
       units: 1,
-      price: 2500,
+      rate: 2500,
       timestamp: 123
     };
     let result = accountDao.addAsset(USERNAME, MARKET, asset);
@@ -79,13 +79,13 @@ describe('database/account-dao', () => {
       base: 'USDT',
       vcType: 'BTC',
       units: 1,
-      price: 2500,
+      rate: 2500,
       total: 2500,
       type: 'sell',
       timestamp: 123
     };
     let result = accountDao.addHistory(USERNAME, MARKET, history);
-    expect(result.price).to.equal(2500);
+    expect(result.rate).to.equal(2500);
   });
 
   it('should remove asset matched when removeAsset', () => {
@@ -93,7 +93,7 @@ describe('database/account-dao', () => {
       base: 'USDT',
       vcType: 'BTC',
       units: 1,
-      price: 2500,
+      rate: 2500,
       timestamp: 123
     });
     let arr = accountDao.searchAssets(USERNAME, MARKET, 'USDT', 'BTC');
@@ -113,7 +113,7 @@ describe('database/account-dao', () => {
       base: 'USDT',
       vcType: 'BTC',
       units: 1,
-      price: 2500,
+      rate: 2500,
       timestamp: 123
     });
     accountDao.updateAsset(USERNAME, MARKET, {
@@ -152,7 +152,7 @@ describe('database/account-dao', () => {
       base: 'USDT',
       vcType: 'BTC',
       units: 1,
-      price: 2500,
+      rate: 2500,
       total: 2500,
       type: 'sell',
       timestamp: 123

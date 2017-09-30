@@ -53,7 +53,7 @@ export function removeAsset(accountId, market, base, vcType, units) {
 		return;
 	}
 	let assets = searchAssets(accountId, market, base, vcType);
-	assets.sort((a1, a2) => a2.price - a1.price);
+	assets.sort((a1, a2) => a2.rate - a1.rate);
 	for (let i = assets.length - 1; i >= 0; i--) {
 		if (assets[i].units <= units) {
 			accountDao.removeAsset(accountId, market, {
