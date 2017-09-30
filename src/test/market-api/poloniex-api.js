@@ -29,16 +29,16 @@ describe('market-api/poloniex-api.js', function () {
         expect(result.USDT.BTC).to.exist;
         expect(result.USDT.BTC.base).to.equal('USDT');
         expect(result.USDT.BTC.vcType).to.equal('BTC');
-        expect(result.USDT.BTC.low).to.equal(99);
-        expect(result.USDT.BTC.high).to.equal(101);
+        expect(result.USDT.BTC.bid).to.equal(99);
+        expect(result.USDT.BTC.ask).to.equal(101);
         expect(result.USDT.BTC.timestamp).to.be.a('number');
 
         expect(result.BTC).to.exist;
         expect(result.BTC.TEST).to.exist;
         expect(result.BTC.TEST.base).to.equal('BTC');
         expect(result.BTC.TEST.vcType).to.equal('TEST');
-        expect(result.BTC.TEST.low).to.equal(98);
-        expect(result.BTC.TEST.high).to.equal(102);
+        expect(result.BTC.TEST.bid).to.equal(98);
+        expect(result.BTC.TEST.ask).to.equal(102);
         expect(result.BTC.TEST.timestamp).to.be.a('number');
         done();
       });
