@@ -6,6 +6,7 @@ import * as accountDao from '../../app/database/account-dao';
 
 describe('account/index', function () {
 	const ACCOUNT_ID = 'test-user';
+	const NON_EXIST_ACCOUNT_ID = 'non-exist-test-user';
 	const MARKET = 'poloniex';
 	const API_KEY = 'api-key';
 	const SECRET_KEY = 'secret-key';
@@ -116,6 +117,22 @@ describe('account/index', function () {
 		expect(result.USDT.BTC).to.exist;
 		expect(result.USDT.BTC.length).to.equal(2);
 	});
+
+	describe('getUser', () => {
+		before(() => {
+			sinon.stub(accountDao, 'existUser')
+				.withArgs(ACCOUNT_ID).returns(true)
+				.withArgs(NON_EXIST_ACCOUNT_ID).returns(false);
+		})
+		it('should return username when the user exists', () => {
+			let user = account.getUser(ACCOUNT_ID);
+			expect(user.id).to.equal(ACCOUNT_ID);
+		});
+		it('should return null when the user does not exist', () => {
+			let user = account.getUser(NON_EXIST_ACCOUNT_ID);
+			expect(user).to.be.null;
+		});
+	})
 
 	after(() => {
 		accountDao.createAccount.restore();

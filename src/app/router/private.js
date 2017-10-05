@@ -5,6 +5,15 @@ import logger from '../util/logger';
 
 let router = Router();
 
+router.get('/users/:user', (req, res) => {
+  let user = account.getUser(req.params.user);
+  if (!user) {
+    res.sendStatus(404);
+    return;
+  }
+  res.json(user);
+});
+
 router.get('/users/:user/markets/:market/assets/:base?/:vcType?', (req, res) => {
   let { user, market, base, vcType } = req.params;
   let assets = account.searchAssets(user, market, base, vcType);

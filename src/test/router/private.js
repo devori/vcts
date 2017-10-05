@@ -192,4 +192,39 @@ describe('router/private.js', function () {
       this.timeout(3000);
     });
   });
+  describe('GET /users/:user', () => {
+    before(() => {
+      sinon.stub(account, 'getUser')
+        .withArgs(TEST_USER).returns({ id: TEST_USER })
+        .withArgs(NON_EXIST_USER).returns(null);
+    });
+    after(() => {
+      account.getUser.restore();
+    });
+    it('should return user info when the user exists', done => {
+      supertest(app)
+        .get(`/users/${TEST_USER}`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) {
+            expect.fail('', '', err);
+            return;
+          }
+          expect(res.body.id).to.equal(TEST_USER);
+          done();
+        })
+    });
+    it('should return 404 info when the user does not exist', done => {
+      supertest(app)
+        .get(`/users/${NON_EXIST_USER}`)
+        .expect(404)
+        .end((err, res) => {
+          if (err) {
+            expect.fail('', '', err);
+            return;
+          }
+          done();
+        })
+    });
+  });
 });
