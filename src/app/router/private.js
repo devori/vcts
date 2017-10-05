@@ -5,6 +5,16 @@ import logger from '../util/logger';
 
 let router = Router();
 
+router.use((req, res, next) => {
+  let username = req.url.match(/^\/users\/([a-zA-Z0-9-.]*)/)[1];
+  let user = account.getUser(username);
+  if (!user) {
+    res.sendStatus(404);
+    return;
+  }
+  next();
+});
+
 router.get('/users/:user', (req, res) => {
   let user = account.getUser(req.params.user);
   if (!user) {
@@ -69,6 +79,39 @@ router.get('/users/:user/markets/:market/histories/:base?/:vcType?', (req, res) 
   let { user, market, base, vcType } = req.params;
   let result = account.getHistory(user, market, base, vcType);
   res.json(result);
+});
+
+router.put('/users/:user/markets/:market/assets/:base/:vcType?', (req,res) => {
+  let { user, market, base, vcType } = req.params;
+  if (req.query.mode === 'sync') {
+    let keys = account.getMarketKeys(user, market);
+    return marketApi.load(market).getBalances(keys, base).then(balances => {
+      if (vcType) {
+        balances = { [vcType]: (balances[vcType] ? balances[vcType] : 0) };
+      }
+      return balances;
+    }).then(balances => {
+      return marketApi.load(market).getTickers().then(tickers => {
+        tickers = tickers[base];
+        tickers[base] = { ask: 1, bid: 1 };
+        return {
+          balances,
+          tickers
+        }
+      });
+    }).then(({ tickers, balances }) => {
+      res.json(account.syncAssets(user, market, base, balances, tickers));
+    }).catch(err => {
+      console.error(err);
+      res.status(500).json({
+        error: err
+      });
+    });
+  } else {
+    res.status(500).json({
+      error: 'mode is required'
+    });
+  }
 });
 
 export default router;

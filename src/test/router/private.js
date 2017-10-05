@@ -9,10 +9,9 @@ import privateRouter from '../../app/router/private';
 import * as account from '../../app/account';
 
 describe('router/private.js', function () {
-  const TEST_USER = 'test-user';
+  const TEST_USER = 'test-user01';
   const NON_EXIST_USER = 'non-exist-user';
   const MARKET = 'poloniex';
-  const ACCOUNT_API_KEY = 'test-user';
   const POLONIEX_API_KEY = 'poloniex-api-key';
   const POLONIEX_SECRET_API = 'poloniex-secret-key';
 
@@ -20,9 +19,16 @@ describe('router/private.js', function () {
   let app;
 
   before(() => {
+    sinon.stub(account, 'getUser')
+      .withArgs(TEST_USER).returns({ id: TEST_USER })
+      .withArgs(NON_EXIST_USER).returns(null);
     app = express();
     app.use(bodyParser.json());
     app.use('/', privateRouter);
+  });
+
+  after(() => {
+    account.getUser.restore();
   });
 
   describe('GET /users/:user/markets/:market/assets/:base?/:vcType?', () => {
@@ -154,7 +160,7 @@ describe('router/private.js', function () {
 
   describe('GET /users/:user/markets/:market/histories/:base?/:vcType?', () => {
     before(() => {
-      sinon.stub(account, 'getHistory').withArgs(ACCOUNT_API_KEY, MARKET, sinon.match.any, sinon.match.any).returns({
+      sinon.stub(account, 'getHistory').withArgs(TEST_USER, MARKET, sinon.match.any, sinon.match.any).returns({
         "USDT": {
           "BTC": [
             {
@@ -193,14 +199,6 @@ describe('router/private.js', function () {
     });
   });
   describe('GET /users/:user', () => {
-    before(() => {
-      sinon.stub(account, 'getUser')
-        .withArgs(TEST_USER).returns({ id: TEST_USER })
-        .withArgs(NON_EXIST_USER).returns(null);
-    });
-    after(() => {
-      account.getUser.restore();
-    });
     it('should return user info when the user exists', done => {
       supertest(app)
         .get(`/users/${TEST_USER}`)
@@ -225,6 +223,74 @@ describe('router/private.js', function () {
           }
           done();
         })
+    });
+  });
+  describe('PUT /users/{user}/markets/{market}/assets/{BASE}/{VCTYPE}?', () => {
+    const BASE = 'BTC';
+    let mockAccount;
+    before(() => {
+      const BTC_ASSETS = {
+        ETH: [
+          {
+            "base": BASE,
+            "vcType": 'ETH',
+            "units": 1.5,
+            "uuid": "33777511-8ffa-4a98-88d2-69625eeadcef"
+          }
+        ],
+        LTC: [
+          {
+            "base": BASE,
+            "vcType": 'LTC',
+            "units": 2,
+            "uuid": "33777511-8ffa-4a98-88d2-asdfiojef2"
+          }
+        ]
+      }
+      const BALANCES = { ETH: 1.5, LTC: 2 };
+      sinon.stub(account, 'syncAssets')
+        .withArgs(TEST_USER, MARKET, BASE, BALANCES).returns(BTC_ASSETS)
+        .withArgs(TEST_USER, MARKET, BASE, { LTC: BALANCES.LTC }).returns({ LTC: BTC_ASSETS.LTC });
+      sinon.stub(marketApi.load(MARKET), 'getBalances')
+        .withArgs(sinon.match.any, BASE).returns(Promise.resolve(BALANCES));
+      sinon.stub(marketApi.load(MARKET), 'getTickers')
+        .returns(Promise.resolve({ [BASE]: {}}));
+    });
+    after(() => {
+      account.syncAssets.restore();
+      marketApi.load(MARKET).getBalances.restore();
+      marketApi.load(MARKET).getTickers.restore();
+    });
+    it('should return updated assets when it call with sync mode', done => {
+      supertest(app)
+        .put(`/users/${TEST_USER}/markets/${MARKET}/assets/${BASE}?mode=sync`)
+        .expect(200)
+        .end((err ,res) => {
+          if (err) {
+            expect.fail('', '', err);
+            return;
+          }
+          expect(res.body.ETH.length).to.equal(1);
+          expect(res.body.ETH[0].uuid).to.equal('33777511-8ffa-4a98-88d2-69625eeadcef');
+          expect(res.body.LTC.length).to.equal(1);
+          expect(res.body.LTC[0].uuid).to.equal('33777511-8ffa-4a98-88d2-asdfiojef2');
+          done();
+        });
+    });
+    it('should return updated asset when it call with vctype and sync mode', done => {
+      supertest(app)
+        .put(`/users/${TEST_USER}/markets/${MARKET}/assets/${BASE}/LTC?mode=sync`)
+        .expect(200)
+        .end((err ,res) => {
+          if (err) {
+            expect.fail('', '', err);
+            return;
+          }
+          expect(res.body.ETH).not.to.exist;
+          expect(res.body.LTC.length).to.equal(1);
+          expect(res.body.LTC[0].uuid).to.equal('33777511-8ffa-4a98-88d2-asdfiojef2');
+          done();
+        });
     });
   });
 });

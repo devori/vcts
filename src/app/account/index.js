@@ -84,3 +84,27 @@ export function getUser(accountId) {
 	}
 	return null;
 }
+
+export function syncAssets(accountId, market, base, balances, tickers) {
+	let result = {};
+	for (let vcType in balances) {
+		if (!tickers[vcType]) {
+			continue;
+		}
+		let assets = searchAssets(accountId, market, base, vcType);
+		let sumUnits = assets.reduce((acc, a) => acc + a.units, 0);
+		if (balances[vcType] < sumUnits) {
+			removeAsset(accountId, market, base, vcType, sumUnits - balances[vcType]);
+		} else if (balances[vcType] > sumUnits) {
+			addAsset(accountId, market, {
+				base,
+				vcType,
+				units: balances[vcType] - sumUnits,
+				rate: tickers[vcType].ask,
+				type: 'sync'
+			});
+		}
+		result[vcType] = searchAssets(accountId, market, base, vcType);
+	}
+	return result;
+}

@@ -29,15 +29,11 @@ export function getTickers() {
 	});
 }
 
-export function getBalances(auth) {
+export function getBalances(auth, base) {
 	return callPrivateApi(auth, 'returnBalances').then(data => {
-		let result = {
-			balances: {},
-			timestamp: new Date().getTime(),
-			raw: data
-		};
+		let result = {};
 		for (let k in data) {
-			result.balances[k] = _.floor(Number(data[k]), 8);
+			result[k] = _.floor(Number(data[k]), 8);
 		}
 		return result;
 	});

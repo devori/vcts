@@ -21,6 +21,10 @@ describe('market-api/poloniex-api.js', function () {
       });
     });
 
+    after(() => {
+      nock.cleanAll();
+    });
+
     it('should return refined tickers when getTickers call', done => {
       let prom = poloniexApi.getTickers();
       expect(prom).to.be.a('promise');
@@ -44,10 +48,6 @@ describe('market-api/poloniex-api.js', function () {
       });
       this.timeout(3000);
     });
-
-    after(() => {
-      nock.cleanAll();
-    });
   });
 
   describe('getBalances', () => {
@@ -62,26 +62,22 @@ describe('market-api/poloniex-api.js', function () {
       });
     });
 
+    after(() => {
+      nock.cleanAll();
+    });
+
     it('should return refined balances when getBalances call', done => {
       let prom = poloniexApi.getBalances({
         apiKey: 'a',
         secretKey: 'b'
-      });
+      }, 'BTC');
       expect(prom).to.be.a('promise');
       prom.then(result => {
-        expect(result.balances.USDT).to.equal(100);
-        expect(result.balances.BTC).to.equal(1.12345678);
-        expect(result.timestamp).to.be.a('number');
-        expect(result.raw.USDT).to.equal('100');
-        expect(result.raw.BTC).to.equal('1.123456789');
+        expect(result.USDT).to.equal(100);
+        expect(result.BTC).to.equal(1.12345678);
         done();
       });
-      this.timeout(3000);
     });
-
-    after(() => {
-      nock.cleanAll();
-    })
   });
 
   describe('sell', () => {
@@ -117,6 +113,10 @@ describe('market-api/poloniex-api.js', function () {
       });
     });
 
+    after(() => {
+      nock.cleanAll();
+    });
+
     it('should return sale result when sell call', done => {
       let prom = poloniexApi.sell({
         apiKey: 'a',
@@ -149,10 +149,6 @@ describe('market-api/poloniex-api.js', function () {
       });
       this.timeout(3000);
     });
-
-    after(() => {
-      nock.cleanAll();
-    })
   });
 
   describe('buy', () => {
@@ -188,6 +184,10 @@ describe('market-api/poloniex-api.js', function () {
       });
     });
 
+    after(() => {
+      nock.cleanAll();
+    });
+
     it('should return buy result when buy call', done => {
       let prom = poloniexApi.buy({
         apiKey: 'a',
@@ -220,9 +220,5 @@ describe('market-api/poloniex-api.js', function () {
       });
       this.timeout(3000);
     });
-
-    after(() => {
-      nock.cleanAll();
-    })
   });
 });
