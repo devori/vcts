@@ -12,11 +12,14 @@ describe('account/index', function () {
 	const SECRET_KEY = 'secret-key';
 
 	describe('addAsset', () => {
+		let mockAccountDao;
 		before(() => {
 			sinon.stub(accountDao, 'addAsset').returnsArg(2);
+			mockAccountDao = sinon.mock(accountDao);
 		});
 		after(() => {
 				accountDao.addAsset.restore();
+				mockAccountDao.restore();
 		});
 		it('should return result of dao when addAsset call', () => {
 			let result = account.addAsset(ACCOUNT_ID, MARKET, {
@@ -28,6 +31,16 @@ describe('account/index', function () {
 			expect(result.base).to.equal('USDT');
 			expect(result.vcType).to.equal('BTC');
 			expect(result.units).to.equal(1.23);
+		});
+		it('should be called addHistory when it call', () => {
+			let expectation = mockAccountDao.expects('addHistory').once();
+			account.addAsset(ACCOUNT_ID, MARKET, {
+				base: 'USDT',
+				vcType: 'BTC',
+				units: 1.23,
+				rate: 2500
+			});
+			expectation.verify();
 		});
 	});
 
@@ -92,7 +105,20 @@ describe('account/index', function () {
 				units: 0.5,
 				uuid: 'units-2-2500'
 			});
-			account.removeAsset(ACCOUNT_ID, MARKET, 'USDT', 'BTC', 2.5);
+			account.removeAsset(ACCOUNT_ID, MARKET, {
+				base: 'USDT',
+				vcType: 'BTC',
+				units: 2.5
+			});
+			mockAccountDao.verify();
+		});
+		it('should be called addHistory when it call', () => {
+			let expectation = mockAccountDao.expects('addHistory').once();
+			account.removeAsset(ACCOUNT_ID, MARKET, {
+				base: 'USDT',
+				vcType: 'BTC',
+				units: 2.5
+			});
 			mockAccountDao.verify();
 		});
 	});

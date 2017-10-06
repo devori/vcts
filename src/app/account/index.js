@@ -41,6 +41,7 @@ export function searchAssets(accountId, market, base, vcType) {
 }
 
 export function addAsset(accountId, market, asset) {
+	addHistory(accountId, market, asset);
 	return accountDao.addAsset(accountId, market, asset);
 }
 
@@ -48,10 +49,12 @@ export function addHistory(accountId, market, history) {
 	return accountDao.addHistory(accountId, market, history);
 }
 
-export function removeAsset(accountId, market, base, vcType, units) {
+export function removeAsset(accountId, market, asset) {
+	let { base, vcType, units } = asset;
 	if (units <= 0) {
 		return;
 	}
+	addHistory(accountId, market, asset);
 	let assets = searchAssets(accountId, market, base, vcType);
 	assets.sort((a1, a2) => a2.rate - a1.rate);
 	for (let i = assets.length - 1; i >= 0; i--) {
@@ -94,7 +97,11 @@ export function syncAssets(accountId, market, base, balances, tickers) {
 		let assets = searchAssets(accountId, market, base, vcType);
 		let sumUnits = assets.reduce((acc, a) => acc + a.units, 0);
 		if (balances[vcType] < sumUnits) {
-			removeAsset(accountId, market, base, vcType, sumUnits - balances[vcType]);
+			removeAsset(accountId, market, {
+				base,
+				vcType,
+				units: sumUnits - balances[vcType]
+			});
 		} else if (balances[vcType] > sumUnits) {
 			addAsset(accountId, market, {
 				base,

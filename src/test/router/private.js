@@ -93,7 +93,7 @@ describe('router/private.js', function () {
     });
     it('should return buy result with 201 after buy info save when url called', done => {
       mockAccount.expects('addAsset').withArgs(TEST_USER, MARKET).once();
-      mockAccount.expects('addHistory').withArgs(TEST_USER, MARKET).once();
+      mockAccount.expects('addHistory').withArgs(TEST_USER, MARKET).never();
       supertest(app)
         .post(`/users/${TEST_USER}/markets/${MARKET}/assets/USDT/BTC`)
         .send({
@@ -137,7 +137,7 @@ describe('router/private.js', function () {
     });
     it('should return sell result after sell info save when sell call', done => {
       mockAccount.expects('removeAsset').withArgs(TEST_USER, MARKET).once();
-      mockAccount.expects('addHistory').withArgs(TEST_USER, MARKET).once();
+      mockAccount.expects('addHistory').withArgs(TEST_USER, MARKET).never();
       supertest(app)
         .delete(`/users/${TEST_USER}/markets/${MARKET}/assets/USDT/BTC`)
         .send({

@@ -42,7 +42,6 @@ router.post('/users/:user/markets/:market/assets/:base/:vcType', (req, res) => {
   ).then(result => {
     result.trades.forEach(t => {
       account.addAsset(user, market, t);
-      account.addHistory(user, market, t);
     });
     res.status(201).json(result);
     logger.info(`[${Date()}] Purchase - ${base}_${vcType} : ${req.body.units} - ${req.body.rate}`);
@@ -64,8 +63,7 @@ router.delete('/users/:user/markets/:market/assets/:base/:vcType', (req, res) =>
     req.body.rate
   ).then(result => {
     result.trades.forEach(t => {
-      account.removeAsset(user, market, t.base, t.vcType, t.units);
-      account.addHistory(user, market, t);
+      account.removeAsset(user, market, t);
     });
     res.json(result);
     logger.info(`[${Date()}] Sale - ${base}_${vcType} : ${req.body.units} - ${req.body.rate}`);
