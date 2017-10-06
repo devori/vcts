@@ -9,6 +9,10 @@ let app = express();
 
 app.use(compression());
 app.use(bodyParser.json());
+app.use((req, res, next) => {
+  logger.info(`[${Date()}] ${req.method} ${req.url}`);
+  next();
+});
 app.use('/api/v1/public', pubilcRouter);
 app.use('/api/v1/private', privateRouter);
 app.use((err, req, res, next) => {
