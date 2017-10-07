@@ -31,6 +31,7 @@
     "supervisor": "supervisor --r -r 'babel/register' output/app/index.js",
     "watch": "babel src --out-dir output --presets=node6 --watch",
     "build": "babel src/app --out-dir build/app --presets=node6",
+    "build-dev": "babel src --out-dir output --presets=node6 ",
     "test": "mocha output/test/**/*.js"
   },
   "repository": {
