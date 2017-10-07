@@ -98,7 +98,7 @@ router.put('/users/:user/markets/:market/assets/:base/:vcType?', (req,res) => {
         }
       });
     }).then(({ tickers, balances }) => {
-      res.json(account.syncAssets(user, market, base, balances, tickers));
+      res.json(account.refineAssets(user, market, base, balances, tickers));
     }).catch(err => {
       console.error(err);
       res.status(500).json({

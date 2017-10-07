@@ -248,7 +248,7 @@ describe('router/private.js', function () {
         ]
       }
       const BALANCES = { ETH: 1.5, LTC: 2 };
-      sinon.stub(account, 'syncAssets')
+      sinon.stub(account, 'refineAssets')
         .withArgs(TEST_USER, MARKET, BASE, BALANCES).returns(BTC_ASSETS)
         .withArgs(TEST_USER, MARKET, BASE, { LTC: BALANCES.LTC }).returns({ LTC: BTC_ASSETS.LTC });
       sinon.stub(marketApi.load(MARKET), 'getBalances')
@@ -257,7 +257,7 @@ describe('router/private.js', function () {
         .returns(Promise.resolve({ [BASE]: {}}));
     });
     after(() => {
-      account.syncAssets.restore();
+      account.refineAssets.restore();
       marketApi.load(MARKET).getBalances.restore();
       marketApi.load(MARKET).getTickers.restore();
     });

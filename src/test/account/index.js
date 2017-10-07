@@ -14,31 +14,45 @@ describe('account/index', function () {
 	describe('addAsset', () => {
 		let mockAccountDao;
 		before(() => {
-			sinon.stub(accountDao, 'addAsset').returnsArg(2);
+			sinon.stub(accountDao, 'searchAssets').returns([{ rate: 1, units: 1 }]);
+		});
+		beforeEach(() => {
 			mockAccountDao = sinon.mock(accountDao);
 		});
-		after(() => {
-				accountDao.addAsset.restore();
-				mockAccountDao.restore();
+		afterEach(() => {
+			mockAccountDao.restore();
 		});
+		after(() => {
+			accountDao.searchAssets.restore();
+		})
 		it('should return result of dao when addAsset call', () => {
-			let result = account.addAsset(ACCOUNT_ID, MARKET, {
+			let asset = {
 				base: 'USDT',
 				vcType: 'BTC',
-				units: 1.23,
-				rate: 2500
-			});
-			expect(result.base).to.equal('USDT');
-			expect(result.vcType).to.equal('BTC');
-			expect(result.units).to.equal(1.23);
+				units: 1,
+				rate: 2
+			}
+			let expectation = mockAccountDao.expects('addAsset').withArgs(ACCOUNT_ID, MARKET, asset);
+			account.addAsset(ACCOUNT_ID, MARKET, asset);
+			expectation.verify();
 		});
 		it('should be called addHistory when it call', () => {
-			let expectation = mockAccountDao.expects('addHistory').once();
-			account.addAsset(ACCOUNT_ID, MARKET, {
+			let asset = {
 				base: 'USDT',
 				vcType: 'BTC',
-				units: 1.23,
-				rate: 2500
+				units: 1,
+				rate: 2
+			};
+			let expectation = mockAccountDao.expects('addHistory').withArgs(ACCOUNT_ID, MARKET, asset);
+			account.addAsset(ACCOUNT_ID, MARKET, asset);
+			expectation.verify();
+		});
+		it('should be called updateAsset when same rate asset exists', () => {
+			let expectation = mockAccountDao.expects('updateAsset')
+				.withArgs(ACCOUNT_ID, MARKET, sinon.match.has('units', 2));
+			account.addAsset(ACCOUNT_ID, MARKET, {
+				units: 1,
+				rate: 1
 			});
 			expectation.verify();
 		});
@@ -212,7 +226,7 @@ describe('account/index', function () {
 		});
 	});
 
-	describe('syncAssets', () => {
+	describe('refineAssets', () => {
 		const BASE = 'BTC';
 		let ASSETS;
 		before(() => {
@@ -251,12 +265,12 @@ describe('account/index', function () {
 		beforeEach(() => {
 			ASSETS = {
 				[BASE]: {
-					BTC: [{ units: 1, rate: 1 , uuid: '1' }],
-					ETH: [{ units: 1, rate: 0.1, uuid: '1' },
-							  { units: 1, rate: 0.2, uuid: '2' }],
-					LTC: [{ units: 1, rate: 0.3, uuid: '1' },
-								{ units: 1, rate: 0.1, uuid: '2' },
-								{ units: 1, rate: 0.2, uuid: '3' }]
+					BTC: [{ base: BASE, vcType: 'BTC', units: 1, rate: 1 , uuid: '1' }],
+					ETH: [{ base: BASE, vcType: 'ETH', units: 1, rate: 0.1, uuid: '1' },
+							  { base: BASE, vcType: 'ETH', units: 1, rate: 0.2, uuid: '2' }],
+					LTC: [{ base: BASE, vcType: 'LTC', units: 1, rate: 0.3, uuid: '1' },
+								{ base: BASE, vcType: 'LTC', units: 1, rate: 0.1, uuid: '2' },
+								{ base: BASE, vcType: 'LTC', units: 1, rate: 0.2, uuid: '3' }]
 				}
 			};
 		});
@@ -267,7 +281,7 @@ describe('account/index', function () {
 			accountDao.addAsset.restore();
 		})
 		it('should return assets in balances when it call', () => {
-			let result = account.syncAssets(ACCOUNT_ID, MARKET, BASE, {
+			let result = account.refineAssets(ACCOUNT_ID, MARKET, BASE, {
 				ETH: 2, LTC: 3
 			}, {
 				LTC: { ask: 0.1 },
@@ -278,11 +292,11 @@ describe('account/index', function () {
 			expect(result.LTC.length).to.equal(3);
 		});
 		it('should remove assets in order of lower rate when it call', () => {
-			let result = account.syncAssets(ACCOUNT_ID, MARKET, BASE, {
+			let result = account.refineAssets(ACCOUNT_ID, MARKET, BASE, {
 				ETH: 1, LTC: 1.5
 			}, {
-				LTC: { ask: 0.1 },
-				ETH: { ask: 0.2 }
+				ETH: { ask: 0.2 },
+				LTC: { ask: 0.1 }
 			});
 			expect(result.ETH.length).to.equal(1);
 			expect(result.ETH[0].rate).to.equal(0.2);
@@ -295,14 +309,39 @@ describe('account/index', function () {
 		});
 
 		it('should add asset that have ask rate if balance is more than sum of units', () => {
-			let result = account.syncAssets(ACCOUNT_ID, MARKET, BASE, {
+			let result = account.refineAssets(ACCOUNT_ID, MARKET, BASE, {
 				ETH: 3
 			}, {
 				ETH: { ask: 0.2 }
 			});
-			expect(result.ETH.length).to.equal(3);
-			expect(result.ETH[2].units).to.equal(1);
-			expect(result.ETH[2].rate).to.equal(0.2);
+			expect(result.ETH.length).to.equal(2);
+			expect(result.ETH[1].units).to.equal(2);
+			expect(result.ETH[1].rate).to.equal(0.2);
+		});
+		it('should merge same rate assets when same rate assets exist', () => {
+			ASSETS = {
+				[BASE]: {
+					BTC: [{ base: BASE, vcType: 'BTC', units: 1, rate: 1 , uuid: '1' },
+								{ base: BASE, vcType: 'BTC', units: 1, rate: 1 , uuid: '2' }],
+					ETH: [{ base: BASE, vcType: 'ETH', units: 1, rate: 1 , uuid: '1' },
+								{ base: BASE, vcType: 'ETH', units: 1, rate: 2 , uuid: '2' },
+								{ base: BASE, vcType: 'ETH', units: 1, rate: 1 , uuid: '3' }]
+				}
+			};
+			let result = account.refineAssets(ACCOUNT_ID, MARKET, BASE, {
+				BTC: 2, ETH: 3
+			}, {
+				BTC: { ask: 1 },
+				ETH: { ask: 1 }
+			});
+			expect(result.BTC.length).to.equal(1);
+			expect(result.BTC[0].units).to.equal(2);
+			expect(result.BTC[0].rate).to.equal(1);
+			expect(result.ETH.length).to.equal(2);
+			expect(result.ETH[0].units).to.equal(2);
+			expect(result.ETH[0].rate).to.equal(1);
+			expect(result.ETH[1].units).to.equal(1);
+			expect(result.ETH[1].rate).to.equal(2);
 		});
 	});
 });

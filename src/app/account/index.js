@@ -42,7 +42,14 @@ export function searchAssets(accountId, market, base, vcType) {
 
 export function addAsset(accountId, market, asset) {
 	addHistory(accountId, market, asset);
-	return accountDao.addAsset(accountId, market, asset);
+	let matchedAsset = accountDao.searchAssets(accountId, market, asset.base, asset.vcType).filter(a => a.rate === asset.rate)[0];
+	if (matchedAsset) {
+		accountDao.updateAsset(accountId, market, Object.assign(matchedAsset, {
+			units: asset.units + matchedAsset.units
+		}));
+	} else {
+		accountDao.addAsset(accountId, market, asset);
+	}
 }
 
 export function addHistory(accountId, market, history) {
@@ -88,14 +95,13 @@ export function getUser(accountId) {
 	return null;
 }
 
-export function syncAssets(accountId, market, base, balances, tickers) {
+export function refineAssets(accountId, market, base, balances, tickers) {
 	let result = {};
 	for (let vcType in balances) {
 		if (!tickers[vcType]) {
 			continue;
 		}
-		let assets = searchAssets(accountId, market, base, vcType);
-		let sumUnits = assets.reduce((acc, a) => acc + a.units, 0);
+		let sumUnits = searchAssets(accountId, market, base, vcType).reduce((acc, a) => acc + a.units, 0);
 		if (balances[vcType] < sumUnits) {
 			removeAsset(accountId, market, {
 				base,
@@ -107,10 +113,21 @@ export function syncAssets(accountId, market, base, balances, tickers) {
 				base,
 				vcType,
 				units: balances[vcType] - sumUnits,
-				rate: tickers[vcType].ask,
-				type: 'sync'
+				rate: tickers[vcType].ask
 			});
 		}
+		searchAssets(accountId, market, base, vcType)
+			.sort((a1, a2) => a1.rate - a2.rate)
+			.reduce((pre, a) => {
+				if (pre && pre.rate === a.rate) {
+					pre.units += a.units;
+					accountDao.updateAsset(accountId, market, pre);
+					accountDao.removeAsset(accountId, market, a);
+					return pre;
+				} else {
+					return a;
+				}
+			}, null);
 		result[vcType] = searchAssets(accountId, market, base, vcType);
 	}
 	return result;
