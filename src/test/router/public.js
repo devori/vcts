@@ -6,6 +6,7 @@ import { expect, should } from 'chai';
 import * as marketApi from '../../app/market-api';
 import publicRouter from '../../app/router/public';
 import * as account from '../../app/account'
+import logger from '../../app/util/logger';
 
 describe('router/public.js', function () {
   const TEST_NAME = 'test';
@@ -13,6 +14,7 @@ describe('router/public.js', function () {
 
   let app;
   before(() => {
+    sinon.stub(logger, 'info').returns(null);
     sinon.stub(account, 'register')
 			.withArgs(sinon.match({
          username: TEST_NAME
@@ -141,6 +143,7 @@ describe('router/public.js', function () {
   });
 
   after(() => {
+    logger.info.restore();
     account.register.restore();
     marketApi.load('poloniex').getTickers.restore();
   });
