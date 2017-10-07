@@ -14,7 +14,7 @@ describe('router/public.js', function () {
 
   let app;
   before(() => {
-    sinon.stub(logger, 'info').returns(null);
+    sinon.stub(logger, 'verbose').returns(null);
     sinon.stub(account, 'register')
 			.withArgs(sinon.match({
          username: TEST_NAME
