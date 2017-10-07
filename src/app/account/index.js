@@ -96,6 +96,7 @@ export function getUser(accountId) {
 }
 
 export function refineAssets(accountId, market, base, balances, tickers) {
+	let curtime = new Date().getTime();
 	let result = {};
 	for (let vcType in balances) {
 		if (!tickers[vcType]) {
@@ -106,14 +107,16 @@ export function refineAssets(accountId, market, base, balances, tickers) {
 			removeAsset(accountId, market, {
 				base,
 				vcType,
-				units: sumUnits - balances[vcType]
+				units: sumUnits - balances[vcType],
+				timestamp: curtime
 			});
 		} else if (balances[vcType] > sumUnits) {
 			addAsset(accountId, market, {
 				base,
 				vcType,
 				units: balances[vcType] - sumUnits,
-				rate: tickers[vcType].ask
+				rate: tickers[vcType].ask,
+				timestamp: curtime
 			});
 		}
 		searchAssets(accountId, market, base, vcType)
