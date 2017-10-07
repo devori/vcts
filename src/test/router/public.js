@@ -143,7 +143,7 @@ describe('router/public.js', function () {
   });
 
   after(() => {
-    logger.info.restore();
+    logger.verbose.restore();
     account.register.restore();
     marketApi.load('poloniex').getTickers.restore();
   });
