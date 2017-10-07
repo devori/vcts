@@ -7,6 +7,7 @@ import { expect, should } from 'chai';
 import * as marketApi from '../../app/market-api';
 import privateRouter from '../../app/router/private';
 import * as account from '../../app/account';
+import logger from '../../app/util/logger';
 
 describe('router/private.js', function () {
   const TEST_USER = 'test-user01';
@@ -17,8 +18,8 @@ describe('router/private.js', function () {
 
   let mockAccount;
   let app;
-
   before(() => {
+    sinon.stub(logger, 'info').returns(null);
     sinon.stub(account, 'getUser')
       .withArgs(TEST_USER).returns({ id: TEST_USER })
       .withArgs(NON_EXIST_USER).returns(null);
@@ -28,6 +29,7 @@ describe('router/private.js', function () {
   });
 
   after(() => {
+    logger.info.restore();
     account.getUser.restore();
   });
 
