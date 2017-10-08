@@ -116,7 +116,8 @@ export function refineAssets(accountId, market, base, balances, tickers) {
 				vcType,
 				units: balances[vcType] - sumUnits,
 				rate: tickers[vcType].ask,
-				timestamp: curtime
+				timestamp: curtime,
+				type: 'buy'
 			});
 		}
 		searchAssets(accountId, market, base, vcType)
