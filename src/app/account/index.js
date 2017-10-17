@@ -41,6 +41,7 @@ export function searchAssets(accountId, market, base, vcType) {
 }
 
 export function addAsset(accountId, market, asset) {
+	asset.type = 'buy';
 	addHistory(accountId, market, asset);
 	let matchedAsset = accountDao.searchAssets(accountId, market, asset.base, asset.vcType).filter(a => a.rate === asset.rate)[0];
 	if (matchedAsset) {
@@ -57,13 +58,14 @@ export function addHistory(accountId, market, history) {
 }
 
 export function removeAsset(accountId, market, asset) {
+	asset.type = 'sell';
 	let { base, vcType, units } = asset;
 	if (units <= 0) {
 		return;
 	}
-	addHistory(accountId, market, asset);
 	let assets = searchAssets(accountId, market, base, vcType);
 	assets.sort((a1, a2) => a2.rate - a1.rate);
+	let total = 0;
 	for (let i = assets.length - 1; i >= 0; i--) {
 		if (assets[i].units <= units) {
 			accountDao.removeAsset(accountId, market, {
@@ -72,6 +74,7 @@ export function removeAsset(accountId, market, asset) {
 				uuid: assets[i].uuid
 			});
 			units -= assets[i].units;
+			total += assets[i].units * assets[i].rate;
 		} else {
 			accountDao.updateAsset(accountId, market, {
 				base,
@@ -79,9 +82,12 @@ export function removeAsset(accountId, market, asset) {
 				units: assets[i].units - units,
 				uuid: assets[i].uuid
 			});
+			total += units * assets[i].rate;
 			break;
 		}
 	}
+	asset.buy = total / units
+	addHistory(accountId, market, asset);
 }
 
 export function getHistory(accountId, market, base, vcType) {
@@ -117,7 +123,6 @@ export function refineAssets(accountId, market, base, balances, tickers) {
 				units: balances[vcType] - sumUnits,
 				rate: tickers[vcType].ask,
 				timestamp: curtime,
-				type: 'buy'
 			});
 		}
 		searchAssets(accountId, market, base, vcType)

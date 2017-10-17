@@ -57,7 +57,6 @@ export function sell(auth, base, vcType, units, rate) {
 				units: Number(t.amount),
 				rate: Number(t.rate),
 				total: Number(t.amount) * Number(t.rate) * 0.9975,
-				type: 'sell',
 				timestamp: new Date().getTime()
 			});
 		});
@@ -83,7 +82,6 @@ export function buy(auth, base, vcType, units, rate) {
 				units: Number(t.amount) * 0.9975,
 				rate: Number(t.rate),
 				total: Number(t.amount) * Number(t.rate),
-				type: 'buy',
 				timestamp: new Date().getTime()
 			})
 		});
