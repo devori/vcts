@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "async": "^2.4.1",
     "body-parser": "^1.17.2",
     "compression": "^1.6.2",
     "express": "^4.15.2",
@@ -16,23 +15,21 @@
     "winston-daily-rotate-file": "^1.4.6"
   },
   "devDependencies": {
-    "autobahn": "^17.5.2",
-    "babel-cli": "^6.24.1",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
     "babel-preset-node6": "^11.0.0",
+    "babel-watch": "^2.0.7",
     "chai": "^4.0.1",
     "mocha": "^3.4.2",
     "nock": "^9.0.13",
     "sinon": "^2.3.2",
-    "supertest": "^3.0.0",
-    "supervisor": "^0.12.0"
+    "supertest": "^3.0.0"
   },
   "scripts": {
     "start": "node build/app/index.js",
-    "supervisor": "supervisor --r -r 'babel/register' output/app/index.js",
-    "watch": "babel src --out-dir output --presets=node6 --watch",
-    "build": "babel src/app --out-dir build/app --presets=node6",
-    "build-dev": "babel src --out-dir output --presets=node6 ",
-    "test": "mocha output/test/**/*.js"
+    "watch": "babel-watch src/app/index.js",
+    "build": "babel src/app --out-dir build/app",
+    "test": "mocha --compilers js:babel-core/register src/test/**/*.js"
   },
   "repository": {
     "type": "git",

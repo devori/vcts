@@ -2,7 +2,6 @@ import { expect, should } from 'chai';
 import sinon from 'sinon';
 import * as marketApi from '../../app/market-api';
 import * as poloniexApi from '../../app/market-api/poloniex-api';
-import * as account from '../../app/account';
 
 describe('market-api/index.js', function () {
 

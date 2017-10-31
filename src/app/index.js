@@ -1,9 +1,16 @@
+import path from 'path';
+import fs from 'fs';
 import express from 'express';
 import compression from 'compression'
 import bodyParser from 'body-parser';
 import pubilcRouter from './router/public';
 import privateRouter from './router/private';
 import logger from './util/logger';
+
+const DATA_DIR_PATH = path.resolve(__dirname, '../../data');
+if (!fs.existsSync(DATA_DIR_PATH)) {
+    fs.mkdirSync(DATA_DIR_PATH);
+}
 
 let app = express();
 

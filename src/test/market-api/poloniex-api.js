@@ -1,5 +1,4 @@
 import { expect, should } from 'chai';
-import sinon from 'sinon';
 import nock from 'nock';
 import * as poloniexApi from '../../app/market-api/poloniex-api';
 
@@ -53,8 +52,8 @@ describe('market-api/poloniex-api.js', function () {
   describe('getBalances', () => {
     before(() => {
       nock('https://poloniex.com')
-      .post('/tradingApi', {
-        command: 'returnBalances'
+      .post('/tradingApi', body => {
+          return body.command === 'returnBalances' && !isNaN(body.nonce)
       })
       .reply(200, {
         USDT: '100',
@@ -83,12 +82,12 @@ describe('market-api/poloniex-api.js', function () {
   describe('sell', () => {
     before(() => {
       nock('https://poloniex.com')
-      .post('/tradingApi', {
-        command: 'sell',
-        currencyPair: 'USDT_BTC',
-        rate: '2500',
-        amount: '1',
-        immediateOrCancel: '1'
+      .post('/tradingApi', body => {
+        return body.command === 'sell'
+          && body.currencyPair === 'USDT_BTC'
+          && body.rate === '2500'
+          && body.amount === '1'
+          && body.immediateOrCancel === '1';
       })
       .reply(200, {
         "orderNumber": 123,
@@ -132,8 +131,7 @@ describe('market-api/poloniex-api.js', function () {
           vcType: 'BTC',
           units: 0.4,
           rate: 2500,
-          total: 0.4 * 2500 * 0.9975,
-          type: 'sell'
+          total: 0.4 * 2500 * 0.9975
         });
         expect(result.trades[0].timestamp).to.be.a('number');
         expect(result.trades[1]).to.deep.include({
@@ -141,8 +139,7 @@ describe('market-api/poloniex-api.js', function () {
           vcType: 'BTC',
           units: 0.6,
           rate: 2600,
-          total: 0.6 * 2600 * 0.9975,
-          type: 'sell'
+          total: 0.6 * 2600 * 0.9975
         });
         expect(result.trades[1].timestamp).to.be.a('number');
         done();
@@ -154,12 +151,12 @@ describe('market-api/poloniex-api.js', function () {
   describe('buy', () => {
     before(() => {
       nock('https://poloniex.com')
-      .post('/tradingApi', {
-        command: 'buy',
-        currencyPair: 'USDT_BTC',
-        rate: '2600',
-        amount: '1',
-        immediateOrCancel: '1'
+      .post('/tradingApi', body => {
+          return body.command === 'buy'
+              && body.currencyPair === 'USDT_BTC'
+              && body.rate === '2600'
+              && body.amount === '1'
+              && body.immediateOrCancel === '1';
       })
       .reply(200, {
         "orderNumber": 124,
@@ -203,8 +200,7 @@ describe('market-api/poloniex-api.js', function () {
           vcType: 'BTC',
           units: 0.4 * 0.9975,
           rate: 2500,
-          total: 0.4 * 2500,
-          type: 'buy'
+          total: 0.4 * 2500
         });
         expect(result.trades[0].timestamp).to.be.a('number');
         expect(result.trades[1]).to.deep.include({
@@ -212,8 +208,7 @@ describe('market-api/poloniex-api.js', function () {
           vcType: 'BTC',
           units: 0.6 * 0.9975,
           rate: 2600,
-          total: 0.6 * 2600,
-          type: 'buy'
+          total: 0.6 * 2600
         });
         expect(result.trades[1].timestamp).to.be.a('number');
         done();

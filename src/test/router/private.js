@@ -1,6 +1,5 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import crypto from 'crypto';
 import supertest from 'supertest';
 import sinon from 'sinon';
 import { expect, should } from 'chai';
@@ -13,10 +12,7 @@ describe('router/private.js', function () {
   const TEST_USER = 'test-user01';
   const NON_EXIST_USER = 'non-exist-user';
   const MARKET = 'poloniex';
-  const POLONIEX_API_KEY = 'poloniex-api-key';
-  const POLONIEX_SECRET_API = 'poloniex-secret-key';
 
-  let mockAccount;
   let app;
   before(() => {
     sinon.stub(logger, 'info').returns(null);

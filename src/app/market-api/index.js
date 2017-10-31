@@ -1,5 +1,4 @@
 import * as poloniexApi from './poloniex-api';
-import * as account from '../account';
 
 export const MARKET = {
   POLONIEX: 'poloniex'

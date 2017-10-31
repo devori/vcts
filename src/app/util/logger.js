@@ -1,12 +1,18 @@
 import path from 'path';
+import fs from 'fs';
 import winston from 'winston';
-import winstonDailyRotateFile from 'winston-daily-rotate-file';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
+const LOG_DIR_PATH = path.resolve(__dirname, '../../../logs');
+
+if (!fs.existsSync(LOG_DIR_PATH)) {
+  fs.mkdirSync(LOG_DIR_PATH);
+}
 
 let logger = new (winston.Logger)({
   transports: [
     new (winston.transports.Console)(),
-    new (winston.transports.DailyRotateFile)({
+    new DailyRotateFile({
       filename: './logs/app.log',
       datePattern: 'yyyy-MM-dd.',
       prepend: true,

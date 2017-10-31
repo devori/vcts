@@ -10,3 +10,4 @@ git
 build/
 npm-debug.log*
 process.pid
+.idea/

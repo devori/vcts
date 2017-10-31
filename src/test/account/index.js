@@ -1,6 +1,5 @@
 import { expect, should } from 'chai';
 import sinon from 'sinon';
-import crypto from 'crypto';
 import * as account from '../../app/account';
 import * as accountDao from '../../app/database/account-dao';
 
