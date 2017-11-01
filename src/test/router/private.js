@@ -74,13 +74,11 @@ describe('router/private.js', function () {
       mockAccount = sinon.mock(account);
       sinon.stub(marketApi.load(MARKET), 'buy').returns(
         Promise.resolve({
-    			trades: [
-            {
-              units: 0.9975,
-              rate: 100,
-              total: 100
-            }
-          ],
+    			trade: {
+            units: 0.9975,
+            rate: 100,
+            total: 100
+          },
     			timestamp: new Date().getTime(),
     			raw: {}
   		}));
@@ -118,13 +116,11 @@ describe('router/private.js', function () {
       mockAccount = sinon.mock(account);
       sinon.stub(marketApi.load(MARKET), 'sell').returns(
         Promise.resolve({
-          trades: [
-            {
-              units: 1,
-              rate: 10000,
-              total: 9975
-            }
-          ],
+          trade: {
+            units: 1,
+            rate: 10000,
+            total: 9975
+          },
           timestamp: new Date().getTime(),
           raw: {}
       }));

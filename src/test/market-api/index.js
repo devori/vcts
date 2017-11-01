@@ -14,10 +14,10 @@ describe('market-api/index.js', function () {
       return Promise.resolve({ balances: 'temp data' });
     });
     sinon.stub(poloniexApi, 'buy').callsFake(() => {
-      return Promise.resolve({ trades: 'temp data' });
+      return Promise.resolve({ trade: 'temp data' });
     });
     sinon.stub(poloniexApi, 'sell').callsFake(() => {
-      return Promise.resolve({ trades: 'temp data' });
+      return Promise.resolve({ trade: 'temp data' });
     });
   });
 
@@ -45,7 +45,7 @@ describe('market-api/index.js', function () {
 
   it('should call poloniex-buy api when buy call', done => {
     marketApi.load(marketApi.MARKET.POLONIEX).buy({}).then(result => {
-      expect(result.trades).to.equal('temp data');
+      expect(result.trade).to.equal('temp data');
       done();
     });
     this.timeout(3000);
@@ -53,7 +53,7 @@ describe('market-api/index.js', function () {
 
   it('should call poloniex-sell api when sell call', done => {
     marketApi.load(marketApi.MARKET.POLONIEX).sell({}).then(result => {
-      expect(result.trades).to.equal('temp data');
+      expect(result.trade).to.equal('temp data');
       done();
     });
     this.timeout(3000);

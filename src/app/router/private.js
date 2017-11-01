@@ -40,12 +40,10 @@ router.post('/users/:user/markets/:market/assets/:base/:vcType', (req, res) => {
     req.body.units,
     req.body.rate
   ).then(result => {
-    result.trades.forEach(t => {
-      account.addAsset(user, market, t);
-    });
+    account.addAsset(user, market, result.trade);
     res.status(201).json(result);
     logger.info(`[${Date()}] Purchase - ${base}_${vcType} : ${req.body.units} - ${req.body.rate}`);
-    logger.info(result.trades);
+    logger.info(result.trade);
   }).catch(err => {
     res.status(500).send(err);
   });
@@ -62,12 +60,10 @@ router.delete('/users/:user/markets/:market/assets/:base/:vcType', (req, res) =>
     req.body.units,
     req.body.rate
   ).then(result => {
-    result.trades.forEach(t => {
-      account.removeAsset(user, market, t);
-    });
+    account.removeAsset(user, market, result.trade);
     res.json(result);
     logger.info(`[${Date()}] Sale - ${base}_${vcType} : ${req.body.units} - ${req.body.rate}`);
-    logger.info(result.raw);
+    logger.info(result.trade);
   }).catch(err => {
     res.status(500).send(err);
   });

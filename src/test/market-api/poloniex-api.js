@@ -45,7 +45,6 @@ describe('market-api/poloniex-api.js', function () {
         expect(result.BTC.TEST.timestamp).to.be.a('number');
         done();
       });
-      this.timeout(3000);
     });
   });
 
@@ -116,7 +115,7 @@ describe('market-api/poloniex-api.js', function () {
       nock.cleanAll();
     });
 
-    it('should return sale result when sell call', done => {
+    it('should return merged sale result when sell call', done => {
       let prom = poloniexApi.sell({
         apiKey: 'a',
         secretKey: 'b'
@@ -125,26 +124,15 @@ describe('market-api/poloniex-api.js', function () {
       prom.then(result => {
         expect(result.raw.orderNumber).to.equal(123);
         expect(result.raw.resultingTrades).to.have.lengthOf(2);
-        expect(result.trades).to.have.lengthOf(2);
-        expect(result.trades[0]).to.deep.include({
+        expect(result.trade).to.deep.include({
           base: 'USDT',
           vcType: 'BTC',
-          units: 0.4,
-          rate: 2500,
-          total: 0.4 * 2500 * 0.9975
+          units: 1.00000000,
+          rate: 2560.00000000
         });
-        expect(result.trades[0].timestamp).to.be.a('number');
-        expect(result.trades[1]).to.deep.include({
-          base: 'USDT',
-          vcType: 'BTC',
-          units: 0.6,
-          rate: 2600,
-          total: 0.6 * 2600 * 0.9975
-        });
-        expect(result.trades[1].timestamp).to.be.a('number');
+        expect(result.trade.timestamp).to.be.a('number');
         done();
       });
-      this.timeout(3000);
     });
   });
 
@@ -185,7 +173,7 @@ describe('market-api/poloniex-api.js', function () {
       nock.cleanAll();
     });
 
-    it('should return buy result when buy call', done => {
+    it('should return merged buy result when buy call', done => {
       let prom = poloniexApi.buy({
         apiKey: 'a',
         secretKey: 'b'
@@ -194,26 +182,15 @@ describe('market-api/poloniex-api.js', function () {
       prom.then(result => {
         expect(result.raw.orderNumber).to.equal(124);
         expect(result.raw.resultingTrades).to.have.lengthOf(2);
-        expect(result.trades).to.have.lengthOf(2);
-        expect(result.trades[0]).to.deep.include({
+        expect(result.trade).to.deep.include({
           base: 'USDT',
           vcType: 'BTC',
-          units: 0.4 * 0.9975,
-          rate: 2500,
-          total: 0.4 * 2500
+          units: 0.99750000,
+          rate: 2560.00000000
         });
-        expect(result.trades[0].timestamp).to.be.a('number');
-        expect(result.trades[1]).to.deep.include({
-          base: 'USDT',
-          vcType: 'BTC',
-          units: 0.6 * 0.9975,
-          rate: 2600,
-          total: 0.6 * 2600
-        });
-        expect(result.trades[1].timestamp).to.be.a('number');
+        expect(result.trade.timestamp).to.be.a('number');
         done();
       });
-      this.timeout(3000);
     });
   });
 });

@@ -47,18 +47,22 @@ export function sell(auth, base, vcType, units, rate) {
 		immediateOrCancel: '1'
 	}).then(data => {
 		let result = {
-			raw: data,
-			trades: []
+			raw: data
 		};
-		data.resultingTrades.forEach(t => {
-			result.trades.push({
-				base,
-				vcType,
-				units: Number(t.amount),
-				rate: Number(t.rate),
-				total: Number(t.amount) * Number(t.rate) * 0.9975,
-				timestamp: new Date().getTime()
-			});
+		result.trade = data.resultingTrades.reduce((acc, t) => {
+			let units = Number(t.amount);
+			let rate = Number(t.rate);
+			acc.rate = (acc.units * acc.rate + units * rate) / (acc.units + units);
+			acc.rate = Number(acc.rate.toFixed(8));
+			acc.units += units;
+			acc.units = Number(acc.units.toFixed(8));
+			return acc;
+		}, {
+			base,
+			vcType,
+			units: 0,
+			rate: 0,
+			timestamp: new Date().getTime()
 		});
 		return result;
 	});
@@ -72,18 +76,22 @@ export function buy(auth, base, vcType, units, rate) {
 		immediateOrCancel: '1'
 	}).then(data => {
 		let result = {
-			raw: data,
-			trades: []
+			raw: data
 		};
-		data.resultingTrades.forEach(t => {
-			result.trades.push({
-				base,
-				vcType,
-				units: Number(t.amount) * 0.9975,
-				rate: Number(t.rate),
-				total: Number(t.amount) * Number(t.rate),
-				timestamp: new Date().getTime()
-			})
+		result.trade = data.resultingTrades.reduce((acc, t) => {
+			let units = Number(t.amount) * 0.9975;
+			let rate = Number(t.rate);
+			acc.rate = (acc.units * acc.rate + units * rate) / (acc.units + units);
+			acc.rate = Number(acc.rate.toFixed(8));
+			acc.units += units;
+			acc.units = Number(acc.units.toFixed(8));
+			return acc;
+		}, {
+			base,
+			vcType,
+			units: 0,
+			rate: 0,
+			timestamp: new Date().getTime()
 		});
 		return result;
 	});
