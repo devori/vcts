@@ -57,6 +57,10 @@ export function addHistory(accountId, market, history) {
 	return accountDao.addHistory(accountId, market, history);
 }
 
+export function removeAssetById(accountId, market, asset) {
+	return accountDao.removeAsset(accountId, market, asset);
+}
+
 export function removeAsset(accountId, market, asset) {
 	asset.type = 'sell';
 	let { base, vcType, units } = asset;

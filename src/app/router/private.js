@@ -50,8 +50,16 @@ router.post('/users/:user/markets/:market/assets/:base/:vcType', (req, res) => {
 });
 
 
-router.delete('/users/:user/markets/:market/assets/:base/:vcType', (req, res) => {
-  let { user, market, base, vcType } = req.params;
+router.delete('/users/:user/markets/:market/assets/:base/:vcType/:uuid?', (req, res) => {
+  let { user, market, base, vcType, uuid } = req.params;
+  if (uuid) {
+    res.json(account.removeAssetById(user, market, {
+      base,
+      vcType,
+      uuid
+    }));
+    return;
+  }
   let keys = account.getMarketKeys(user, market);
   marketApi.load(req.params.market).sell(
     keys,

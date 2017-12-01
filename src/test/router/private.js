@@ -110,7 +110,7 @@ describe('router/private.js', function () {
     });
   });
 
-  describe('DELETE /users/:user/markets/:market/assets/:base?/:vcType?', () => {
+  describe('DELETE /users/:user/markets/:market/assets/:base/:vcType/:id?', () => {
     let mockAccount;
     before(() => {
       mockAccount = sinon.mock(account);
@@ -150,6 +150,21 @@ describe('router/private.js', function () {
         });
       this.timeout(3000);
     });
+    it('should call removeAssetById when uuid exists', done => {
+      mockAccount.expects('removeAssetById').withArgs(TEST_USER, MARKET).once();
+      supertest(app)
+        .delete(`/users/${TEST_USER}/markets/${MARKET}/assets/USDT/BTC/1`)
+        .expect('Content-Type', 'application/json')
+        .expect(200)
+        .end((err, res) => {
+          if (err) {
+            expect.fail('', '', err);
+            return;
+          }
+          mockAccount.verify();
+          done();
+        })
+    })
   });
 
   describe('GET /users/:user/markets/:market/histories/:base?/:vcType?', () => {

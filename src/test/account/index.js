@@ -343,4 +343,29 @@ describe('account/index', function () {
 			expect(result.ETH[1].rate).to.equal(2);
 		});
 	});
+
+	describe('removeAssetById', () => {
+		before(() => {
+			sinon.stub(accountDao, 'removeAsset').withArgs(ACCOUNT_ID, MARKET, sinon.match({
+				base: 'BTC',
+				vcType: 'ETH',
+				uuid: 'uuid-1'
+			})).returns({
+				base: 'BTC',
+				vcType: 'ETH',
+				uuid: 'uuid-1'
+			});
+		})
+		after(() => {
+			accountDao.removeAsset.restore();
+		})
+		it('should return removed asset when it calls', () => {
+			let result = account.removeAssetById(ACCOUNT_ID, MARKET, {
+				base: 'BTC',
+				vcType: 'ETH',
+				uuid: 'uuid-1'
+			});
+			expect(result.base).to.equal('BTC')
+		})
+	})
 });
