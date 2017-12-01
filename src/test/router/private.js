@@ -154,7 +154,6 @@ describe('router/private.js', function () {
       mockAccount.expects('removeAssetById').withArgs(TEST_USER, MARKET).once();
       supertest(app)
         .delete(`/users/${TEST_USER}/markets/${MARKET}/assets/USDT/BTC/1`)
-        .expect('Content-Type', 'application/json')
         .expect(200)
         .end((err, res) => {
           if (err) {
