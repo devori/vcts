@@ -71,6 +71,9 @@ export function removeAsset(accountId, market, asset) {
 	assets.sort((a1, a2) => a2.rate - a1.rate);
 	let total = 0;
 	for (let i = assets.length - 1; i >= 0; i--) {
+		if (units <= 0) {
+			break;
+		}
 		if (assets[i].units <= units) {
 			accountDao.removeAsset(accountId, market, {
 				base,
@@ -87,10 +90,10 @@ export function removeAsset(accountId, market, asset) {
 				uuid: assets[i].uuid
 			});
 			total += units * assets[i].rate;
-			break;
+			units = 0;
 		}
 	}
-	asset.buy = total / units
+	asset.buy = total / (asset.units - units);
 	addHistory(accountId, market, asset);
 }
 
