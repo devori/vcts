@@ -47,6 +47,21 @@ export function searchAssets(accountId, market, base, vcType) {
   return dao.cloneDeep().value() || [];
 }
 
+export function searchAssetById(accountId, market, base, vcType, id) {
+  let dao = findDao(accountId, market, 'assets');
+  if (!dao) {
+    return null;
+  };
+  dao = findByPath(dao, [
+    { name: base },
+    { name: vcType }
+  ]);
+  if (!dao) {
+    return null;
+  }
+  return dao.find({uuid: id}).cloneDeep().value() || {};
+}
+
 export function addAsset(accountId, market, asset) {
   let dao = findDao(accountId, market, 'assets');
   if (!dao) {

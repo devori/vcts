@@ -145,3 +145,24 @@ export function refineAssets(accountId, market, base, balances, tickers) {
 	}
 	return result;
 }
+
+export function mergeAssets(accountId, market, base, vcType, ids) {
+	const mergedAsset = ids.reduce((acc, id) => {
+		const asset = accountDao.searchAssetById(accountId, market, base, vcType, id);
+		if (!acc) {
+			return asset;
+		}
+		const total = acc.rate * acc.units + asset.rate * asset.units;
+		acc.units += asset.units;
+		acc.rate = total / acc.units;
+
+		return acc;
+	}, null);
+	
+	ids.slice(1).forEach(id => {
+		const asset = accountDao.searchAssetById(accountId, market, base, vcType, id);
+		accountDao.removeAsset(accountId, market, asset);
+	});
+
+	return accountDao.updateAsset(accountId, market, mergedAsset);
+}

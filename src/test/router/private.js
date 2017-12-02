@@ -235,7 +235,8 @@ describe('router/private.js', function () {
   });
   describe('PUT /users/{user}/markets/{market}/assets/{BASE}/{VCTYPE}?', () => {
     const BASE = 'BTC';
-    let mockAccount;
+    const VC_TYPE = 'LTC';
+    const IDS = ['1', '2'];
     before(() => {
       const BTC_ASSETS = {
         ETH: [
@@ -259,6 +260,12 @@ describe('router/private.js', function () {
       sinon.stub(account, 'refineAssets')
         .withArgs(TEST_USER, MARKET, BASE, BALANCES).returns(BTC_ASSETS)
         .withArgs(TEST_USER, MARKET, BASE, { LTC: BALANCES.LTC }).returns({ LTC: BTC_ASSETS.LTC });
+      sinon.stub(account, 'mergeAssets')
+        .withArgs(TEST_USER, MARKET, BASE, VC_TYPE, sinon.match(IDS)).returns({
+          base: BASE,
+          vcType: VC_TYPE,
+          uuid: '1'
+        });
       sinon.stub(marketApi.load(MARKET), 'getBalances')
         .withArgs(sinon.match.any, BASE).returns(Promise.resolve(BALANCES));
       sinon.stub(marketApi.load(MARKET), 'getTickers')
@@ -297,6 +304,22 @@ describe('router/private.js', function () {
           expect(res.body.ETH).not.to.exist;
           expect(res.body.LTC.length).to.equal(1);
           expect(res.body.LTC[0].uuid).to.equal('33777511-8ffa-4a98-88d2-asdfiojef2');
+          done();
+        });
+    });
+    it('should return merged asset when it calls with vcType and merge mode', done => {
+      supertest(app)
+        .put(`/users/${TEST_USER}/markets/${MARKET}/assets/${BASE}/${VC_TYPE}?mode=merge`)
+        .send(IDS)
+        .expect(200)
+        .end((err ,res) => {
+          if (err) {
+            expect.fail('', '', err);
+            return;
+          }
+          expect(res.body.base).to.equal(BASE);
+          expect(res.body.vcType).to.equal(VC_TYPE);
+          expect(res.body.uuid).to.equal('1');
           done();
         });
     });

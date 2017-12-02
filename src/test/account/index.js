@@ -355,10 +355,10 @@ describe('account/index', function () {
 				vcType: 'ETH',
 				uuid: 'uuid-1'
 			});
-		})
+		});
 		after(() => {
 			accountDao.removeAsset.restore();
-		})
+		});
 		it('should return removed asset when it calls', () => {
 			let result = account.removeAssetById(ACCOUNT_ID, MARKET, {
 				base: 'BTC',
@@ -366,6 +366,71 @@ describe('account/index', function () {
 				uuid: 'uuid-1'
 			});
 			expect(result.base).to.equal('BTC')
-		})
-	})
+		});
+	});
+
+	describe('mergeAssets', () => {
+		before(() => {
+			sinon.stub(accountDao, 'searchAssetById').callsFake((accountId, market, base, vcType, id) => {
+				if (accountId !== ACCOUNT_ID || market !== MARKET || base !== 'BTC' || vcType !== 'ETH') {
+					return null;
+				}
+				switch (id) {
+				case '1':
+					return {
+						base: 'BTC',
+						vcType: 'ETH',
+						uuid: '1',
+						rate: 1,
+						units: 1,
+					};
+				case '2':
+					return {
+						base: 'BTC',
+						vcType: 'ETH',
+						uuid: '2',
+						rate: 3,
+						units: 1,
+					};
+				default:
+					return null;
+				}
+			});
+			sinon.stub(accountDao, 'removeAsset').withArgs(ACCOUNT_ID, MARKET, sinon.match({
+				base: 'BTC',
+				vcType: 'ETH',
+				uuid: '1'
+			})).returns({
+				base: 'BTC',
+				vcType: 'ETH',
+				uuid: '1'
+			});
+			sinon.stub(accountDao, 'updateAsset').withArgs(ACCOUNT_ID, MARKET, sinon.match({
+				base: 'BTC',
+				vcType: 'ETH',
+				uuid: '1',
+				rate: 2,
+				units: 2,
+			})).returns({
+				base: 'BTC',
+				vcType: 'ETH',
+				uuid: '1',
+				rate: 2,
+				units: 2,
+			})
+		});
+		after(() => {
+			accountDao.searchAssetById.restore();
+			accountDao.removeAsset.restore();
+			accountDao.updateAsset.restore();
+		});
+		it('should return merged asset when it calls', () => {
+			const result = account.mergeAssets(ACCOUNT_ID, MARKET, 'BTC', 'ETH', ['1', '2']);
+			expect(result.uuid).to.equal('1');
+			expect(result.base).to.equal('BTC');
+			expect(result.vcType).to.equal('ETH');
+			expect(result.rate).to.equal(2);
+			expect(result.units).to.equal(2);
+		});
+	});
 });

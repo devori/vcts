@@ -83,9 +83,12 @@ router.get('/users/:user/markets/:market/histories/:base?/:vcType?', (req, res) 
   res.json(result);
 });
 
-router.put('/users/:user/markets/:market/assets/:base/:vcType?', (req,res) => {
+router.put('/users/:user/markets/:market/assets/:base/:vcType?', (req, res) => {
   let { user, market, base, vcType } = req.params;
-  if (req.query.mode === 'sync') {
+
+  if (req.query.mode === 'merge') {
+    res.json(account.mergeAssets(user, market, base, vcType, req.body));
+  } else if (req.query.mode === 'sync') {
     let keys = account.getMarketKeys(user, market);
     return marketApi.load(market).getBalances(keys, base).then(balances => {
       if (vcType) {

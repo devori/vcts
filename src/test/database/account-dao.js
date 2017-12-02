@@ -74,6 +74,24 @@ describe('database/account-dao', () => {
     });
   });
 
+  it('should return asset', () => {
+    let asset = {
+      base: 'USDT',
+      vcType: 'BTC',
+      units: 1,
+      rate: 2500,
+      timestamp: 123
+    };
+    let result = accountDao.addAsset(USERNAME, MARKET, asset);
+    let assetById = accountDao.searchAssetById(USERNAME, MARKET, result.base, result.vcType, result.uuid);
+    expect(assetById.uuid).to.equal(result.uuid);
+    accountDao.removeAsset(USERNAME, MARKET, {
+      base: result.base,
+      vcType: result.vcType,
+      uuid: result.uuid
+    });
+  })
+
   it('should return history after history add', () => {
     let history = {
       base: 'USDT',
