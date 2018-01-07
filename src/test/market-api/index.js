@@ -27,6 +27,12 @@ describe('market-api/index.js', function () {
     }).to.throw('test-market is not supported');
   });
 
+  it('should not throw exception when market name is bianance', () => {
+    expect(() => {
+      marketApi.load('binance');
+    }).not.to.throw;
+  });
+
   it('should call poloniex-getTickers api when getTickers call', done => {
     marketApi.load(marketApi.MARKET.POLONIEX).getTickers().then(result => {
       expect(result.tickers).to.equal('temp data');

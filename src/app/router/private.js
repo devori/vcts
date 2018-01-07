@@ -90,7 +90,7 @@ router.put('/users/:user/markets/:market/assets/:base/:vcType?', (req, res) => {
     res.json(account.mergeAssets(user, market, base, vcType, req.body));
   } else if (req.query.mode === 'sync') {
     let keys = account.getMarketKeys(user, market);
-    return marketApi.load(market).getBalances(keys, base).then(balances => {
+    return marketApi.load(market).getBalances(keys).then(balances => {
       if (vcType) {
         balances = { [vcType]: (balances[vcType] ? balances[vcType] : 0) };
       }

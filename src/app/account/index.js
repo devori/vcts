@@ -161,7 +161,7 @@ export function mergeAssets(accountId, market, base, vcType, ids) {
 
 		return acc;
 	}, null);
-	
+
 	ids.slice(1).forEach(id => {
 		const asset = accountDao.searchAssetById(accountId, market, base, vcType, id);
 		accountDao.removeAsset(accountId, market, asset);

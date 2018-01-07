@@ -2,11 +2,11 @@ import request from 'request';
 import crypto from 'crypto';
 import _ from 'lodash';
 
-const POLONIEX_API_BASE_URL = 'https://poloniex.com';
+const API_BASE_URL = 'https://poloniex.com';
 
 export function getTickers() {
 	return new Promise((resolve, reject) => {
-		request(`${POLONIEX_API_BASE_URL}/public?command=returnTicker`, (err, res, body) => {
+		request(`${API_BASE_URL}/public?command=returnTicker`, (err, res, body) => {
 			if (err) {
 				throw err;
 			}
@@ -29,7 +29,7 @@ export function getTickers() {
 	});
 }
 
-export function getBalances(auth, base) {
+export function getBalances(auth) {
 	return callPrivateApi(auth, 'returnBalances').then(data => {
 		let result = {};
 		for (let k in data) {
@@ -108,7 +108,7 @@ function callPrivateApi(auth, command, params = {}) {
 	return new Promise((resolve, reject) => {
 		request({
 			method: 'POST',
-			url: `${POLONIEX_API_BASE_URL}/tradingApi`,
+			url: `${API_BASE_URL}/tradingApi`,
 			headers: headers,
 			form: params
 		}, (err, res, body) => {

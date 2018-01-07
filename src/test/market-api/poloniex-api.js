@@ -68,7 +68,7 @@ describe('market-api/poloniex-api.js', function () {
       let prom = poloniexApi.getBalances({
         apiKey: 'a',
         secretKey: 'b'
-      }, 'BTC');
+      });
       expect(prom).to.be.a('promise');
       prom.then(result => {
         expect(result.USDT).to.equal(100);

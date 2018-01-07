@@ -34,7 +34,7 @@ describe('database/account-dao', () => {
     fs.unlinkSync(`./data/accounts/${USERNAME}/${MARKET}/key.json`);
     fs.unlinkSync(`./data/accounts/${USERNAME}/${MARKET}/assets.json`);
     fs.unlinkSync(`./data/accounts/${USERNAME}/${MARKET}/history.json`);
-    fs.rmdirSync(`./data/accounts/${USERNAME}/${MARKET}`);
+    fs.rmdirSync(`./data/accounts/${USERNAME}/poloniex`);
     fs.rmdirSync(`./data/accounts/${USERNAME}`);
   });
 

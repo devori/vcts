@@ -267,7 +267,7 @@ describe('router/private.js', function () {
           uuid: '1'
         });
       sinon.stub(marketApi.load(MARKET), 'getBalances')
-        .withArgs(sinon.match.any, BASE).returns(Promise.resolve(BALANCES));
+        .withArgs(sinon.match.any).returns(Promise.resolve(BALANCES));
       sinon.stub(marketApi.load(MARKET), 'getTickers')
         .returns(Promise.resolve({ [BASE]: {}}));
     });
