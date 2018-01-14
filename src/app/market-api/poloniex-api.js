@@ -4,8 +4,14 @@ import _ from 'lodash';
 
 const API_BASE_URL = 'https://poloniex.com';
 
+export function getExchangeInfo() {
+	return Promise.resolve({
+		BTC: {}
+	});
+}
+
 export function getTickers() {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		request(`${API_BASE_URL}/public?command=returnTicker`, (err, res, body) => {
 			if (err) {
 				throw err;

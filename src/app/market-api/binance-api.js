@@ -1,23 +1,37 @@
 import request from 'request';
 import crypto from 'crypto';
 import _ from 'lodash';
+import logger from '../util/logger';
 
-const API_BASE_URL = 'https://api.binance.com/api/v3';
+const API_BASE_URL = 'https://api.binance.com/api';
 
-const HEADER = {
-	CONTENT_TYPE: 'application/x-www-form-urlencoded',
-	API_KEY_HEADER: 'X-MBX-APIKEY'
-};
-
-const SIGN = {
-	ALGORITHM: 'sha256',
-	SIGNATURE_NAME: 'signature',
-	TIMESTAMP_NAME: 'timestamp'
+export function getExchangeInfo() {
+	return new Promise((resolve) => {
+        request(`${API_BASE_URL}/v1/exchangeInfo`, (err, res, body) => {
+            if (err) {
+                throw err;
+            }
+            resolve(JSON.parse(body));
+        });
+	}).then(data => {
+        return data.symbols.reduce((acc, info) => {
+            acc[info.quoteAsset] = acc[info.quoteAsset] || {};
+            acc[info.quoteAsset][info.baseAsset] = {
+                rate: {
+                    step: Number(info.filters.find(({filterType}) => filterType === 'PRICE_FILTER').tickSize)
+                },
+                units: {
+                    step: Number(info.filters.find(({filterType}) => filterType === 'LOT_SIZE').stepSize)
+                }
+            };
+            return acc;
+        }, {});
+    });
 }
 
 export function getTickers() {
-	return new Promise((resolve, reject) => {
-		request(`${API_BASE_URL}/ticker/bookTicker`, (err, res, body) => {
+	return new Promise((resolve) => {
+		request(`${API_BASE_URL}/v3/ticker/bookTicker`, (err, res, body) => {
 			if (err) {
 				throw err;
 			}
@@ -35,10 +49,10 @@ export function getTickers() {
 				bid: Number(ticker.bidPrice),
 				ask: Number(ticker.askPrice),
 				timestamp: new Date().getTime()
-			}
+			};
 			return acc;
 		}, {});
-	})
+	});
 }
 
 export function getBalances(auth) {
@@ -59,6 +73,7 @@ export function buy(auth, base, vcType, units, rate) {
 }
 
 export function order(auth, base, vcType, side, units, rate) {
+	logger.info(`[Order] ${side} ${base}-${vcType} : ${units}(units) ${rate}(rate)`);
 	return callPrivateApi(auth, 'order', 'POST', {
 		symbol: `${vcType}${base}`,
 		side,
@@ -99,10 +114,12 @@ function callPrivateApi(auth, command, method, params = {}) {
 
 	const options = {
 		method,
-		url: `${API_BASE_URL}/${command}`,
-		headers: { 'X-MBX-APIKEY': auth.apiKey },
+		url: `${API_BASE_URL}/v3/${command}`,
+		headers: {
+			'X-MBX-APIKEY': auth.apiKey
+		},
 		[method === 'GET' ? 'qs' : 'form']: params,
-	}
+	};
 
 	return new Promise((resolve, reject) => {
 		request(options, (err, res, body) => {
