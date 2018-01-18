@@ -22,7 +22,7 @@ app.use((req, res, next) => {
 });
 app.use('/api/v1/public', pubilcRouter);
 app.use('/api/v1/private', privateRouter);
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   if (err) {
     res.status(500);
     res.json({

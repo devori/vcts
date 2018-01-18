@@ -57,6 +57,45 @@ export function addHistory(accountId, market, history) {
 	return accountDao.addHistory(accountId, market, history);
 }
 
+export function removeAssetsByIds(accountId, market, asset, ids) {
+    asset.type = 'sell';
+    let { base, vcType, units } = asset;
+    if (units <= 0) {
+        return;
+    }
+
+    let totalEstimation = 0;
+    let totalUnits = 0;
+    ids.reduce((restUnits, uuid) => {
+    	if (restUnits <= 0) {
+    		return 0;
+		}
+    	const asset = accountDao.searchAssetById(accountId, market, base, vcType, uuid);
+    	if (asset.units <= restUnits) {
+    		accountDao.removeAsset(accountId, market, {
+    			base,
+				vcType,
+				uuid,
+			});
+    		totalEstimation += asset.units * asset.rate;
+    		totalUnits += asset.units;
+		} else {
+            accountDao.updateAsset(accountId, market, {
+                base,
+                vcType,
+				uuid,
+                units: asset.units - restUnits,
+            });
+            totalEstimation += restUnits * asset.rate;
+            totalUnits += restUnits;
+		}
+		return restUnits - asset.units;
+	}, units);
+
+    asset.buy = totalEstimation / totalUnits;
+    addHistory(accountId, market, asset);
+}
+
 export function removeAssetById(accountId, market, asset) {
 	return accountDao.removeAsset(accountId, market, asset);
 }

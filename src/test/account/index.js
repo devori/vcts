@@ -369,6 +369,61 @@ describe('account/index', function () {
 		});
 	});
 
+    describe('removeAssetsByIds', () => {
+    	const BASE = 'BTC';
+    	const VC_TYPE = 'ETH';
+
+        beforeEach(() => {
+        	sinon.stub(accountDao, 'searchAssetById')
+				.withArgs(ACCOUNT_ID, MARKET, BASE, VC_TYPE, 'uuid-1').returns({units: 1, rate: 2.5})
+            	.withArgs(ACCOUNT_ID, MARKET, BASE, VC_TYPE, 'uuid-2').returns({units: 1, rate: 1});
+
+            sinon.stub(accountDao, 'removeAsset').returns('');
+            sinon.stub(accountDao, 'updateAsset').returns('');
+            sinon.stub(accountDao, 'addHistory').returns('');
+
+            account.removeAssetsByIds(ACCOUNT_ID, MARKET, {
+            	base: BASE,
+				vcType: VC_TYPE,
+				units: 1.5
+			}, ['uuid-1', 'uuid-2']);
+        });
+
+        afterEach(() => {
+            accountDao.removeAsset.restore();
+            accountDao.updateAsset.restore();
+            accountDao.addHistory.restore();
+            accountDao.searchAssetById.restore();
+        });
+
+        it('should call removeAsset with uuid-1', () => {
+            expect(accountDao.removeAsset.calledWith(ACCOUNT_ID, MARKET, {
+                base: BASE,
+                vcType: VC_TYPE,
+                uuid: 'uuid-1',
+            })).to.be.true;
+        });
+
+        it('should call updateAsset with uuid-2', () => {
+            expect(accountDao.updateAsset.calledWith(ACCOUNT_ID, MARKET, {
+                base: BASE,
+                vcType: VC_TYPE,
+				units: 0.5,
+                uuid: 'uuid-2'
+            })).to.be.true;
+		});
+
+        it('should call addHistory with sale info', () => {
+        	expect(accountDao.addHistory.calledWith(ACCOUNT_ID, MARKET, {
+        		type: 'sell',
+				base: BASE,
+				vcType: VC_TYPE,
+				units: 1.5,
+				buy: 2
+			})).to.be.true;
+		});
+    });
+
 	describe('mergeAssets', () => {
 		before(() => {
 			sinon.stub(accountDao, 'searchAssetById').callsFake((accountId, market, base, vcType, id) => {
