@@ -90,15 +90,19 @@ export function addHistory(accountId, market, history) {
     return dao.last().cloneDeep().value();
 }
 
-export function getHistory(accountId, market, base) {
+export function getHistory(accountId, market, base, {start, end}) {
     let dao = findDao(accountId, market, 'history');
     if (!dao) {
         return null;
     }
-    if (base) {
-        dao = dao.get(base);
+
+    if (!base) {
+        return dao.cloneDeep().value();
     }
-    return dao.cloneDeep().value();
+
+    return dao.get(base).filter(({timestamp}) => timestamp >= start && timestamp <= end)
+        .cloneDeep()
+        .value();
 }
 
 export function removeAsset(accountId, market, condition) {

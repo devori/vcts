@@ -163,7 +163,7 @@ describe('account/index', function () {
 			accountDao.getHistory.restore();
 		});
 		it('should return histories matched accountId when getHistory call', () => {
-			let result = account.getHistory(ACCOUNT_ID, MARKET, 'USDT');
+			const result = account.getHistory(ACCOUNT_ID, MARKET, 'USDT');
 			expect(result.USDT).to.exist;
 			expect(result.USDT.length).to.equal(1);
 		});

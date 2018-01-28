@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import supertest from 'supertest';
 import sinon from 'sinon';
 import {expect, should} from 'chai';
+import mockdate from 'mockdate';
 import * as marketApi from '../../app/market-api';
 import privateRouter from '../../app/router/private';
 import * as account from '../../app/account';
@@ -166,26 +167,37 @@ describe('router/private.js', function () {
         })
     });
 
-    describe('GET /users/:user/markets/:market/histories/:base?/:vcType?', () => {
-        before(() => {
-            sinon.stub(account, 'getHistory').withArgs(TEST_USER, MARKET, 'USDT').returns([
-                {
-                    "base": "USDT",
-                    "vcType": "BTC",
-                    "units": 1,
-                    "rate": 2500,
-                    "total": 2500,
-                    "type": "sell",
-                    "timestamp": 123
+    describe('GET /users/:user/markets/:market/histories/:base', () => {
+        let mockTimestamp;
+
+        beforeEach(() => {
+            mockdate.set('1984-09-11');
+            mockTimestamp = new Date().getTime();
+            sinon.stub(account, 'getHistory').callsFake((user, market, base, condition) => {
+                if (user === TEST_USER && market === MARKET && base === 'USDT'
+                    && condition.start <= 123 && condition.end >= 123) {
+                    return [
+                        {
+                            "base": "USDT",
+                            "vcType": "BTC",
+                            "units": 1,
+                            "rate": 2500,
+                            "total": 2500,
+                            "type": "sell",
+                            "timestamp": 123
+                        }
+                    ];
                 }
-            ]);
+                return [];
+            });
         });
 
-        after(() => {
+        afterEach(() => {
             account.getHistory.restore();
+            mockdate.reset();
         });
 
-        it('should return history matched condition when histories call using get method', done => {
+        it('should return all history when start and end do not exist', done => {
             supertest(app)
                 .get(`/users/${TEST_USER}/markets/${MARKET}/histories/USDT`)
                 .expect('Content-Type', 'application/json; charset=utf-8')
@@ -198,6 +210,15 @@ describe('router/private.js', function () {
                     "type": "sell",
                     "timestamp": 123
                 }])
+                .end(done);
+        });
+
+        it('should return matched history', done => {
+            supertest(app)
+                .get(`/users/${TEST_USER}/markets/${MARKET}/histories/USDT`)
+                .query({start: '1', end: '122'})
+                .expect('Content-Type', 'application/json; charset=utf-8')
+                .expect(200, [])
                 .end(done);
         });
     });

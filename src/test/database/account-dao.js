@@ -167,7 +167,7 @@ describe('database/account-dao', () => {
         });
     });
 
-    it('should return history when getHistory call', () => {
+    it('should return matched history when getHistory call', () => {
         accountDao.addHistory(USERNAME, MARKET, {
             base: 'USDT',
             vcType: 'BTC',
@@ -175,11 +175,26 @@ describe('database/account-dao', () => {
             rate: 2500,
             total: 2500,
             type: 'sell',
-            timestamp: 123
+            timestamp: 3000
         });
-        let result = accountDao.getHistory(USERNAME, MARKET, null);
-        expect(result.USDT).to.exist;
-        expect(result.USDT).to.be.a('array');
+        let result = accountDao.getHistory(USERNAME, MARKET, 'USDT', {start: 2999, end: 3001});
+        expect(result.length).to.equal(1);
+        expect(result[0].timestamp).to.equal(3000);
+
+        result = accountDao.getHistory(USERNAME, MARKET, 'USDT', {start: 3000, end: 3000});
+        expect(result.length).to.equal(1);
+
+        result = accountDao.getHistory(USERNAME, MARKET, 'USDT', {start: 2000, end: 2999});
+        expect(result.length).to.equal(0);
+
+        result = accountDao.getHistory(USERNAME, MARKET, 'USDT', {start: 3001, end: 4000});
+        expect(result.length).to.equal(0);
+    });
+
+    it('should return all history when base is empty', () => {
+        const result = accountDao.getHistory(USERNAME, MARKET, null, {start: 0, end: 0});
+
+        expect(result.USDT.length).to.equal(2);
     });
 
     describe('existUser', () => {

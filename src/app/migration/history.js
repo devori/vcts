@@ -17,7 +17,7 @@ export function migrate() {
             path.resolve(ACCOUNTS_PATH, account, market, `history-${new Date().getTime()}.json`)
         );
 
-        const marketHistory = accountDao.getHistory(account, market);
+        const marketHistory = accountDao.getHistory(account, market, null, {});
 
         fsExtra.removeSync(path.resolve(ACCOUNTS_PATH, account, market, 'history.json'));
         fsExtra.writeJsonSync(path.resolve(ACCOUNTS_PATH, account, market, 'history.json'), {});
@@ -47,7 +47,7 @@ function getShouldBeMigratedList() {
     }).reduce((markets, marketsPerAccount) => markets.concat(marketsPerAccount), [])
         .filter(({account, market}) => fs.existsSync(path.resolve(ACCOUNTS_PATH, account, market, 'history.json')))
         .filter(({account, market}) => {
-            const history = accountDao.getHistory(account, market);
+            const history = accountDao.getHistory(account, market, null, {});
             for (const base in history) {
                 if (history[base] instanceof Array) {
                     continue;

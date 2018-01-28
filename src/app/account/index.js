@@ -134,8 +134,8 @@ export function removeAsset(accountId, market, asset) {
     addHistory(accountId, market, asset);
 }
 
-export function getHistory(accountId, market, base) {
-    return accountDao.getHistory(accountId, market, base);
+export function getHistory(accountId, market, base, conditions) {
+    return accountDao.getHistory(accountId, market, base, conditions);
 }
 
 export function getUser(accountId) {
