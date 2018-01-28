@@ -168,42 +168,37 @@ describe('router/private.js', function () {
 
     describe('GET /users/:user/markets/:market/histories/:base?/:vcType?', () => {
         before(() => {
-            sinon.stub(account, 'getHistory').withArgs(TEST_USER, MARKET, sinon.match.any, sinon.match.any).returns({
-                "USDT": {
-                    "BTC": [
-                        {
-                            "base": "USDT",
-                            "vcType": "BTC",
-                            "units": 1,
-                            "rate": 2500,
-                            "total": 2500,
-                            "type": "sell",
-                            "timestamp": 123
-                        }
-                    ]
+            sinon.stub(account, 'getHistory').withArgs(TEST_USER, MARKET, 'USDT').returns([
+                {
+                    "base": "USDT",
+                    "vcType": "BTC",
+                    "units": 1,
+                    "rate": 2500,
+                    "total": 2500,
+                    "type": "sell",
+                    "timestamp": 123
                 }
-            });
+            ]);
         });
+
         after(() => {
             account.getHistory.restore();
         });
+
         it('should return history matched condition when histories call using get method', done => {
             supertest(app)
-                .get(`/users/${TEST_USER}/markets/${MARKET}/histories/USDT/BTC`)
+                .get(`/users/${TEST_USER}/markets/${MARKET}/histories/USDT`)
                 .expect('Content-Type', 'application/json; charset=utf-8')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) {
-                        expect.fail('', '', err);
-                        return;
-                    }
-                    expect(res.body.USDT).to.exist;
-                    expect(res.body.USDT.BTC).to.exist;
-                    expect(res.body.USDT.BTC.length).to.equal(1);
-                    expect(res.body.USDT.BTC[0].base).to.equal('USDT');
-                    done();
-                });
-            this.timeout(3000);
+                .expect(200, [{
+                    "base": "USDT",
+                    "vcType": "BTC",
+                    "units": 1,
+                    "rate": 2500,
+                    "total": 2500,
+                    "type": "sell",
+                    "timestamp": 123
+                }])
+                .end(done);
         });
     });
     describe('GET /users/:user', () => {

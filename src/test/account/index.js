@@ -156,19 +156,16 @@ describe('account/index', function () {
 	describe('getHistory', () => {
 		before(() => {
 			sinon.stub(accountDao, 'getHistory').returns({
-				USDT: {
-					BTC: [{ base: 'USDT' }]
-				}
+				USDT: [{ base: 'USDT', vcType: 'BTC' }],
 			});
 		});
 		after(() => {
 			accountDao.getHistory.restore();
 		});
 		it('should return histories matched accountId when getHistory call', () => {
-			let result = account.getHistory(ACCOUNT_ID, MARKET, 'USDT', 'BTC');
+			let result = account.getHistory(ACCOUNT_ID, MARKET, 'USDT');
 			expect(result.USDT).to.exist;
-			expect(result.USDT.BTC).to.exist;
-			expect(result.USDT.BTC.length).to.equal(1);
+			expect(result.USDT.length).to.equal(1);
 		});
 	})
 

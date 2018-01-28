@@ -78,9 +78,9 @@ router.delete('/users/:user/markets/:market/assets/:base/:vcType/:uuid?', (req, 
     });
 });
 
-router.get('/users/:user/markets/:market/histories/:base?/:vcType?', (req, res) => {
-    let {user, market, base, vcType} = req.params;
-    let result = account.getHistory(user, market, base, vcType);
+router.get('/users/:user/markets/:market/histories/:base?', (req, res) => {
+    let {user, market, base} = req.params;
+    let result = account.getHistory(user, market, base);
     res.json(result);
 });
 
