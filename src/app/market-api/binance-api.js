@@ -40,8 +40,8 @@ export function getTickers() {
 	}).then(data => {
 		return data.reduce((acc, ticker) => {
 			const symbol = ticker.symbol;
-			const base = symbol.substr(symbol.length - 3, 3);
-			const vcType = symbol.substr(0, symbol.length - 3);
+			const base = symbol.endsWith('USDT') ? 'USDT' : symbol.substr(symbol.length - 3, 3);
+			const vcType = symbol.endsWith('USDT') ? symbol.substr(0, symbol.length - 4) : symbol.substr(0, symbol.length - 3);
 			acc[base] = acc[base] || {};
 			acc[base][vcType] = {
 				base,
