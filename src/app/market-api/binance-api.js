@@ -44,7 +44,7 @@ export function getTickers() {
 			const vcType = symbol.substr(0, symbol.length - 3);
 			acc[base] = acc[base] || {};
 			acc[base][vcType] = {
-				base: 'BTC',
+				base,
 				vcType,
 				bid: Number(ticker.bidPrice),
 				ask: Number(ticker.askPrice),
