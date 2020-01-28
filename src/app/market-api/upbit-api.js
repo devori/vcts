@@ -2,7 +2,8 @@ import request from 'request';
 import crypto from 'crypto';
 import _ from 'lodash';
 import uuid from 'uuid';
-import { sign } from 'jsonwebtoken'
+import { sign } from 'jsonwebtoken';
+import { encode } from 'querystring';
 import logger from '../util/logger';
 
 const API_BASE_URL = 'https://api.upbit.com';
@@ -94,7 +95,7 @@ export function getBalances(auth) {
 }
 
 export function sell(auth, base, vcType, units, rate) {
-	return order(auth, base, vcType, 'SELL', units, rate);
+	return order(auth, base, vcType, 'ask', units, rate);
 }
 
 export function buy(auth, base, vcType, units, rate) {
@@ -103,51 +104,37 @@ export function buy(auth, base, vcType, units, rate) {
 
 export function order(auth, base, vcType, side, units, rate) {
 	logger.info(`[Order] ${side} ${base}-${vcType} : ${units}(units) ${rate}(rate)`);
-	return callPrivateApi(auth, 'order', 'POST', {
-		symbol: `${vcType}${base}`,
+	return callPrivateApi(auth, 'orders', 'POST', {
+		market: `${base}-${vcType}`,
 		side,
-		type: 'LIMIT',
-		timeInForce: 'IOC',
-		quantity: units,
-		price: rate,
-		newOrderRespType: 'FULL'
+		volume: String(units),
+		price: String(rate),
+		ord_type: 'limit',
 	}).then(data => {
-		if (data.fills.length === 0) {
-			throw 'there is no fills';
-		}
 		const result = {
 			raw: data
 		};
-		result.trade = data.fills.reduce((acc, t) => {
-			const units = Number(t.qty);
-			const rate = Number(t.price);
-			acc.rate = (acc.units * acc.rate + units * rate) / (acc.units + units);
-			acc.rate = Number(acc.rate.toFixed(8));
-			acc.units += units;
-			acc.units = Number(acc.units.toFixed(8));
-			return acc;
-		}, {
+		result.trade = {
 			base,
 			vcType,
-			units: 0,
-			rate: 0,
-			timestamp: new Date().getTime()
-		});
+			units: Number(data.executed_volume),
+			rate: Number(data.avg_price),
+			timestamp: new Date().getTime(),
+		};
 		return result;
 	});
 }
 
-function callPrivateApi(auth, command, method, params = {}) {
-	params.timestamp = String(new Date().getTime());
-	params.signature = getHmacSha256(auth.secretKey, params);
+function callPrivateApi(auth, command, method, body = {}) {
+	const token = getHashSha512(auth, body);
 
 	const options = {
 		method,
-		url: `${API_BASE_URL}/v3/${command}`,
+		url: `${API_BASE_URL}/v1/${command}`,
 		headers: {
-			'X-MBX-APIKEY': auth.apiKey
+			Authorization: `Bearer ${token}`,
 		},
-		[method === 'GET' ? 'qs' : 'form']: params,
+		json: body,
 	};
 
 	return new Promise((resolve, reject) => {
@@ -156,20 +143,20 @@ function callPrivateApi(auth, command, method, params = {}) {
 				reject(err);
 				return;
 			}
-			resolve(JSON.parse(body));
+			resolve(body);
 		})
-	}).then(result => {
-		if (result.code < 0) {
-			throw result.msg;
-		}
-		return result;
 	});
 }
 
-function getHmacSha256(key, params) {
-	const uriencodedParams = Object.keys(params).map(key => {
-		return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-	}).join('&');
 
-	return crypto.createHmac('sha256', key).update(uriencodedParams).digest('hex');
+function getHashSha512(auth, body) {
+	const hash = crypto.createHash('sha512');
+	const queryHash = hash.update(encode(body), 'utf-8').digest('hex');
+	
+	return sign({
+		access_key: auth.apiKey,
+		nonce: uuid.v4(),
+		query_hash: queryHash,
+		query_hash_alg: 'SHA512',
+	}, auth.secretKey);
 }

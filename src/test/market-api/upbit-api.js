@@ -3,6 +3,7 @@ import nock from 'nock';
 import crypto from 'crypto';
 import uuid from 'uuid';
 import { sign } from 'jsonwebtoken';
+import { encode } from 'querystring';
 import * as upbitApi from '../../app/market-api/upbit-api';
 
 describe('market-api/upbit-api.js', function () {
@@ -171,52 +172,51 @@ describe('market-api/upbit-api.js', function () {
         });
     });
 
-    xdescribe('sell', () => {
+    describe('sell', () => {
         beforeEach(() => {
+            const query = encode({
+                market: 'KRW-BTC',
+                side: 'ask',
+                volume: '0.01',
+                price: '100',
+                ord_type: 'limit',
+            })
+            const hash = crypto.createHash('sha512')
+            const queryHash = hash.update(query, 'utf-8').digest('hex')
+            const token = sign({
+                access_key: API_KEY,
+                nonce: 'uuid-v4',
+                query_hash: queryHash,
+                query_hash_alg: 'SHA512',
+            }, SECRET_KEY);
+
             nock(BASE_URL)
-                .matchHeader('Content-Type', 'application/x-www-form-urlencoded')
-                .post('/api/v3/order', body => {
-                    const paramString = Object.keys(body).filter(key => key !== 'signature').map(key => {
-                        return encodeURIComponent(key) + '=' + encodeURIComponent(body[key]);
-                    }).join('&');
-                    const signature = crypto.createHmac('sha256', SECRET_KEY).update(paramString).digest('hex');
-                    return body.timestamp && signature === body.signature;
+                .matchHeader('Authorization', `Bearer ${token}`)
+                .post('/v1/orders', {
+                    market: 'KRW-BTC',
+                    side: 'ask',
+                    volume: '0.01',
+                    price: '100',
+                    ord_type: 'limit',
                 })
-                .reply(200, (uri, reqbody) => {
-                    const result = {
-                        "symbol": "XRPBTC",
-                        "orderId": 28,
-                        "clientOrderId": "6gCrw2kRUAF9CvJDGP16IP",
-                        "transactTime": 1507725176595,
-                        "price": "0.00000000",
-                        "origQty": "3.00000000",
-                        "executedQty": "2.00000000",
-                        "status": "FILLED",
-                        "timeInForce": "IOC",
-                        "type": "LIMIT",
-                        "side": "SELL",
-                        "fills": []
-                    };
-
-                    if (reqbody.startsWith('symbol=XRP')) {
-                        result.fills = [
-                            {
-                                "price": "0.00015",
-                                "qty": "1.00000000",
-                                "commission": "0.00000015",
-                                "commissionAsset": "BTC"
-                            },
-                            {
-                                "price": "0.00016",
-                                "qty": "1.00000000",
-                                "commission": "0.00000015",
-                                "commissionAsset": "BTC"
-                            }
-                        ]
-                    }
-
-                    return result;
-                });
+                .reply(200, {
+                    "uuid":"cdd92199-2897-4e14-9448-f923320408ad",
+                    "side":"ask",
+                    "ord_type":"limit",
+                    "price":"100.0",
+                    "avg_price":"110",
+                    "state":"wait",
+                    "market":"KRW-BTC",
+                    "created_at":"2018-04-10T15:42:23+09:00",
+                    "volume":"0.01",
+                    "remaining_volume":"0.005",
+                    "reserved_fee":"0.0015",
+                    "remaining_fee":"0.007",
+                    "paid_fee":"0.8",
+                    "locked":"1.0015",
+                    "executed_volume":"0.005",
+                    "trades_count":1
+                  });
         });
 
         afterEach(() => {
@@ -227,29 +227,18 @@ describe('market-api/upbit-api.js', function () {
             const prom = upbitApi.sell({
                 apiKey: API_KEY,
                 secretKey: SECRET_KEY
-            }, 'BTC', 'XRP', 3, 0.00016);
+            }, 'KRW', 'BTC', 0.01, 100);
+
             expect(prom).to.be.a('promise');
             prom.then(result => {
-                expect(result.raw.fills.length).to.equal(2);
+                expect(result.raw.uuid).to.equal('cdd92199-2897-4e14-9448-f923320408ad');
                 expect(result.trade).to.deep.include({
-                    base: 'BTC',
-                    vcType: 'XRP',
-                    units: 2,
-                    rate: 0.000155
+                    base: 'KRW',
+                    vcType: 'BTC',
+                    units: 0.005,
+                    rate: 110
                 });
                 expect(result.trade.timestamp).to.be.a('number');
-                done();
-            });
-        });
-
-        it('should throw exception when fills are empty', done => {
-            const prom = upbitApi.sell({
-                apiKey: API_KEY,
-                secretKey: SECRET_KEY
-            }, 'BTC', 'ETH', 3, 0.1);
-            expect(prom).to.be.a('promise');
-            prom.catch((error) => {
-                expect(error).to.equal('there is no fills');
                 done();
             });
         });
