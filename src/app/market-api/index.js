@@ -1,9 +1,11 @@
 import * as poloniexApi from './poloniex-api';
 import * as binanceApi from './binance-api';
+import * as upbitApi from './upbit-api';
 
 export const MARKET = {
   POLONIEX: 'poloniex',
-  BINANCE: 'binance'
+  BINANCE: 'binance',
+  UPBIT: 'upbit',
 }
 
 export function load(marketName) {
@@ -12,6 +14,8 @@ export function load(marketName) {
     return poloniexApi;
   case MARKET.BINANCE:
     return binanceApi;
+  case MARKET.UPBIT:
+    return upbitApi;
   default:
     throw `${marketName} is not supported`;
   }
