@@ -78,13 +78,18 @@ export function getOrderResult(auth, orderId, vcType) {
 			const result = {
 				raw: data,
 			};
+			console.log(data);
 			const base = data.symbol.substr(vcType.length).toUpperCase();
 			const units = Number(Number(data['field-amount']).toFixed(8));
+			let rate = Number(Number(data['price']).toFixed(8));
+			if (units > 0) {
+				rate = Number(((Number(data['field-cash-amount']).toFixed(8)) / units).toFixed(8));
+			}
 			result.trade = {
 				base,
 				vcType,
 				units: units - (data.type.startsWith('buy') ? Number(Number(data['field-fees']).toFixed(8)) : 0),
-				rate: Number(Number(data['price']).toFixed(8)),
+				rate,
 				timestamp: new Date().getTime()
 			};
 			return result;

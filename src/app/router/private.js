@@ -15,6 +15,15 @@ router.use((req, res, next) => {
     next();
 });
 
+router.get('/users/:user/test', (req, res) => {
+    const user = 'test';
+    const market = 'huobi'
+    const keys = account.getMarketKeys(user, market);
+    marketApi.load(market).getOrderResult(keys, '280974756194501', 'USDT').then(data => {
+        return data;
+    }).then((b) => res.json(b));
+});
+
 router.get('/users/:user', (req, res) => {
     let user = account.getUser(req.params.user);
     if (!user) {
