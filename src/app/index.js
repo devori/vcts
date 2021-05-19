@@ -3,11 +3,13 @@ import fs from 'fs';
 import express from 'express';
 import compression from 'compression'
 import bodyParser from 'body-parser';
+import tls from 'tls';
 import * as historyMigrator from './migration/history';
 import pubilcRouter from './router/public';
 import privateRouter from './router/private';
 import logger from './util/logger';
 
+tls.DEFAULT_ECDH_CURVE = 'auto';
 const DATA_DIR_PATH = path.resolve(__dirname, '../../data');
 if (!fs.existsSync(DATA_DIR_PATH)) {
     fs.mkdirSync(DATA_DIR_PATH);
